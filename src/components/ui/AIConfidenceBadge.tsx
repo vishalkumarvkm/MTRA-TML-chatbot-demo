@@ -11,27 +11,27 @@ function getConfidenceConfig(confidence: number) {
   if (confidence >= 85) {
     return {
       label: "High",
-      barClass: "bg-emerald-500 dark:bg-emerald-400",
-      textClass: "text-emerald-700 dark:text-emerald-400",
-      bgClass: "bg-emerald-50 dark:bg-emerald-950/40",
-      borderClass: "border-emerald-200 dark:border-emerald-800",
+      barClass: "bg-brand-teal",
+      textClass: "text-brand-teal",
+      bgClass: "bg-brand-mint/20",
+      borderClass: "border-brand-mint/50",
     };
   }
   if (confidence >= 70) {
     return {
       label: "Medium",
-      barClass: "bg-amber-500 dark:bg-amber-400",
-      textClass: "text-amber-700 dark:text-amber-400",
-      bgClass: "bg-amber-50 dark:bg-amber-950/40",
-      borderClass: "border-amber-200 dark:border-amber-800",
+      barClass: "bg-brand-lightblue2",
+      textClass: "text-brand-blue",
+      bgClass: "bg-brand-lightblue",
+      borderClass: "border-brand-lightblue2/30",
     };
   }
   return {
     label: "Low",
-    barClass: "bg-red-500 dark:bg-red-400",
-    textClass: "text-red-700 dark:text-red-400",
-    bgClass: "bg-red-50 dark:bg-red-950/40",
-    borderClass: "border-red-200 dark:border-red-800",
+    barClass: "bg-brand-black",
+    textClass: "text-brand-black dark:text-brand-white",
+    bgClass: "bg-brand-grey",
+    borderClass: "border-brand-grey",
   };
 }
 

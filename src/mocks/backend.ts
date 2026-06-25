@@ -22,7 +22,7 @@ export const mockBackend: backendInterface = {
     name: "Dr. Sarah Mitchell",
     title: "Senior Registered Nurse",
     email: "s.mitchell@montefiore.org",
-    phone: "(718) 920-4321",
+    phone: "718-920-4321",
     department: "Nursing — 4 North ICU",
     hireDate: BigInt(1609459200000000000),
     managerId: "emp-mgr-001",

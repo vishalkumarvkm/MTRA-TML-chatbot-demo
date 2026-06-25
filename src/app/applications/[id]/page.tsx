@@ -153,17 +153,17 @@ export default function CaseDetailsPage({
                   {[
                     {
                       label: "Application Created",
-                      date: "Dec 12, 10:42 AM",
+                      date: "Dec 12, 10:42 am",
                       user: "System",
                     },
                     {
                       label: "AI Validation Passed",
-                      date: "Dec 12, 10:43 AM",
-                      user: "MTRA AI",
+                      date: "Dec 12, 10:43 am",
+                      user: "HealthyME AI",
                     },
                     {
                       label: "Assigned to HR",
-                      date: "Dec 13, 09:15 AM",
+                      date: "Dec 13, 9:15 am",
                       user: "System",
                     },
                   ].map((log, idx) => (

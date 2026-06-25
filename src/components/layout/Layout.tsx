@@ -38,7 +38,6 @@ import {
   Sun,
   Trophy,
   User,
-  Wallet,
   Zap,
   Lock,
   CreditCard,
@@ -58,13 +57,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Dashboard", href: "/", icon: LayoutDashboard, roles: ["employee", "hr", "admin"] },
   { label: "Apply Now", href: "/apply", icon: FilePlus, roles: ["employee"] },
   { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee"] },
-  { label: "Benefit Balance", href: "/dashboard/balance", icon: Wallet, roles: ["employee"] },
   { label: "HR Operations", href: "/hr-ops", icon: Settings2, roles: ["hr", "admin"] },
   { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["hr", "admin"] },
-  { label: "Service Agreements", href: "/service-agreements", icon: ShieldAlert, roles: ["employee", "hr", "admin"] },
+  { label: "Service Agreements", href: "/service-agreements", icon: ShieldAlert, roles: ["hr", "admin"] },
   { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["hr", "admin"] },
   { label: "Payroll Feed", href: "/payroll", icon: CreditCard, roles: ["hr", "admin"] },
   {
@@ -80,7 +78,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["manager", "hr", "admin"],
   },
   { label: "Policy Admin", href: "/admin/policy", icon: Settings, roles: ["hr", "admin"] },
-  { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Application Status", href: "/notifications", icon: Bell },
 ];
 
 interface LayoutProps {
@@ -99,6 +97,7 @@ export function Layout({
   const { theme, setTheme } = useTheme();
   const {
     currentUser,
+    isAuthenticated,
     logout,
     sidebarCollapsed,
     toggleSidebar,
@@ -111,19 +110,32 @@ export function Layout({
 
   useEffect(() => {
     if (hasHydrated) {
+      if (!isAuthenticated) {
+        const searchStr = typeof window !== "undefined" ? window.location.search : "";
+        const fullPath = pathname ? `${pathname}${searchStr}` : "";
+        const queryParam = fullPath && fullPath !== "/" ? `?redirect=${encodeURIComponent(fullPath)}` : "";
+        console.warn("Unauthenticated access attempt. Redirecting to login...");
+        router.replace(`/login${queryParam}`);
+        return;
+      }
+
       // Find current item's required roles
       const activeItem = NAV_ITEMS.find((item) => 
-        pathname === item.href || (item.href !== "/dashboard" && item.href !== "/" && pathname?.startsWith(item.href + "/"))
+        pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"))
       );
       
       if (activeItem?.roles) {
         if (!currentUser || !activeItem.roles.includes(currentUser.role)) {
           console.warn("Unauthorized access attempt. Redirecting...");
-          router.replace("/");
+          if (currentUser?.role === "manager") {
+            router.replace("/approvals");
+          } else {
+            router.replace("/");
+          }
         }
       }
     }
-  }, [hasHydrated, currentUser, pathname, router]);
+  }, [hasHydrated, isAuthenticated, currentUser, pathname, router]);
 
   const handleLogout = () => {
     logout();
@@ -203,7 +215,7 @@ export function Layout({
       {/* Sidebar */}
       <aside
         className={cn(
-          "flex flex-col bg-card border-r border-border transition-all duration-300 ease-in-out flex-shrink-0 z-30",
+          "flex flex-col bg-card border-r border-border transition-all duration-300 ease-in-out flex-shrink-0 z-30 h-screen",
           isMobile && "fixed inset-y-0 left-0",
           sidebarCollapsed ? (isMobile ? "-translate-x-full" : "w-16") : "w-64 translate-x-0",
         )}
@@ -216,40 +228,32 @@ export function Layout({
             sidebarCollapsed ? "justify-center" : "justify-between gap-3",
           )}
         >
-          {!sidebarCollapsed && (
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                <Activity className="w-4 h-4 text-primary-foreground" />
+          {!sidebarCollapsed ? (
+            <>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <img src="/assets/images/logo_healthy_me.png" alt="HealthyME" className="h-8 object-contain" />
               </div>
-              <div className="min-w-0">
-                <div className="text-sm font-bold font-display text-foreground leading-none truncate">
-                  MTRA
-                </div>
-                <div className="text-[10px] text-muted-foreground leading-tight truncate">
-                  Montefiore Health
-                </div>
-              </div>
-            </div>
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="Collapse sidebar"
+                data-ocid="sidebar.toggle"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="p-2 border border-border rounded-lg bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm"
+              aria-label="Expand sidebar"
+              data-ocid="sidebar.expand"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           )}
-          {sidebarCollapsed && (
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Activity className="w-4 h-4 text-primary-foreground" />
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className={cn(
-              "rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors",
-              sidebarCollapsed && "hidden",
-            )}
-            aria-label={
-              sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
-            }
-            data-ocid="sidebar.toggle"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Navigation */}
@@ -260,8 +264,7 @@ export function Layout({
           {filteredNav.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/dashboard" &&
-                item.href !== "/" &&
+              (item.href !== "/" &&
                 pathname?.startsWith(item.href + "/"));
             return (
               <Link
@@ -345,11 +348,11 @@ export function Layout({
           data-ocid="header"
         >
           <div className="flex items-center gap-4 min-w-0">
-            {/* Mobile menu */}
+            {/* Mobile-only menu button (desktop uses the sidebar toggle when collapsed) */}
             <button
               type="button"
               onClick={toggleSidebar}
-              className="lg:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+              className="lg:hidden p-2 border border-border rounded-lg bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm"
               data-ocid="header.menu_button"
             >
               <Menu className="w-5 h-5" />
@@ -392,7 +395,7 @@ export function Layout({
                 </div>
               ) : (
                 <h1 className="text-base font-semibold font-display text-foreground truncate">
-                  {title ?? "MTRA"}
+                  {title ?? "HealthyME"}
                 </h1>
               )}
             </div>

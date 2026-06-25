@@ -1,4 +1,4 @@
-// MTRA — Montefiore Tuition Reimbursement Agent
+// HealthyME — Montefiore Tuition Reimbursement Agent
 // Frontend TypeScript Types
 
 export type ProgramType =
@@ -75,6 +75,7 @@ export interface Employee {
   managerId: string | null;
   avatar?: string;
   location?: string;
+  isNYSNA?: boolean;
 }
 
 export interface CaseItem {
@@ -233,6 +234,7 @@ export interface ServiceAgreement {
   employeeName: string;
   applicationId: string;
   amount: number;
+  signedDate: string;
   startDate: string;
   endDate: string;
   status: "Active" | "ExpiringSoon" | "Breached" | "Completed";

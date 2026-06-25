@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Layout } from "@/components/layout/Layout";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -14,11 +14,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { mockApplications, mockPrograms } from "@/data/mockData";
+import {
+  mockApplications,
+  mockEmployees,
+  mockPrograms,
+  mockServiceAgreements,
+} from "@/data/mockData";
 import { useRouter } from "next/navigation";
 import {
+  CalendarCheck2,
   ChevronRight,
   Download,
+  FileSignature,
   Filter,
   Plus,
   Search,
@@ -29,6 +36,17 @@ import { useState } from "react";
 export default function ApplicationsPage() {
   const router = useRouter();
   const [search, setSearch] = useState("");
+
+  // Current employee (Maria Santos in demo)
+  const currentEmployee = mockEmployees[0];
+  const isNYSNA = currentEmployee.isNYSNA === true;
+
+  // Find this employee's active service agreement (NYSNA only)
+  const serviceAgreement = isNYSNA
+    ? mockServiceAgreements.find(
+        (sa) => sa.employeeId === currentEmployee.id,
+      ) ?? null
+    : null;
 
   const filteredApps = mockApplications.filter(
     (app) =>
@@ -49,6 +67,16 @@ export default function ApplicationsPage() {
       day: "numeric",
       year: "numeric",
     });
+
+  const saStatusColors: Record<string, string> = {
+    Active:
+      "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
+    ExpiringSoon:
+      "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
+    Completed: "bg-muted text-muted-foreground border-border",
+    Breached:
+      "bg-red-100 text-red-800 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800",
+  };
 
   return (
     <Layout
@@ -74,13 +102,88 @@ export default function ApplicationsPage() {
           </Button>
         </div>
 
+        {/* â”€â”€ NYSNA Service Agreement Panel (NYSNA nurses only) â”€â”€ */}
+        {isNYSNA && serviceAgreement && (
+          <Card
+            className="border-primary/25 bg-primary/5 shadow-sm"
+            data-ocid="applications.nysna_service_agreement"
+          >
+            <CardHeader className="pb-3 border-b border-primary/15">
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+                  <FileSignature className="w-4 h-4 text-primary" />
+                  NYSNA Service Agreement
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] font-semibold border ${saStatusColors[serviceAgreement.status] ?? ""}`}
+                  >
+                    {serviceAgreement.status === "ExpiringSoon"
+                      ? "Expiring Soon"
+                      : serviceAgreement.status}
+                  </Badge>
+                </CardTitle>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+                  NYSNA Article 35
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4 pb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+                {/* Signed Date */}
+                <div className="flex items-start gap-2.5">
+                  <CalendarCheck2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                      Date Signed
+                    </p>
+                    <p className="text-sm font-semibold text-foreground mt-0.5">
+                      {formatDate(serviceAgreement.signedDate)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Valid Until */}
+                <div className="flex items-start gap-2.5">
+                  <CalendarCheck2 className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                      Valid Until
+                    </p>
+                    <p className="text-sm font-semibold text-foreground mt-0.5">
+                      {formatDate(serviceAgreement.endDate)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Amount Covered */}
+                <div className="flex items-start gap-2.5 col-span-2 sm:col-span-1">
+                  <FileSignature className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                      Amount Covered
+                    </p>
+                    <p className="text-sm font-bold text-foreground mt-0.5">
+                      {formatCurrency(serviceAgreement.amount)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed border-t border-primary/10 pt-3">
+                You are required to remain employed at Montefiore Health System for 2 years (or completion of 18 credits) following reimbursement approval per your NYSNA service agreement. Early separation may result in prorated repayment.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* â”€â”€ Applications Table â”€â”€ */}
         <Card className="border-border shadow-sm overflow-hidden">
           <CardHeader className="pb-3 border-b border-border bg-muted/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search applications…"
+                  placeholder="Search applicationsâ€¦"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-9 h-9 bg-background"
@@ -197,7 +300,7 @@ export default function ApplicationsPage() {
                             {app.id}
                           </span>
                           <span className="text-[10px] text-muted-foreground">
-                            • {formatDate(app.submittedAt ?? app.createdAt)}
+                            â€¢ {formatDate(app.submittedAt ?? app.createdAt)}
                           </span>
                         </div>
                         <h3 className="font-bold text-foreground text-sm line-clamp-1">
@@ -209,7 +312,7 @@ export default function ApplicationsPage() {
                       </div>
                       <StatusBadge status={app.status} />
                     </div>
-                    
+
                     <div className="flex items-center justify-between pt-1">
                       <Badge
                         variant="outline"

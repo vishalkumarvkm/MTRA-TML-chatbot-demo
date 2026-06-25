@@ -243,7 +243,7 @@ export default function CaseDetailsPage({
              </Card>
 
              <Tabs defaultValue="timeline" className="w-full">
-                <TabsList className="bg-[#eff6f8] p-1.5 h-auto rounded-xl inline-flex items-center gap-1 border-none mb-6 max-w-full overflow-x-auto no-scrollbar">
+                <TabsList className="bg-brand-lightblue p-1.5 h-auto rounded-xl inline-flex items-center gap-1 border-none mb-6 max-w-full overflow-x-auto no-scrollbar">
                    <TabsTrigger 
                       value="timeline" 
                       className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all"
@@ -254,19 +254,19 @@ export default function CaseDetailsPage({
                       value="documents" 
                       className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all gap-2"
                    >
-                      Documents <span className="bg-[#00a878] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                      Documents <span className="bg-brand-teal text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
                    </TabsTrigger>
                    <TabsTrigger 
                       value="notes" 
                       className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all gap-2"
                    >
-                      Notes <span className="bg-[#00a878] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                      Notes <span className="bg-brand-teal text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
                    </TabsTrigger>
                    <TabsTrigger 
                       value="audit" 
                       className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all gap-2"
                    >
-                      Audit <span className="bg-[#00a878] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                      Audit <span className="bg-brand-teal text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center">3</span>
                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value="timeline" className="pt-0">
@@ -281,20 +281,20 @@ export default function CaseDetailsPage({
                          {[
                            {
                              title: "Application Submitted",
-                             desc: "Employee submitted via MTRA portal. Tracking ID: MTRA-2026-0041",
-                             time: "Apr 15, 2026 • 10:23 AM",
+                             desc: "Employee submitted via HealthyME portal. Tracking ID: MTRA-2026-0041",
+                             time: "Apr 15, 2026 • 10:23 am",
                              done: true,
                            },
                            {
                              title: "Under Review",
-                             desc: "Auto-assigned to Priya Nair. AI document processing completed (avg 95.8% confidence)",
-                             time: "Apr 15, 2026 • 11:30 AM",
+                             desc: "Auto-assigned to Priya Nair. HealthyME AI Analysis document processing completed (avg 95.8% confidence)",
+                             time: "Apr 15, 2026 • 11:30 am",
                              done: true,
                            },
                            {
                              title: "HR Analysis",
                              desc: "Eligibility confirmed. Transcript flagged for manual OCR review. Manager notified.",
-                             time: "Apr 16, 2026 • 9:15 AM",
+                             time: "Apr 16, 2026 • 9:15 am",
                              done: true,
                            },
                            {
@@ -384,7 +384,7 @@ export default function CaseDetailsPage({
                            { 
                              name: "Priya Nair", 
                              role: "HR Specialist", 
-                             time: "Apr 16, 2026, 2:45 PM", 
+                             time: "Apr 16, 2026, 2:45 pm", 
                              initials: "PN",
                              color: "blue",
                              text: "Reviewed all submitted documents. Enrollment confirmed with CUNY Lehman registrar. Receipt matches tuition schedule. Transcript still in pending state — AI OCR flagged for manual review. Forwarding to manager for approval once transcript is cleared." 
@@ -392,7 +392,7 @@ export default function CaseDetailsPage({
                            { 
                              name: "Dr. James Okonkwo", 
                              role: "Nurse Manager", 
-                             time: "Apr 17, 2026, 8:00 PM", 
+                             time: "Apr 17, 2026, 8:00 pm", 
                              initials: "DJ",
                              color: "emerald",
                              text: "Maria is an outstanding team member and this course directly supports her role as charge nurse. I fully support this application. Pending HR clearance of transcript." 
@@ -400,7 +400,7 @@ export default function CaseDetailsPage({
                            { 
                              name: "Priya Nair", 
                              role: "HR Specialist", 
-                             time: "Apr 22, 2026, 4:30 PM", 
+                             time: "Apr 22, 2026, 4:30 pm", 
                              initials: "PN",
                              color: "blue",
                              text: "Transcript re-submitted for AI reprocessing. OCR confidence improved to 73%. Manual verification in progress. SLA clock at 7 days. Expected resolution by Apr 29." 
@@ -455,9 +455,9 @@ export default function CaseDetailsPage({
                             </TableHeader>
                             <TableBody>
                                {[
-                                 { action: "APPLICATION_SUBMITTED", actor: "Latasha Williams", role: "employee", time: "Apr 20, 2026, 1:46 PM", details: "Employee submitted tuition reimbursement application MTRA-2026-0047 for Fordham University." },
-                                 { action: "AI_LOW_CONFIDENCE", actor: "MTRA AI Agent", role: "admin", time: "Apr 20, 2026, 1:50 PM", details: "Fordham University invoice processing flagged — confidence 78%. Document queued for manual review." },
-                                 { action: "DOCUMENT_REPROCESSED", actor: "Priya Nair", role: "hr", time: "Apr 21, 2026, 3:30 PM", details: "HR manually re-submitted Fordham invoice for AI reprocessing due to low confidence score." },
+                                 { action: "APPLICATION_SUBMITTED", actor: "Latasha Williams", role: "employee", time: "Apr 20, 2026, 1:46 pm", details: "Employee submitted tuition reimbursement application MTRA-2026-0047 for Fordham University." },
+                                 { action: "AI_LOW_CONFIDENCE", actor: "HealthyME AI Agent", role: "admin", time: "Apr 20, 2026, 1:50 pm", details: "Fordham University invoice processing flagged — confidence 78%. Document queued for manual review." },
+                                 { action: "DOCUMENT_REPROCESSED", actor: "Priya Nair", role: "hr", time: "Apr 21, 2026, 3:30 pm", details: "HR manually re-submitted Fordham invoice for AI reprocessing due to low confidence score." },
                                ].map((entry, idx) => (
                                  <TableRow key={idx} className="border-b border-border/50 hover:bg-muted/20">
                                     <TableCell className="px-6">
@@ -494,7 +494,7 @@ export default function CaseDetailsPage({
                 <CardHeader className="p-4 border-b border-emerald-500/10">
                    <div className="flex items-center gap-2">
                       <Zap className="w-4 h-4 text-emerald-600" />
-                      <CardTitle className="text-xs font-bold uppercase tracking-widest text-emerald-700">MTRA AI Analysis</CardTitle>
+                      <CardTitle className="text-xs font-bold uppercase tracking-widest text-emerald-700">HealthyME AI Analysis</CardTitle>
                    </div>
                 </CardHeader>
                 <CardContent className="p-4 space-y-4">

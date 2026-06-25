@@ -175,7 +175,7 @@ export default function HROpsPage() {
                     <span className="text-amber-600">Day 38 of 45</span>
                   </div>
                   <div className="h-3 w-full bg-muted rounded-full overflow-hidden relative shadow-inner">
-                    <div className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-amber-600 w-[84%]" />
+                    <div className="h-full bg-brand-teal w-[84%]" />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -250,7 +250,7 @@ export default function HROpsPage() {
               <CardHeader className="p-0 border-b border-border">
                  <div className="px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <Tabs defaultValue="all" className="w-auto">
-                       <TabsList className="bg-[#eff6f8] p-1 h-auto rounded-lg gap-1 border-none">
+                       <TabsList className="bg-brand-lightblue p-1 h-auto rounded-lg gap-1 border-none">
                           <TabsTrigger value="all" className="text-[10px] font-bold px-3 py-1.5 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">All Cases <span className="ml-1 px-1.5 rounded-full bg-muted text-muted-foreground">10</span></TabsTrigger>
                           <TabsTrigger value="high" className="text-[10px] font-bold px-3 py-1.5 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">High Priority <span className="ml-1 px-1.5 rounded-full bg-destructive/10 text-destructive">4</span></TabsTrigger>
                           <TabsTrigger value="pending" className="text-[10px] font-bold px-3 py-1.5 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">Pending Review <span className="ml-1 px-1.5 rounded-full bg-amber-100 text-amber-700">3</span></TabsTrigger>

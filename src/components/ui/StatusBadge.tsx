@@ -8,37 +8,37 @@ const APP_STATUS_CONFIG: Record<
 > = {
   Draft: {
     label: "Draft",
-    className: "bg-muted text-muted-foreground border-border hover:bg-muted",
+    className: "bg-brand-grey text-brand-black border-brand-grey hover:bg-brand-grey",
   },
   Submitted: {
     label: "Submitted",
     className:
-      "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800",
+      "bg-brand-lightblue text-brand-blue border-brand-lightblue2/30 hover:bg-brand-lightblue",
   },
   UnderReview: {
     label: "Under Review",
     className:
-      "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800",
+      "bg-brand-lightblue2/20 text-brand-blue border-brand-lightblue2/50 hover:bg-brand-lightblue2/30",
   },
   PendingApproval: {
     label: "Pending Approval",
     className:
-      "bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-50 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-800",
+      "bg-brand-lightblue2/20 text-brand-blue border-brand-lightblue2/50 hover:bg-brand-lightblue2/30",
   },
   Approved: {
     label: "Approved",
     className:
-      "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800",
+      "bg-brand-mint/20 text-brand-teal border-brand-mint/70 hover:bg-brand-mint/30",
   },
   Rejected: {
     label: "Rejected",
     className:
-      "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800",
+      "bg-brand-black text-brand-white border-brand-black hover:bg-brand-black/90",
   },
   Escalated: {
     label: "Escalated",
     className:
-      "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-50 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800",
+      "bg-brand-grey text-brand-black border-brand-grey hover:bg-brand-grey",
   },
 };
 
@@ -49,17 +49,17 @@ const SLA_STATUS_CONFIG: Record<
   OnTrack: {
     label: "On Track",
     className:
-      "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800",
+      "bg-brand-mint/20 text-brand-teal border-brand-mint/70 hover:bg-brand-mint/30",
   },
   AtRisk: {
     label: "At Risk",
     className:
-      "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800",
+      "bg-brand-lightblue2/20 text-brand-blue border-brand-lightblue2/50 hover:bg-brand-lightblue2/30",
   },
   Overdue: {
     label: "Overdue",
     className:
-      "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800",
+      "bg-brand-black text-brand-white border-brand-black hover:bg-brand-black/90",
   },
 };
 
@@ -70,22 +70,22 @@ const APPROVAL_STATUS_CONFIG: Record<
   Pending: {
     label: "Pending",
     className:
-      "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800",
+      "bg-brand-lightblue2/20 text-brand-blue border-brand-lightblue2/50 hover:bg-brand-lightblue2/30",
   },
   Approved: {
     label: "Approved",
     className:
-      "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800",
+      "bg-brand-mint/20 text-brand-teal border-brand-mint/70 hover:bg-brand-mint/30",
   },
   Rejected: {
     label: "Rejected",
     className:
-      "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800",
+      "bg-brand-black text-brand-white border-brand-black hover:bg-brand-black/90",
   },
   Escalated: {
     label: "Escalated",
     className:
-      "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-50 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800",
+      "bg-brand-grey text-brand-black border-brand-grey hover:bg-brand-grey",
   },
 };
 

@@ -135,7 +135,7 @@ export default function ScholarshipPortal() {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                    <div className="xl:col-span-2 space-y-6">
                       {/* AI Executive Summary */}
-                      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden shadow-sm">
+                      <Card className="border-primary/20 bg-card overflow-hidden shadow-sm">
                          <CardHeader className="pb-3 flex-row items-center gap-2 border-b border-primary/10 bg-primary/5">
                             <Brain className="w-4 h-4 text-primary" />
                             <CardTitle className="text-xs font-bold uppercase tracking-widest text-primary">AI Applicant Insight</CardTitle>
@@ -164,7 +164,7 @@ export default function ScholarshipPortal() {
                       </Card>
 
                       <Tabs defaultValue="rubric" className="w-full">
-                         <TabsList className="bg-[#eff6f8] p-1 h-auto rounded-xl inline-flex items-center gap-1 border-none mb-6">
+                         <TabsList className="bg-brand-lightblue p-1 h-auto rounded-xl inline-flex items-center gap-1 border-none mb-6">
                             <TabsTrigger value="rubric" className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">Scoring Rubric</TabsTrigger>
                             <TabsTrigger value="history" className="rounded-lg px-4 py-2 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">Past Awards</TabsTrigger>
                          </TabsList>

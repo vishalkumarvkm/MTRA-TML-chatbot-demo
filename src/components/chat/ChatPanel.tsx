@@ -58,7 +58,7 @@ export function ChatPanel() {
       const aiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         role: "ai",
-        text: `As your ${persona.role}, I'm processing your request about "${text}". In a real implementation, I would connect to the MTRA backend to provide specific data. How else can I help?`,
+        text: `As your ${persona.role}, I'm processing your request about "${text}". In a real implementation, I would connect to the HealthyME backend to provide specific data. How else can I help?`,
         timestamp: new Date().toISOString(),
       };
       addChatMessage(aiMsg);
@@ -75,8 +75,8 @@ export function ChatPanel() {
     >
       <CardHeader className="p-4 border-b bg-card flex flex-row items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-inner">
-            <persona.avatar className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-brand-lightblue flex items-center justify-center flex-shrink-0 border border-brand-lightblue2/30 shadow-inner">
+            <Sparkles className="w-5 h-5 text-brand-teal animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
@@ -86,7 +86,7 @@ export function ChatPanel() {
               </Badge>
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse" />
               <span className="text-[10px] text-muted-foreground font-medium">System Online</span>
             </div>
           </div>
@@ -117,11 +117,11 @@ export function ChatPanel() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
           {chatMessages.length === 0 && (
             <div className="text-center py-10 space-y-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
-                <persona.avatar className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-full bg-brand-lightblue flex items-center justify-center mx-auto border border-brand-lightblue2/40 shadow-md">
+                <Sparkles className="w-7 h-7 text-brand-teal animate-pulse" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-bold text-foreground">Welcome to MTRA Chat</p>
+                <p className="text-sm font-bold text-foreground">Welcome to HealthyME Chat</p>
                 <p className="text-xs text-muted-foreground px-10">
                   {persona.systemPrompt}
                 </p>
@@ -131,12 +131,15 @@ export function ChatPanel() {
           
           {chatMessages.map((msg) => (
             <div key={msg.id} className={cn("flex gap-2.5", msg.role === "user" ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn(
-                "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0",
-                msg.role === "ai" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-              )}>
-                {msg.role === "ai" ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
-              </div>
+              {msg.role === "ai" ? (
+                <div className="w-7 h-7 rounded-lg bg-brand-lightblue flex items-center justify-center flex-shrink-0 border border-brand-lightblue2/30 shadow-sm">
+                  <Sparkles className="w-4 h-4 text-brand-teal animate-pulse" />
+                </div>
+              ) : (
+                <div className="w-7 h-7 rounded-lg bg-muted text-muted-foreground flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4" />
+                </div>
+              )}
               <div className={cn(
                 "max-w-[80%] p-3 rounded-2xl text-[13px] leading-relaxed",
                 msg.role === "ai" 
@@ -150,8 +153,8 @@ export function ChatPanel() {
           
           {isTyping && (
             <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
-                <Bot className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-brand-lightblue flex items-center justify-center flex-shrink-0 border border-brand-lightblue2/30 shadow-sm">
+                <Sparkles className="w-4 h-4 text-brand-teal animate-pulse" />
               </div>
               <div className="bg-card border border-border rounded-2xl rounded-tl-none p-3 flex gap-1 items-center">
                 <span className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce [animation-delay:-0.3s]" />
