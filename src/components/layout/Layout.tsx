@@ -265,7 +265,8 @@ export function Layout({
             const isActive =
               pathname === item.href ||
               (item.href !== "/" &&
-                pathname?.startsWith(item.href + "/"));
+                (pathname?.startsWith(item.href + "/") ||
+                 (item.href.split("/")[1] === pathname?.split("/")[1])));
             return (
               <Link
                 key={item.href}
@@ -273,8 +274,8 @@ export function Layout({
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 group",
                   isActive
-                    ? "bg-primary/10 text-primary dark:bg-primary/20"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
+                    : "text-slate-500 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground dark:text-slate-400 dark:hover:text-white",
                 )}
                 data-ocid={`nav.${item.label.toLowerCase().replace(/\s+/g, "_")}`}
               >
@@ -283,8 +284,8 @@ export function Layout({
                     "flex-shrink-0 transition-colors",
                     sidebarCollapsed ? "w-5 h-5" : "w-4 h-4",
                     isActive
-                      ? "text-primary"
-                      : "text-muted-foreground group-hover:text-foreground",
+                      ? "text-sidebar-accent-foreground"
+                      : "text-slate-400 group-hover:text-sidebar-accent-foreground dark:text-slate-500 dark:group-hover:text-white",
                   )}
                 />
                 {!sidebarCollapsed && (
