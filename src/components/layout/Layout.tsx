@@ -500,11 +500,14 @@ export function Layout({
         <main
           className={cn(
             "flex-1 bg-background",
-            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0",
+            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto xl:overflow-hidden",
           )}
           data-ocid="main_content"
         >
-          {children}
+          <div className="flex-1 flex flex-col min-h-full">
+            <div className="flex-1 flex flex-col min-h-0">{children}</div>
+            <FooterDisclaimer />
+          </div>
         </main>
         
         {/* Global AI Chat Agent */}
@@ -513,5 +516,25 @@ export function Layout({
         <ChatPanel />
       </div>
     </div>
+  );
+}
+
+function FooterDisclaimer() {
+  return (
+    <footer className="w-full shrink-0 z-50">
+      <div
+        className="w-full text-center text-[11px] font-semibold flex items-center justify-center gap-1.5"
+        style={{
+          backgroundColor: "#F59E0B",
+          color: "#003769",
+          padding: "6px 12px",
+          fontFamily: '"Fakt", Arial, sans-serif',
+          fontWeight: 600,
+        }}
+      >
+        <span className="text-xs">⚠️</span>
+        <span>DEMO BUILD — Sandbox environment. Data is for testing only.</span>
+      </div>
+    </footer>
   );
 }

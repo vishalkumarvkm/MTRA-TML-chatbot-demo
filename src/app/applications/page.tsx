@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Layout } from "@/components/layout/Layout";
 import { StatusBadge } from "@/components/ui/StatusBadge";

@@ -71,10 +71,10 @@ export default function ServiceAgreementsPage() {
         { label: "Service Agreements" },
       ]}
     >
-      <div className="flex flex-col lg:flex-row h-full overflow-hidden bg-muted/20">
+      <div className="flex flex-col lg:flex-row lg:h-full lg:overflow-hidden bg-muted/20">
         {/* Main List */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 sm:p-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex-1 flex flex-col min-h-0 lg:overflow-y-auto p-4 sm:p-6 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
             <div>
               <h1 className="text-2xl font-bold font-display text-foreground">Service Agreement Tracker</h1>
               <p className="text-xs text-muted-foreground mt-0.5">Monitoring 12-month post-reimbursement employment commitments</p>
@@ -86,7 +86,7 @@ export default function ServiceAgreementsPage() {
             </div>
           </div>
 
-          <Card className="border-border shadow-sm overflow-hidden">
+          <Card className="border-border shadow-sm overflow-hidden shrink-0">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -141,7 +141,7 @@ export default function ServiceAgreementsPage() {
 
           {/* Repayment Calculator (Static view for selected) */}
           {selectedSa && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 shrink-0">
                <Card className="border-border shadow-sm bg-card">
                   <CardHeader className="pb-2 border-b border-border bg-muted/20">
                      <div className="flex items-center gap-2">
@@ -221,54 +221,56 @@ export default function ServiceAgreementsPage() {
         </div>
 
         {/* Right Sidebar: Recent Activity & Alerts */}
-        <aside className="w-full lg:w-80 bg-card border-l border-border p-6 space-y-6 overflow-y-auto h-[40vh] lg:h-full">
-          <Card className="border-amber-500/20 bg-amber-500/5 overflow-hidden shadow-sm">
-             <CardHeader className="p-4 border-b border-amber-500/10">
-                <div className="flex items-center gap-2">
-                   <AlertTriangle className="w-4 h-4 text-amber-600" />
-                   <CardTitle className="text-xs font-bold uppercase tracking-widest text-amber-700">Expiration Alerts</CardTitle>
-                </div>
-             </CardHeader>
-             <CardContent className="p-4 space-y-4">
-                {[
-                  { name: "Carlos Rivera", days: 24, status: "ExpiringSoon" },
-                  { name: "Aisha Thompson", days: 8, status: "Critical" },
-                ].map((alert, i) => (
-                  <div key={i} className="bg-white p-3 rounded-lg border border-amber-200 shadow-sm space-y-2">
-                     <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold">{alert.name}</p>
-                        <Badge className="bg-amber-100 text-amber-700 text-[8px] h-4 border-transparent">T-{alert.days}d</Badge>
+        <aside className="w-full lg:w-80 bg-card border-t lg:border-t-0 lg:border-l border-border lg:overflow-y-auto flex-shrink-0 h-auto lg:h-full">
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+             <Card className="border-amber-500/20 bg-amber-500/5 overflow-hidden shadow-sm">
+                <CardHeader className="p-4 border-b border-amber-500/10">
+                   <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      <CardTitle className="text-xs font-bold uppercase tracking-widest text-amber-700">Expiration Alerts</CardTitle>
+                   </div>
+                </CardHeader>
+                <CardContent className="p-4 space-y-4">
+                   {[
+                     { name: "Carlos Rivera", days: 24, status: "ExpiringSoon" },
+                     { name: "Aisha Thompson", days: 8, status: "Critical" },
+                   ].map((alert, i) => (
+                     <div key={i} className="bg-white p-3 rounded-lg border border-amber-200 shadow-sm space-y-2">
+                        <div className="flex justify-between items-start">
+                           <p className="text-xs font-bold">{alert.name}</p>
+                           <Badge className="bg-amber-100 text-amber-700 text-[8px] h-4 border-transparent">T-{alert.days}d</Badge>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight">
+                           Agreement commitment ends in {alert.days} days. Ensure employee remains in good standing.
+                        </p>
                      </div>
-                     <p className="text-[10px] text-muted-foreground leading-tight">
-                        Agreement commitment ends in {alert.days} days. Ensure employee remains in good standing.
-                     </p>
-                  </div>
-                ))}
-             </CardContent>
-          </Card>
+                   ))}
+                </CardContent>
+             </Card>
 
-          <div className="space-y-4">
-             <div className="flex items-center gap-2 px-1">
-                <History className="w-4 h-4 text-muted-foreground" />
-                <h2 className="text-xs font-bold uppercase tracking-widest text-foreground">Recent Events</h2>
-             </div>
-             <div className="space-y-4 relative">
-                <div className="absolute left-[13px] top-2 bottom-0 w-px bg-border/60" />
-                {[
-                  { text: "SA-003 Generated", sub: "Latasha Williams", time: "2d ago", icon: FileText },
-                  { text: "SA-003 Signed", sub: "Via DocuSign", time: "2d ago", icon: ShieldCheck },
-                  { text: "SA-002 Alert Sent", sub: "90-day countdown", time: "5d ago", icon: Clock },
-                ].map((event, i) => (
-                  <div key={i} className="flex gap-4 relative z-10">
-                     <div className="w-7 h-7 rounded-lg bg-white border border-border flex items-center justify-center shadow-sm">
-                        <event.icon className="w-3.5 h-3.5 text-primary" />
+             <div className="space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                   <History className="w-4 h-4 text-muted-foreground" />
+                   <h2 className="text-xs font-bold uppercase tracking-widest text-foreground">Recent Events</h2>
+                </div>
+                <div className="space-y-4 relative">
+                   <div className="absolute left-[13px] top-2 bottom-0 w-px bg-border/60" />
+                   {[
+                     { text: "SA-003 Generated", sub: "Latasha Williams", time: "2d ago", icon: FileText },
+                     { text: "SA-003 Signed", sub: "Via DocuSign", time: "2d ago", icon: ShieldCheck },
+                     { text: "SA-002 Alert Sent", sub: "90-day countdown", time: "5d ago", icon: Clock },
+                   ].map((event, i) => (
+                     <div key={i} className="flex gap-4 relative z-10">
+                        <div className="w-7 h-7 rounded-lg bg-white border border-border flex items-center justify-center shadow-sm">
+                           <event.icon className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <div>
+                           <p className="text-[11px] font-bold text-foreground leading-tight">{event.text}</p>
+                           <p className="text-[9px] text-muted-foreground">{event.sub} • {event.time}</p>
+                        </div>
                      </div>
-                     <div>
-                        <p className="text-[11px] font-bold text-foreground leading-tight">{event.text}</p>
-                        <p className="text-[9px] text-muted-foreground">{event.sub} • {event.time}</p>
-                     </div>
-                  </div>
-                ))}
+                   ))}
+                </div>
              </div>
           </div>
         </aside>
