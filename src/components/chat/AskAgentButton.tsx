@@ -3,38 +3,58 @@
 import { useAppStore } from "@/store/appStore";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Sparkles } from "lucide-react";
 
 interface AskAgentButtonProps {
   className?: string;
   size?: "sm" | "md";
-  showText?: boolean;
 }
 
-export function AskAgentButton({ className, size = "md", showText = true }: AskAgentButtonProps) {
+export function AskAgentButton({ className, size = "md" }: AskAgentButtonProps) {
   const { isChatOpen, setIsChatOpen, unreadChatCount } = useAppStore();
 
   if (isChatOpen) return null;
+
+  if (size === "sm") {
+    return (
+      <button
+        onClick={() => setIsChatOpen(!isChatOpen)}
+        className={cn(
+          "relative rounded-full shadow-[0_4px_12px_rgba(0,55,105,0.3)] flex items-center justify-center transition-all duration-300 pointer-events-auto active:scale-95 group",
+          "bg-[#003769] text-white hover:bg-[#00254a] hover:-translate-y-0.5 w-8 h-8",
+          className
+        )}
+        data-ocid="ask_agent_button"
+      >
+        <Sparkles className="text-white w-4 h-4" />
+        {unreadChatCount > 0 && (
+          <Badge className="absolute bg-destructive text-white border-slate-900 flex items-center justify-center p-0 font-black shadow-lg -top-1 -right-0.5 min-w-[14px] h-[14px] text-[7px] border">
+            {unreadChatCount}
+          </Badge>
+        )}
+      </button>
+    );
+  }
 
   return (
     <button
       onClick={() => setIsChatOpen(!isChatOpen)}
       className={cn(
-        "relative rounded-full shadow-lg flex items-center transition-all duration-300 pointer-events-auto active:scale-95 group",
-        "bg-brand-black/95 backdrop-blur-md text-white hover:bg-brand-blue hover:shadow-[0_0_20px_rgba(0,148,128,0.4)] hover:-translate-y-0.5",
-        "before:absolute before:inset-[-1.5px] before:rounded-full before:bg-brand-teal before:-z-10 before:opacity-70 group-hover:before:opacity-100 transition-opacity",
-        size === "sm" ? "h-8 px-3 gap-2" : "h-12 px-5 gap-3",
+        "relative rounded-full shadow-[0_6px_20px_rgba(0,55,105,0.35)] flex flex-col items-center justify-center text-center transition-all duration-300 pointer-events-auto active:scale-95 group",
+        "bg-[#003769] text-white hover:bg-[#00254a] hover:-translate-y-0.5",
+        "w-24 h-24 p-3 leading-tight font-bold text-[10px] uppercase tracking-wider",
         className
       )}
       data-ocid="ask_agent_button"
     >
-      {showText && <span className={cn(size === "sm" ? "text-[11px]" : "text-sm", "font-bold tracking-tight whitespace-nowrap")}>Ask HealthyME Assistant</span>}
+      <span className="block">Ask your</span>
+      <span className="block text-[11px]">Tuition</span>
+      <span className="block text-[11px]">Navigation</span>
+      <span className="block">Agent</span>
 
       {unreadChatCount > 0 && (
         <Badge 
-          className={cn(
-            "absolute bg-destructive text-white border-slate-900 flex items-center justify-center p-0 font-black shadow-lg",
-            size === "sm" ? "-top-1 -right-0.5 min-w-[14px] h-[14px] text-[7px] border" : "-top-2 -right-1 min-w-[22px] h-[22px] text-[10px] border-2"
-          )}
+          className="absolute bg-destructive text-white border-slate-900 flex items-center justify-center p-0 font-black shadow-lg -top-1.5 -right-1.5 min-w-[22px] h-[22px] text-[10px] border-2"
         >
           {unreadChatCount > 9 ? "9+" : unreadChatCount}
         </Badge>

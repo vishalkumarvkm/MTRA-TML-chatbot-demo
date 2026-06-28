@@ -27,7 +27,40 @@ import {
   History,
   ClipboardCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const RUBRIC_DESCRIPTIONS: Record<string, { range: string; label: string; desc: string }[]> = {
+  need: [
+    { range: "1-2", label: "Low Need", desc: "Full tuition coverage already applies. No hardship stated or FAFSA EFC is high." },
+    { range: "3-4", label: "Moderate Need", desc: "Pays minor out-of-pocket costs. Standard curriculum fees apply." },
+    { range: "5-6", label: "Significant Need", desc: "Out-of-pocket expenses exceed 25% of monthly income. Standard limits don't cover full costs." },
+    { range: "7-8", label: "High Need", desc: "Substantial tuition balance remains. Multiple family dependencies or hardships documented." },
+    { range: "9-10", label: "Critical Need", desc: "Severe hardship. Candidate cannot enroll/continue without scholarship support." }
+  ],
+  academic: [
+    { range: "1-2", label: "Unsatisfactory", desc: "GPA below 2.5 or program is not accredited." },
+    { range: "3-4", label: "Satisfactory", desc: "GPA 2.5 - 3.0. Fulfills standard course requirements." },
+    { range: "5-6", label: "Strong", desc: "GPA 3.0 - 3.4. Solid academic track record with positive reference reviews." },
+    { range: "7-8", label: "Superior", desc: "GPA 3.4 - 3.8. Consistent high performance in challenging courses." },
+    { range: "9-10", label: "Outstanding", desc: "GPA 3.8 - 4.0. Top academic honors, publishing or leadership in coursework." }
+  ],
+  potential: [
+    { range: "1-2", label: "Lacking", desc: "Recommendation letters are generic with no leadership endorsement." },
+    { range: "3-4", label: "Developing", desc: "Recommendations indicate potential to lead. Supervises minor shift tasks." },
+    { range: "5-6", label: "Competent", desc: "Confirms positive communication, team supervision, and coordination." },
+    { range: "7-8", label: "Distinguished", desc: "Highlights peer leadership, committee chairs, or clinical quality improvement." },
+    { range: "9-10", label: "Exceptional", desc: "Active union leadership/mentorship, pioneers team training, stellar testimonials." }
+  ]
+};
+
+function getRubricLevel(criteriaId: string, score: number) {
+  const levels = RUBRIC_DESCRIPTIONS[criteriaId];
+  if (!levels) return null;
+  return levels.find(l => {
+    const [min, max] = l.range.split("-").map(Number);
+    return score >= min && score <= max;
+  });
+}
 
 export default function ScholarshipPortal() {
   const { currentUser } = useAppStore();
@@ -39,15 +72,30 @@ export default function ScholarshipPortal() {
     (a) => a.id === selectedApplicantId
   );
 
-  const myScore = mockCommitteeScores.find(
-    (s) => s.applicantId === selectedApplicantId && s.memberId === currentUser?.id
-  );
+  const [scores, setScores] = useState<Record<string, number>>({
+    need: 5,
+    academic: 5,
+    potential: 5
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    const currentApplicantScore = mockCommitteeScores.find(
+      (s) => s.applicantId === selectedApplicantId && s.memberId === currentUser?.id
+    );
+    setScores({
+      need: currentApplicantScore?.financialNeed ?? 5,
+      academic: currentApplicantScore?.academicStanding ?? 5,
+      potential: currentApplicantScore?.leadershipPotential ?? 5,
+    });
+    setIsSubmitted(!!currentApplicantScore);
+  }, [selectedApplicantId, currentUser]);
 
   return (
     <Layout
       title="Scholarship Committee"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Scholarship Review" },
       ]}
     >
@@ -170,59 +218,91 @@ export default function ScholarshipPortal() {
                          </TabsList>
                          
                          <TabsContent value="rubric" className="space-y-6 pt-0">
-                            <div className="grid gap-4">
-                               {[
-                                 { id: "need", label: "Financial Need", desc: "Based on FAFSA/SAR and personal hardship statement.", icon: Star },
-                                 { id: "academic", label: "Academic Standing", desc: "Prior GPA and rigor of selected program.", icon: Trophy },
-                                 { id: "potential", label: "Leadership Potential", desc: "AI sentiment analysis of recommendation letters.", icon: Zap },
-                               ].map((criteria) => (
-                                 <Card key={criteria.id} className="border-border shadow-sm">
-                                    <CardContent className="p-4">
-                                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                          <div className="flex items-start gap-3">
-                                             <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"><criteria.icon className="w-4 h-4" /></div>
-                                             <div>
-                                                <p className="text-xs font-bold">{criteria.label}</p>
-                                                <p className="text-[10px] text-muted-foreground max-w-md">{criteria.desc}</p>
+                             <div className="grid gap-4">
+                                {[
+                                  { id: "need", label: "Financial Need", desc: "Based on FAFSA/SAR and personal hardship statement.", icon: Star },
+                                  { id: "academic", label: "Academic Standing", desc: "Prior GPA and rigor of selected program.", icon: Trophy },
+                                  { id: "potential", label: "Leadership Potential", desc: "AI sentiment analysis of recommendation letters.", icon: Zap },
+                                ].map((criteria) => {
+                                  const currentScore = scores[criteria.id] ?? 5;
+                                  const selectedLevel = getRubricLevel(criteria.id, currentScore);
+                                  return (
+                                    <Card key={criteria.id} className="border-border shadow-sm">
+                                       <CardContent className="p-4">
+                                          <div className="flex flex-col gap-4">
+                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <div className="flex items-start gap-3">
+                                                   <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"><criteria.icon className="w-4 h-4" /></div>
+                                                   <div>
+                                                      <p className="text-xs font-bold">{criteria.label}</p>
+                                                      <p className="text-[10px] text-muted-foreground max-w-md">{criteria.desc}</p>
+                                                   </div>
+                                                </div>
+                                                <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
+                                                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                                                     <button
+                                                        key={num}
+                                                        type="button"
+                                                        onClick={() => !isSubmitted && setScores(prev => ({ ...prev, [criteria.id]: num }))}
+                                                        disabled={isSubmitted}
+                                                        className={`w-7 h-7 rounded-md text-[10px] font-bold border transition-all ${
+                                                          currentScore === num
+                                                            ? "bg-primary text-white border-primary shadow-sm"
+                                                            : "bg-background border-border hover:border-primary/40"
+                                                        } ${isSubmitted ? "opacity-60 cursor-not-allowed" : ""}`}
+                                                     >
+                                                        {num}
+                                                     </button>
+                                                   ))}
+                                                </div>
                                              </div>
+                                             {selectedLevel && (
+                                                <div className="p-2.5 bg-primary/5 rounded-lg border border-primary/10 text-[10px] leading-normal flex items-start gap-2">
+                                                   <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                                                   <div>
+                                                      <span className="font-bold text-primary mr-1">{selectedLevel.label} ({selectedLevel.range}):</span>
+                                                      <span className="text-muted-foreground">{selectedLevel.desc}</span>
+                                                   </div>
+                                                </div>
+                                             )}
                                           </div>
-                                          <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
-                                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                                               <button
-                                                  key={num}
-                                                  className={`w-7 h-7 rounded-md text-[10px] font-bold border transition-all ${
-                                                    myScore && (criteria.id === "need" ? myScore.financialNeed : criteria.id === "academic" ? myScore.academicStanding : myScore.leadershipPotential) === num
-                                                      ? "bg-primary text-white border-primary shadow-sm"
-                                                      : "bg-background border-border hover:border-primary/40"
-                                                  }`}
-                                               >
-                                                  {num}
-                                               </button>
-                                             ))}
-                                          </div>
-                                       </div>
-                                    </CardContent>
-                                 </Card>
-                               ))}
-                            </div>
+                                       </CardContent>
+                                    </Card>
+                                  );
+                                })}
+                             </div>
 
-                            <Card className="border-border shadow-sm">
-                               <CardContent className="p-4 space-y-3">
-                                  <p className="text-[10px] font-bold text-foreground uppercase tracking-widest">Confidential Comments</p>
-                                  <textarea 
-                                     className="w-full min-h-[120px] rounded-xl border border-border bg-background p-4 text-xs focus:ring-1 focus:ring-primary outline-none transition-all"
-                                     placeholder="Provide rationale for your scores..."
-                                     defaultValue={myScore?.comments}
-                                  />
-                                  <div className="flex justify-end gap-3">
-                                     <Button variant="outline" size="sm" className="h-9 px-4 font-bold text-xs">Save Draft</Button>
-                                     <Button size="sm" className="h-9 px-6 bg-primary font-bold text-xs gap-2">
-                                        <ClipboardCheck className="w-4 h-4" />
-                                        Submit Final Score
-                                     </Button>
-                                  </div>
-                               </CardContent>
-                            </Card>
+                             <Card className="border-border shadow-sm">
+                                <CardContent className="p-4 space-y-3">
+                                   <p className="text-[10px] font-bold text-foreground uppercase tracking-widest">Confidential Comments</p>
+                                   <textarea 
+                                      disabled={isSubmitted}
+                                      className="w-full min-h-[120px] rounded-xl border border-border bg-background p-4 text-xs focus:ring-1 focus:ring-primary outline-none transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                                      placeholder="Provide rationale for your scores..."
+                                      defaultValue={selectedApplicant ? mockCommitteeScores.find(s => s.applicantId === selectedApplicant.id && s.memberId === currentUser?.id)?.comments : ""}
+                                   />
+                                   <div className="flex justify-end gap-3">
+                                      {!isSubmitted ? (
+                                        <>
+                                          <Button variant="outline" size="sm" className="h-9 px-4 font-bold text-xs">Save Draft</Button>
+                                          <Button 
+                                             onClick={() => setIsSubmitted(true)}
+                                             size="sm" 
+                                             className="h-9 px-6 bg-primary font-bold text-xs gap-2"
+                                          >
+                                             <ClipboardCheck className="w-4 h-4" />
+                                             Submit Final Score
+                                          </Button>
+                                        </>
+                                      ) : (
+                                        <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl">
+                                          <CheckCircle2 className="w-4 h-4" />
+                                          Consensus Score Submitted Successfully
+                                        </div>
+                                      )}
+                                   </div>
+                                </CardContent>
+                             </Card>
                          </TabsContent>
 
                          <TabsContent value="history">
@@ -250,9 +330,9 @@ export default function ScholarshipPortal() {
                             <div className="p-3 bg-white rounded-lg border border-violet-200 space-y-2 shadow-sm">
                                <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase">
                                   <span>Committee Quorum</span>
-                                  <span>1 of 5 Voted</span>
-                               </div>
-                               <Progress value={20} className="h-1 bg-violet-100" />
+                                  <span>{isSubmitted ? "2 of 5 Voted" : "1 of 5 Voted"}</span>
+                                </div>
+                               <Progress value={isSubmitted ? 40 : 20} className="h-1 bg-violet-100" />
                                <p className="text-[10px] text-muted-foreground leading-tight italic">
                                   Final decision buttons will unlock once 5/5 committee members have submitted their private scores.
                                </p>
@@ -277,10 +357,10 @@ export default function ScholarshipPortal() {
                          </CardHeader>
                          <CardContent className="p-0">
                             {[
-                              { name: "Priya Nair", role: "HR Benefits", status: "completed" },
-                              { name: "Sarah Kim", role: "Nursing Ops", status: "pending" },
-                              { name: "Derek Chen", role: "Finance", status: "pending" },
-                              { name: "Dr. James Okonkwo", role: "Clinical Lead", status: "pending" },
+                               { name: "Priya Nair", role: "HR Benefits", status: "completed" },
+                               { name: currentUser?.name && currentUser.name !== "Priya Nair" ? currentUser.name : "Sarah Kim", role: currentUser?.role === "admin" ? "HR Oversight" : "Nursing Ops", status: isSubmitted ? "completed" : "pending" },
+                               { name: "Derek Chen", role: "Finance", status: "pending" },
+                               { name: "Dr. James Okonkwo", role: "Clinical Lead", status: "pending" },
                             ].map((reviewer, i) => (
                               <div key={i} className="flex items-center justify-between p-4 border-b border-border last:border-0">
                                  <div className="flex items-center gap-3">

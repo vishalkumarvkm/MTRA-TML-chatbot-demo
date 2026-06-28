@@ -82,7 +82,7 @@ export default function ApplicationsPage() {
     <Layout
       title="My Applications"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Applications" },
       ]}
     >

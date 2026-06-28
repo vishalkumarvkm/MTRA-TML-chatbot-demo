@@ -143,3 +143,10 @@
     scrollbar-width: none;
   }
 }
+
+/* Hide placeholders globally on focus */
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}

@@ -54,7 +54,7 @@ export default function PayrollView() {
     <Layout
       title="Payroll Integration"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Payroll Feed" },
       ]}
     >

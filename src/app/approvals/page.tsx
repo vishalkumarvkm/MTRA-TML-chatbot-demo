@@ -101,7 +101,7 @@ export default function ApprovalsPage() {
     <Layout
       title="Pending Approvals"
       breadcrumbs={[
-        { label: "Dashboard", href: "/" },
+        { label: "Overview", href: "/" },
         { label: "Approvals" },
       ]}
     >

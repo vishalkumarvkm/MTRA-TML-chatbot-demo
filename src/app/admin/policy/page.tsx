@@ -40,7 +40,7 @@ export default function PolicyAdminPage() {
     <Layout
       title="Policy Administration"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Policy Configuration" },
       ]}
     >

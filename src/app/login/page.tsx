@@ -118,7 +118,6 @@ function LoginPageContent() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
               disabled={loading}
               className="w-full h-11 pl-10 pr-10 rounded-xl border border-border bg-card text-sm focus:border-primary/50 outline-none transition-all focus:ring-1 focus:ring-primary/20"
               data-ocid="login.password_input"

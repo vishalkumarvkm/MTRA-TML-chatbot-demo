@@ -117,7 +117,7 @@ export default function HROpsPage() {
     <HROpsLayout
       title="HR Operations Center"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "HR Operations" },
       ]}
     >

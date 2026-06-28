@@ -139,28 +139,29 @@ function getTenureYears(hireDateStr: string) {
 
 function isEligibleForProgram(employee: (typeof mockEmployees)[number], programType: string) {
   const tenure = getTenureYears(employee.hireDate);
-  const isClinical =
-    employee.title.toLowerCase().includes("nurse") ||
-    employee.title.toLowerCase().includes("rn") ||
+  const isPaOrPt =
+    employee.title.toLowerCase().includes("physician assistant") ||
+    employee.title.toLowerCase().includes("pa") ||
+    employee.title.toLowerCase().includes("physical therapist") ||
+    employee.title.toLowerCase().includes("pt");
+
+  const isPhysicianOrScientistOrExec =
     employee.title.toLowerCase().includes("physician") ||
-    employee.title.toLowerCase().includes("pharmacist") ||
-    employee.title.toLowerCase().includes("therapist") ||
-    employee.title.toLowerCase().includes("technologist") ||
-    employee.department.toLowerCase().includes("nursing") ||
-    employee.department.toLowerCase().includes("medicine") ||
-    employee.department.toLowerCase().includes("pharmacy") ||
-    employee.department.toLowerCase().includes("physical therapy") ||
-    employee.department.toLowerCase().includes("radiology");
+    employee.title.toLowerCase().includes("scientist") ||
+    employee.title.toLowerCase().includes("executive") ||
+    employee.title.toLowerCase().includes("md") ||
+    employee.title.toLowerCase().includes("director") ||
+    employee.title.toLowerCase().includes("chief");
 
   switch (programType) {
     case "TuitionReimbursement":
       return tenure >= 0.5; // 6 months
     case "CMEReimbursement":
-      return isClinical; // active clinical license
+      return isPaOrPt; // Physician Assistants and Weiler PTs only, not nurses
     case "MMCScholarship":
       return tenure >= 3.0; // 3 years
     case "DependentTuition":
-      return tenure >= 5.0; // 5 years
+      return isPhysicianOrScientistOrExec && tenure >= 5.0; // Physicians, Scientists, and Executives only
     default:
       return false;
   }
@@ -188,10 +189,7 @@ export default function DashboardPage() {
     mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ??
     mockEmployees[0];
 
-  const isNysna =
-    employee.department.toLowerCase().includes("nursing") ||
-    employee.title.toLowerCase().includes("nurse") ||
-    employee.title.toLowerCase().includes("rn");
+  const isNysna = employee.isNYSNA === true;
 
   if (!hasHydrated || !isAuthenticated) {
     return (
@@ -286,474 +284,372 @@ export default function DashboardPage() {
 
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-
-  return (
-    <Layout title="Dashboard" breadcrumbs={[{ label: "Dashboard" }]}>
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";  return (
+    <Layout title="Overview" breadcrumbs={[{ label: "Overview" }]}>
       <div
-        className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto"
+        className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto bg-white"
         data-ocid="dashboard.page"
       >
-        {/* Welcome Banner */}
-        <div
-          className="rounded-2xl p-6 relative overflow-hidden shadow-md"
-          style={{
-            background: "var(--brand-blue)",
-          }}
-          data-ocid="dashboard.welcome_banner"
-        >
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:justify-between gap-6">
-            <div>
-              <p className="text-blue-100 text-sm font-medium mb-0.5">
-                {greeting},
-              </p>
-              <h1 className="text-white font-display font-bold text-2xl mb-1">
-                {employee.name}
-              </h1>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-white/20 text-white border-white/30 text-xs font-medium hover:bg-white/20">
-                  {employee.title}
-                </Badge>
-                <span className="text-blue-200 text-xs">
-                  {employee.department}
-                </span>
-              </div>
-              <p className="text-blue-100/70 text-xs mt-1.5">
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
-            <Button
-              onClick={() => router.push("/apply")}
-              className="bg-white text-primary hover:bg-blue-50 font-semibold gap-2 shadow-sm flex-shrink-0"
-              data-ocid="dashboard.quick_apply_button"
-            >
-              <FilePlus className="w-4 h-4" />
-              Quick Apply
-            </Button>
-          </div>
-        </div>
-
-        {/* Action Needed Flag */}
-        {hasActionNeeded && (
-          <button
-            type="button"
-            onClick={() => router.push("/applications")}
-            className="w-full flex items-center justify-between p-3.5 px-4 bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800 rounded-xl cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-950/30 transition-all text-amber-900 dark:text-amber-300 text-left"
-            data-ocid="dashboard.action_needed_flag"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />
-              <span className="text-xs font-bold uppercase tracking-wider flex-shrink-0">Action Needed:</span>
-              <span className="text-xs font-medium truncate">Service Agreement requires signature for Application MTRA-2026-0041</span>
-            </div>
-            <span className="text-xs font-bold underline flex items-center gap-0.5 ml-2 flex-shrink-0">
-              Sign Now &rarr;
-            </span>
-          </button>
-        )}
-
-        {/* Balance Cards Row */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          data-ocid="dashboard.stats_section"
-        >
-          {/* Tuition Balance (Non-NYSNA only) */}
-          {!isNysna && (
-            <Card className="border-border shadow-sm hover:shadow-md transition-shadow duration-200">
-              <CardContent className="p-5 flex items-center gap-4">
-                <ProgressRing
-                  value={employee.tuitionUsed}
-                  max={employee.tuitionMax}
-                  size={72}
-                  color="primary"
-                  valueDisplay={formatCurrency(employee.tuitionBalance)}
-                  sublabel="left"
-                  label="Tuition Balance"
-                />
-                <div className="min-w-0">
-                  <div className="text-xs text-muted-foreground mb-0.5">
-                    Annual budget
-                  </div>
-                  <div className="text-sm font-semibold text-foreground">
-                    {formatCurrency(employee.tuitionMax)}/yr
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatCurrency(employee.tuitionUsed)} used
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Credit Balance (NYSNA only) */}
-          {isNysna && (
-            <Card className="border-border shadow-sm hover:shadow-md transition-shadow duration-200">
-              <CardContent className="p-5 flex items-center gap-4">
-                <ProgressRing
-                  value={employee.creditUsed}
-                  max={employee.creditMax}
-                  size={72}
-                  color="accent"
-                  valueDisplay={`${employee.creditBalance}`}
-                  sublabel="left"
-                  label="Credit Balance"
-                />
-                <div className="min-w-0">
-                  <div className="text-xs text-muted-foreground mb-0.5">
-                    Credit limit
-                  </div>
-                  <div className="text-sm font-semibold text-foreground">
-                    {employee.creditMax} credits/yr
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {employee.creditUsed} used
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Active Applications */}
-          <Card className="border-border shadow-sm hover:shadow-md transition-shadow duration-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                </div>
-                <span className="text-xs text-muted-foreground font-medium">
-                  Active Applications
-                </span>
-              </div>
-              <div className="text-2xl font-bold font-display text-foreground mb-1">
-                {activeApps.length}
-              </div>
-              {activeStatusBreakdown.length > 0 ? (
-                <div className="space-y-0.5">
-                  {activeStatusBreakdown.map((s) => (
-                    <div key={s.label} className="flex items-center gap-1.5">
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${s.color} flex-shrink-0`}
-                      />
-                      <span className="text-[11px] text-muted-foreground">
-                        {s.label}: {s.count}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-xs text-muted-foreground">
-                  {myApps.length} total submitted
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* YTD Reimbursed */}
-          <Card className="border-border shadow-sm hover:shadow-md transition-shadow duration-200">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <span className="text-xs text-muted-foreground font-medium">
-                  Total Reimbursed
-                </span>
-              </div>
-              <div className="text-2xl font-bold font-display text-foreground mb-1">
-                {formatCurrency(ytdReimbursed)}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                YTD · {approvedApps.length} approved
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* NYSNA Service Agreement Panel (NYSNA nurses only) */}
-        {employee.isNYSNA === true && serviceAgreement && (
-          <Card
-            className="border-primary/25 bg-primary/5 shadow-sm"
-            data-ocid="dashboard.nysna_service_agreement"
-          >
-            <CardHeader className="pb-3 border-b border-primary/15">
-              <div className="flex items-center justify-between gap-3">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-                  <FileSignature className="w-4 h-4 text-primary" />
-                  NYSNA Service Agreement Details
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] font-semibold border ${saStatusColors[serviceAgreement.status] ?? ""}`}
-                  >
-                    {serviceAgreement.status === "ExpiringSoon"
-                      ? "Expiring Soon"
-                      : serviceAgreement.status}
-                  </Badge>
-                </CardTitle>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-                  NYSNA Article 35
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 pb-4">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
-                {/* Signed Date */}
-                <div className="flex items-start gap-2.5">
-                  <CalendarCheck2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                      Date Signed
-                    </p>
-                    <p className="text-sm font-semibold text-foreground mt-0.5">
-                      {formatDate(serviceAgreement.signedDate)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Valid Until */}
-                <div className="flex items-start gap-2.5">
-                  <CalendarCheck2 className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                      Valid Until
-                    </p>
-                    <p className="text-sm font-semibold text-foreground mt-0.5">
-                      {formatDate(serviceAgreement.endDate)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Amount Covered */}
-                <div className="flex items-start gap-2.5 col-span-2 sm:col-span-1">
-                  <FileSignature className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                      Amount Covered
-                    </p>
-                    <p className="text-sm font-bold text-foreground mt-0.5">
-                      {formatCurrency(serviceAgreement.amount)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed border-t border-primary/10 pt-3">
-                You are required to remain employed at Montefiore Health System for 2 years (or completion of 18 credits) following reimbursement approval per your NYSNA service agreement. Early separation may result in prorated repayment.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Main Content: Available Programs */}
-        <div
-          className="space-y-4"
-          data-ocid="dashboard.programs_section"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">
-              Available Programs
+        {/* Two-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start bg-white">
+          
+          {/* Left Column (Covers 2/3 width) */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Greeting */}
+            <h2 className="text-xl font-bold font-display text-[#003769]">
+              Good morning, {employee.name.split(" ")[0]}.
             </h2>
-            <Badge
-              variant="outline"
-              className="text-xs text-muted-foreground"
-            >
-              {qualifiedPrograms.length} programs
-            </Badge>
-          </div>
-          <div className={`grid ${gridCols}`}>
-            {qualifiedPrograms.map((prog) => (
-              <Card
-                key={prog.id}
-                className="border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 cursor-pointer group"
-                onClick={() => router.push(`/apply?program=${prog.programType}`)}
-                data-ocid={`dashboard.program.${prog.programType.toLowerCase()}`}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center ${PROGRAM_COLORS[prog.programType]}`}
-                    >
-                      {PROGRAM_ICONS[prog.programType]}
+
+            {/* Stats Cards Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Tuition Balance (Non-NYSNA only) */}
+              {!isNysna && (
+                <Card className="border-2 border-[#003769] shadow-sm hover:shadow-md transition-all rounded-none bg-white">
+                  <CardContent className="p-3 flex items-center gap-2">
+                    <ProgressRing
+                      value={employee.tuitionUsed}
+                      max={employee.tuitionMax}
+                      size={52}
+                      color="primary"
+                      valueDisplay={formatCurrency(employee.tuitionBalance)}
+                      sublabel="left"
+                      label="Tuition Balance"
+                    />
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
+                        Tuition Balance
+                      </div>
+                      <div className="text-xs font-bold text-foreground">
+                        Annual Budget: {formatCurrency(employee.tuitionMax)}/yr
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {formatCurrency(employee.tuitionUsed)} used
+                      </div>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
-                    >
-                      Eligible
-                    </Badge>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Credit Balance (NYSNA only) */}
+              {isNysna && (
+                <Card className="border-2 border-[#003769] shadow-sm hover:shadow-md transition-all rounded-none bg-white">
+                  <CardContent className="p-3 flex items-center gap-2">
+                    <ProgressRing
+                      value={employee.creditUsed}
+                      max={employee.creditMax}
+                      size={52}
+                      color="primary"
+                      valueDisplay={`${employee.creditBalance}`}
+                      sublabel="left"
+                      label="Credit Balance"
+                    />
+                    <div className="min-w-0">
+                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
+                        Credit Balance
+                      </div>
+                      <div className="text-xs font-bold text-foreground">
+                        Credit Limit: {employee.creditMax} credits/yr
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {employee.creditUsed} used
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Active Applications */}
+              <Card className="border-2 border-[#003769] shadow-sm hover:shadow-md transition-all rounded-none bg-white">
+                <CardContent className="p-3 flex flex-col justify-between h-full min-h-[80px]">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
+                    Active Applications
                   </div>
-                  <div className="mb-1">
-                    <div className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {prog.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                      {prog.description}
-                    </div>
+                  <div className="text-2xl font-bold font-display text-[#003769] leading-none mb-1">
+                    {activeApps.length}
                   </div>
-                  <div className="flex items-center justify-between mt-3">
-                    <div className="flex items-center gap-1 text-primary">
-                      <DollarSign className="w-3.5 h-3.5" />
-                      <span className="text-xs font-semibold">
-                        Up to {formatCurrency(prog.maxAmount)}/yr
-                      </span>
+                  {activeStatusBreakdown.length > 0 ? (
+                    <div className="space-y-0.5">
+                      {activeStatusBreakdown.map((s) => (
+                        <div key={s.label} className="flex items-center gap-1">
+                          <span className={`w-1.5 h-1.5 rounded-full ${s.color} flex-shrink-0`} />
+                          <span className="text-[10px] text-muted-foreground font-semibold">
+                            {s.label}: {s.count}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 text-xs px-2 text-primary hover:bg-primary/10 gap-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/apply?program=${prog.programType}`);
-                      }}
-                      data-ocid={`dashboard.program.${prog.programType.toLowerCase()}`}
-                    >
-                      Apply
-                      <ChevronRight className="w-3 h-3" />
-                    </Button>
+                  ) : (
+                    <div className="text-[10px] text-muted-foreground font-semibold">
+                      {myApps.length} total submitted
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* YTD Reimbursed */}
+              <Card className="border-2 border-[#003769] shadow-sm hover:shadow-md transition-all rounded-none bg-white">
+                <CardContent className="p-3 flex flex-col justify-between h-full min-h-[80px]">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
+                    Total Reimbursed
+                  </div>
+                  <div className="text-2xl font-bold font-display text-[#003769] leading-none mb-1">
+                    {formatCurrency(ytdReimbursed)}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground font-semibold">
+                    Year-to-date: {approvedApps.length} Approved
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
-        {/* Lower Row: Recent Applications + Application Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Applications */}
-          <Card
-            className="border-border shadow-sm lg:col-span-1"
-            data-ocid="dashboard.applications_section"
-          >
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <CardTitle className="text-sm font-semibold">
-                Recent Applications
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs h-7 text-primary"
-                onClick={() => router.push("/applications")}
-                data-ocid="dashboard.view_all_link"
-              >
-                View all
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-2 pt-0">
-              {myApps.length === 0 ? (
-                <div
-                  className="text-center py-8 text-sm text-muted-foreground"
-                  data-ocid="dashboard.applications_empty_state"
-                >
-                  <GraduationCap className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                  No applications yet.
-                  <button
-                    type="button"
-                    onClick={() => router.push("/apply")}
-                    className="block mx-auto mt-2 text-primary hover:underline text-sm"
-                  >
-                    Start your first application
-                  </button>
-                </div>
-              ) : (
-                myApps.slice(0, 3).map((app, idx) => (
-                  <button
-                    key={app.id}
-                    type="button"
-                    className="w-full text-left flex items-center justify-between p-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() =>
-                      router.push(`/applications/${app.id}`)
-                    }
-                    data-ocid={`dashboard.application.item.${idx + 1}`}
-                  >
-                    <div className="min-w-0">
-                      <div className="text-xs font-medium text-foreground truncate">
-                        {app.institution}
-                      </div>
-                      <div className="text-[11px] text-muted-foreground truncate">
-                        {app.courseTitle}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                      <span className="text-xs font-semibold text-foreground">
-                        {formatCurrency(app.amount)}
-                      </span>
-                      <StatusBadge status={app.status} size="sm" />
-                    </div>
-                  </button>
-                ))
-              )}
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Application Status */}
-          <Card
-            className="border-border shadow-sm"
-            data-ocid="dashboard.notifications_section"
-          >
-            <CardHeader className="pb-2 flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CardTitle className="text-sm font-semibold">
-                  Application Status
-                </CardTitle>
-                {unreadNotifs.length > 0 && (
-                  <Badge
-                    className="bg-destructive text-destructive-foreground text-[10px] px-1.5 min-w-[18px] justify-center"
-                    data-ocid="dashboard.notifications_unread_badge"
-                  >
-                    {unreadNotifs.length}
-                  </Badge>
-                )}
-              </div>
-              <button
-                type="button"
-                className="text-[11px] text-primary hover:underline"
-                onClick={() => setMarkedAllRead(true)}
-                data-ocid="dashboard.mark_all_read_button"
+            {/* Recent Applications + Application Updates Cards Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Recent Applications Card */}
+              <Card
+                className="border border-border shadow-sm rounded-none bg-white"
+                data-ocid="dashboard.applications_section"
               >
-                Mark all read
-              </button>
-            </CardHeader>
-            <CardContent className="space-y-2 pt-0">
-              {employeeNotifs.slice(0, 4).map((notif, idx) => (
-                <div
-                  key={notif.id}
-                  className={`flex items-start gap-2.5 p-2.5 rounded-lg transition-colors ${
-                    unreadNotifs.some((n) => n.id === notif.id)
-                      ? "bg-primary/5 dark:bg-primary/10"
-                      : "bg-muted/30"
-                  }`}
-                  data-ocid={`dashboard.notification.item.${idx + 1}`}
-                >
-                  <div className="mt-0.5 flex-shrink-0">
-                    {NOTIF_ICONS[notif.type] ?? (
-                      <Bell className="w-4 h-4 text-muted-foreground" />
+                <CardHeader className="pb-2 flex flex-row items-center justify-between px-4 pt-4">
+                  <CardTitle className="text-xs font-bold uppercase tracking-wider text-[#003769]">
+                    Recent Applications
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-[10px] font-bold h-6 text-primary p-0"
+                    onClick={() => router.push("/applications")}
+                    data-ocid="dashboard.view_all_link"
+                  >
+                    View all
+                  </Button>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-0 pb-4 px-4">
+                  {myApps.length === 0 ? (
+                    <div
+                      className="text-center py-6 text-xs text-muted-foreground"
+                      data-ocid="dashboard.applications_empty_state"
+                    >
+                      <GraduationCap className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                      No applications yet.
+                    </div>
+                  ) : (
+                    myApps.slice(0, 2).map((app, idx) => (
+                      <button
+                        key={app.id}
+                        type="button"
+                        className="w-full text-left flex items-center justify-between p-3 rounded-none border border-[#008573]/30 hover:bg-muted/35 transition-colors cursor-pointer"
+                        onClick={() => router.push(`/applications/${app.id}`)}
+                        data-ocid={`dashboard.application.item.${idx + 1}`}
+                      >
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-foreground truncate">
+                            {app.institution}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground truncate">
+                            {app.courseTitle}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+                          <span className="text-xs font-bold text-[#003769]">
+                            {formatCurrency(app.amount)}
+                          </span>
+                          <StatusBadge status={app.status} size="sm" />
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Application Updates Card */}
+              <Card
+                className="border border-border shadow-sm rounded-none bg-white"
+                data-ocid="dashboard.notifications_section"
+              >
+                <CardHeader className="pb-2 flex flex-row items-center justify-between px-4 pt-4">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-xs font-bold uppercase tracking-wider text-[#003769]">
+                      Application Updates
+                    </CardTitle>
+                    {unreadNotifs.length > 0 && (
+                      <Badge
+                        className="bg-destructive text-destructive-foreground text-[8px] h-4 px-1 justify-center rounded-none font-bold"
+                        data-ocid="dashboard.notifications_unread_badge"
+                      >
+                        {unreadNotifs.length}
+                      </Badge>
                     )}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-semibold text-foreground flex items-center gap-1">
-                      {notif.title}
-                      {unreadNotifs.some((n) => n.id === notif.id) && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                      )}
+                  <button
+                    type="button"
+                    className="text-[10px] font-bold text-primary hover:underline p-0"
+                    onClick={() => setMarkedAllRead(true)}
+                    data-ocid="dashboard.mark_all_read_button"
+                  >
+                    Mark all read
+                  </button>
+                </CardHeader>
+                <CardContent className="space-y-3 pt-0 pb-4 px-4">
+                  {employeeNotifs.slice(0, 2).map((notif, idx) => (
+                    <div
+                      key={notif.id}
+                      className={`flex items-start gap-2.5 p-3 rounded-none border border-[#008573]/30 transition-colors ${
+                        unreadNotifs.some((n) => n.id === notif.id)
+                          ? "bg-primary/5"
+                          : "bg-muted/10"
+                      }`}
+                      data-ocid={`dashboard.notification.item.${idx + 1}`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-bold text-[#003769] flex items-center gap-1">
+                          {notif.title}
+                          {unreadNotifs.some((n) => n.id === notif.id) && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                          )}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
+                          {notif.message}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">
-                      {notif.message}
+                  ))}
+                </CardContent>
+              </Card>
+
+            </div>
+
+            {/* NYSNA Service Agreement Details Panel (nurses only) */}
+            {employee.isNYSNA === true && serviceAgreement && (
+              <Card
+                className="border-primary/25 bg-primary/5 shadow-sm rounded-none mt-6"
+                data-ocid="dashboard.nysna_service_agreement"
+              >
+                <CardHeader className="pb-2 border-b border-primary/15 px-4 pt-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <CardTitle className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-foreground">
+                      <FileSignature className="w-4 h-4 text-primary" />
+                      NYSNA Service Agreement Details
+                      <Badge
+                        variant="outline"
+                        className={`text-[9px] font-semibold border rounded-none ${saStatusColors[serviceAgreement.status] ?? ""}`}
+                      >
+                        {serviceAgreement.status === "ExpiringSoon"
+                          ? "Expiring Soon"
+                          : serviceAgreement.status}
+                      </Badge>
+                    </CardTitle>
+                    <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider">
+                      NYSNA Article 35
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent className="py-3 px-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                        Date Signed
+                      </p>
+                      <p className="text-xs font-bold text-foreground">
+                        {formatDate(serviceAgreement.signedDate)}
+                      </p>
                     </div>
-                    <div className="text-[10px] text-muted-foreground/60 mt-1">
-                      {new Date(notif.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
+                    <div>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                        Valid Until
+                      </p>
+                      <p className="text-xs font-bold text-foreground">
+                        {formatDate(serviceAgreement.endDate)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                        Amount Covered
+                      </p>
+                      <p className="text-xs font-bold text-foreground">
+                        {formatCurrency(serviceAgreement.amount)}
+                      </p>
                     </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                  <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed border-t border-primary/10 pt-2">
+                    You are required to remain employed at Montefiore Health System for 2 years (or completion of 18 credits) following reimbursement approval per your NYSNA service agreement. Early separation may result in prorated repayment.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+          </div>
+
+          {/* Right Column (Covers 1/3 width) */}
+          <div className="lg:col-span-1 space-y-6">
+            
+            {/* Action Needed Card */}
+            {hasActionNeeded && (
+              <Card className="border-2 border-[#008573] shadow-sm rounded-none bg-white">
+                <CardContent className="p-3 flex gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#ebf3ef] text-[#008573] flex items-center justify-center font-bold text-lg shrink-0">
+                    !
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xs font-bold text-[#008573] mb-0.5">
+                      Action Needed
+                    </h3>
+                    <p className="text-[11px] font-bold text-foreground leading-normal">
+                      Service Agreement Required
+                    </p>
+                    <p className="text-[9px] text-muted-foreground leading-normal mt-0.5">
+                      You have 7 days to submit your service agreement for Application MTRA-2026-0041.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => router.push("/applications")}
+                      className="text-[10px] font-bold text-[#008573] hover:underline mt-1.5 block text-left"
+                    >
+                      Complete Task &gt;
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Available Programs widget list */}
+            <div className="space-y-3">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#003769]">
+                Available Programs:
+              </h2>
+              <div className="space-y-3">
+                {qualifiedPrograms.map((prog) => (
+                  <Card
+                    key={prog.id}
+                    className="border border-[#008573]/20 bg-[#ebf3ef] shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 cursor-pointer group rounded-none"
+                    onClick={() => router.push(`/apply?program=${prog.programType}`)}
+                  >
+                    <CardContent className="p-4 flex gap-3 items-start relative">
+                      <div className="w-9 h-9 rounded-full bg-[#003769] text-white flex items-center justify-center shrink-0">
+                        {PROGRAM_ICONS[prog.programType]}
+                      </div>
+                      <div className="flex-1 min-w-0 pr-2">
+                        <h4 className="text-xs font-bold text-[#003769] group-hover:text-primary transition-colors">
+                          {prog.name}
+                        </h4>
+                        <p className="text-[10px] text-slate-500 line-clamp-2 mt-1 leading-normal">
+                          {prog.description}
+                        </p>
+                        <span className="text-[10px] font-bold text-[#008573] hover:underline mt-2 self-end text-right w-full block">
+                          Learn More & Apply &gt;
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
     </Layout>
   );

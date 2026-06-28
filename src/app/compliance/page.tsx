@@ -77,7 +77,7 @@ export default function ComplianceDashboard() {
     <Layout
       title="Compliance & Audit"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Compliance Hub" },
       ]}
     >

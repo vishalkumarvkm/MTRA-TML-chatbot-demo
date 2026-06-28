@@ -130,7 +130,7 @@ interface UploadedFile {
 // ─── Step Progress Bar ────────────────────────────────────────
 function WizardProgress({ step }: { step: number }) {
   return (
-    <div className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur-md border-b border-border px-4 py-3 md:px-6 md:py-4">
+    <div className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur-md border-b border-border px-4 py-2 md:px-6 md:py-2.5">
       {/* Desktop View */}
       <div className="hidden md:flex items-start justify-center gap-0 overflow-x-auto no-scrollbar">
         {STEP_LABELS.map((label, idx) => {
@@ -144,10 +144,10 @@ function WizardProgress({ step }: { step: number }) {
               className="flex items-center flex-shrink-0"
               data-ocid={`wizard.step_indicator.${stepNum}`}
             >
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col items-center gap-0.5">
                 <div
                   className={[
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
+                    "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all",
                     isCompleted
                       ? "bg-primary border-primary text-primary-foreground shadow-sm"
                       : isCurrent
@@ -155,11 +155,11 @@ function WizardProgress({ step }: { step: number }) {
                         : "bg-muted border-border text-muted-foreground",
                   ].join(" ")}
                 >
-                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : stepNum}
+                  {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
                 </div>
                 <span
                   className={[
-                    "text-[10px] font-medium text-center leading-tight w-16",
+                    "text-[9px] font-medium text-center leading-tight w-14",
                     isCurrent
                       ? "text-primary"
                       : isCompleted
@@ -173,7 +173,7 @@ function WizardProgress({ step }: { step: number }) {
               {!isLast && (
                 <div
                   className={[
-                    "h-0.5 w-6 lg:w-10 mb-5 mx-0.5 transition-all",
+                    "h-0.5 w-6 lg:w-10 mb-4 mx-0.5 transition-all",
                     isCompleted ? "bg-primary" : "bg-border",
                   ].join(" ")}
                 />
@@ -235,53 +235,53 @@ function Step1Program({
               }
               data-ocid={`apply.program_card.${prog.id}`}
               className={[
-                "text-left rounded-xl border-2 p-5 transition-all duration-200 hover:shadow-md",
+                "text-left rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md",
                 selected
                   ? "border-primary bg-primary/5 shadow-md"
                   : "border-border bg-card hover:border-primary/40",
               ].join(" ")}
             >
               <div className="flex items-start justify-between gap-3">
-                <div className="text-3xl">{prog.icon}</div>
-                <div className="flex flex-col items-end gap-1">
+                <div className="text-2xl">{prog.icon}</div>
+                <div className="flex flex-col items-end gap-0.5">
                   {selected && (
-                    <Badge className="bg-primary text-primary-foreground text-[10px]">
+                    <Badge className="bg-primary text-primary-foreground text-[9px] px-1.5 py-0.5">
                       Selected
                     </Badge>
                   )}
-                  <span className="text-xs text-muted-foreground">Up to</span>
-                  <span className="text-lg font-bold text-foreground">
+                  <span className="text-[10px] text-muted-foreground">Up to</span>
+                  <span className="text-base font-bold text-foreground">
                     ${prog.maxAmount.toLocaleString()}
                   </span>
                 </div>
               </div>
-              <h3 className="font-semibold text-foreground mt-2">
+              <h3 className="text-sm font-bold text-foreground mt-1.5">
                 {prog.name}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              <p className="text-[11px] text-muted-foreground mt-0.5 leading-normal">
                 {prog.description}
               </p>
-              <div className="mt-3 space-y-1">
+              <div className="mt-2 space-y-0.5">
                 {prog.eligibilityRules.slice(0, 3).map((rule) => (
                   <div key={rule} className="flex items-start gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-[11px] text-muted-foreground leading-tight">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-[10px] text-muted-foreground leading-tight">
                       {rule}
                     </span>
                   </div>
                 ))}
                 {prog.eligibilityRules.length > 3 && (
-                  <span className="text-[11px] text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground">
                     +{prog.eligibilityRules.length - 3} more requirements
                   </span>
                 )}
               </div>
               {prog.maxCredits > 0 && (
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground">
+                <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">
                     Max Credits
                   </span>
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-[11px] font-semibold text-foreground">
                     {prog.maxCredits} credits/year
                   </span>
                 </div>
@@ -424,7 +424,7 @@ function Step4CourseDetails({
     u.toLowerCase().includes(instQuery.toLowerCase()),
   );
 
-  const tuition = data.amount ?? 3200;
+  const tuition = data.amount ?? 320;
   const fees = 248;
   const textbooks = 185;
   const totalCost = tuition + fees + textbooks;
@@ -1155,7 +1155,7 @@ function Step8Review({
               <div>
                 <span className="text-muted-foreground">Tuition: </span>
                 <span className="font-medium">
-                  ${(data.amount ?? 3200).toLocaleString()}
+                  ${(data.amount ?? 320).toLocaleString()}
                 </span>
               </div>
               <div>
@@ -1525,24 +1525,24 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
       </div>
 
       {wizardStep < 6 && (
-        <div className="bg-background/80 backdrop-blur-md border-t border-border px-4 py-4 md:px-8 flex items-center justify-between flex-shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        <div className="bg-background/80 backdrop-blur-md border-t border-border px-4 py-2.5 md:px-8 flex items-center justify-between flex-shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-3">
             {wizardStep > 1 && (
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleBack}
-                className="gap-1 h-9 px-3 md:px-4"
+                className="gap-1 h-8 text-[11px] px-3"
                 data-ocid="apply.nav.back_button"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
             )}
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-xs md:text-sm font-medium text-muted-foreground">
+            <span className="text-[11px] font-medium text-muted-foreground">
               Step {wizardStep} <span className="hidden sm:inline">of {totalSteps - 1}</span>
             </span>
             {getNextLabel() !== null && (
@@ -1550,11 +1550,11 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
                 type="button"
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="gap-1 h-9 px-4 md:px-6 shadow-sm"
+                className="gap-1 h-8 text-[11px] px-4 shadow-sm"
                 data-ocid="apply.nav.next_button"
               >
                 <span className="font-semibold">{getNextLabel()}</span>
-                {wizardStep < 5 && <ChevronRight className="w-4 h-4" />}
+                {wizardStep < 5 && <ChevronRight className="w-3.5 h-3.5" />}
               </Button>
             )}
           </div>

@@ -221,7 +221,7 @@ export default function NotificationCenter() {
     <Layout
       title="Application Status"
       breadcrumbs={[
-        { label: "Dashboard", href: "/" },
+        { label: "Overview", href: "/" },
         { label: "Application Status" },
       ]}
     >

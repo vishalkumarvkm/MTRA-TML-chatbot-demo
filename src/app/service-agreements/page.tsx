@@ -67,7 +67,7 @@ export default function ServiceAgreementsPage() {
     <Layout
       title="Service Agreements"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "Service Agreements" },
       ]}
     >

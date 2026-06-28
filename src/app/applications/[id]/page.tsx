@@ -41,7 +41,7 @@ export default function CaseDetailsPage({
     <Layout
       title={`Application: ${id}`}
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "My Applications", href: "/applications" },
         { label: id },
       ]}

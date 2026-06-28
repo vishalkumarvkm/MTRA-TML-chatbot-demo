@@ -487,7 +487,7 @@ export default function CaseDetailsPage({
     <Layout
       title={`Case ${caseData.id}`}
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "HR Operations", href: "/hr-ops" },
         { label: caseData.id },
       ]}

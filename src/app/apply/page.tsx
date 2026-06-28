@@ -11,7 +11,7 @@ export default function ApplyPage() {
     <Layout
       title="Submit Application"
       breadcrumbs={[
-        { label: "Dashboard", href: "/dashboard" },
+        { label: "Overview", href: "/" },
         { label: "New Application" },
       ]}
       disableScroll={true}
