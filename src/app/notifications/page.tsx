@@ -39,7 +39,7 @@ const NOTIF_ICONS: Record<string, any> = {
 interface Message {
   id: string;
   senderName: string;
-  senderRole: "employee" | "hr" | "system";
+  senderRole: "employee" | "admin" | "system";
   message: string;
   timestamp: string;
 }
@@ -71,13 +71,13 @@ export default function NotificationCenter() {
           id: "m1",
           senderName: "System",
           senderRole: "system",
-          message: "Application MTRA-2026-0041 for Fordham University has been successfully submitted and is under HR review.",
+          message: "Application MTRA-2026-0041 for Fordham University has been successfully submitted and is under review.",
           timestamp: "2026-04-15T09:00:00Z",
         },
         {
           id: "m2",
-          senderName: "Priya Nair",
-          senderRole: "hr",
+          senderName: "System Admin",
+          senderRole: "admin",
           message: "Hi Maria, I am reviewing your tuition reimbursement request for Fordham. I noticed the uploaded transcript does not clearly indicate your enrollment status (full-time vs part-time) or the grading scale. Could you please clarify or upload the supplementary page?",
           timestamp: "2026-04-16T14:30:00Z",
         },
@@ -85,13 +85,13 @@ export default function NotificationCenter() {
           id: "m3",
           senderName: "Maria Santos",
           senderRole: "employee",
-          message: "Hi Priya, I'm registered for 6 credits this semester, which is part-time for my program. I've just uploaded the syllabus and the official CUNY Lehman grading scale page to the document section. Please let me know if that works!",
+          message: "Hi Admin, I'm registered for 6 credits this semester, which is part-time for my program. I've just uploaded the syllabus and the official CUNY Lehman grading scale page to the document section. Please let me know if that works!",
           timestamp: "2026-04-17T10:15:00Z",
         },
         {
           id: "m4",
-          senderName: "Priya Nair",
-          senderRole: "hr",
+          senderName: "System Admin",
+          senderRole: "admin",
           message: "Thanks, Maria! I see the grading scale document now. However, to finalize this, we also need the signed Service Agreement. Service agreements apply to all NYSNA nurses receiving tuition assistance. Please sign it so we can progress the application.",
           timestamp: "2026-04-20T08:00:00Z",
         }
@@ -119,8 +119,8 @@ export default function NotificationCenter() {
         },
         {
           id: "t2-m3",
-          senderName: "Priya Nair",
-          senderRole: "hr",
+          senderName: "System Admin",
+          senderRole: "admin",
           message: "Hi Maria, your CME conference reimbursement has been approved and processed. It will be posted on your next bi-weekly payroll deposit.",
           timestamp: "2026-03-12T10:00:00Z",
         }
@@ -141,7 +141,7 @@ export default function NotificationCenter() {
         {
           id: "t3-m2",
           senderName: "Derek Chen",
-          senderRole: "hr",
+          senderRole: "admin",
           message: "Hi Maria, yes. Under IRS Section 127, any employer-provided educational assistance exceeding $5,250 in a calendar year is considered taxable wages and is subject to standard withholding. Our payroll system automatically flags and calculates this once approvals cross the limit.",
           timestamp: "2026-04-30T10:00:00Z",
         }
@@ -152,7 +152,7 @@ export default function NotificationCenter() {
   const filteredNotifs = mockNotifications.filter((n) => {
     const matchesSearch = n.title.toLowerCase().includes(search.toLowerCase()) || 
                           n.message.toLowerCase().includes(search.toLowerCase());
-    const matchesUser = n.userId === employee.id || currentUser?.role === 'hr' || currentUser?.role === 'admin';
+    const matchesUser = n.userId === employee.id || currentUser?.role === 'admin';
     return matchesSearch && matchesUser;
   });
 
@@ -233,10 +233,10 @@ export default function NotificationCenter() {
             <p className="text-xs text-muted-foreground mt-1">Audit trail and official communications regarding your tuition assistance applications</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Button variant="outline" size="sm" className="h-9 px-4 font-bold text-xs bg-card">
+            <Button size="sm" className="h-9 px-4 font-bold text-xs">
               Mark All Read
             </Button>
-            <Button variant="outline" size="sm" className="h-9 w-9 p-0 bg-card">
+            <Button variant="outline" size="sm" className="h-9 w-9 p-0 text-primary hover:bg-primary/5">
               <History className="w-4 h-4" />
             </Button>
           </div>
@@ -268,7 +268,7 @@ export default function NotificationCenter() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            HR Communication Threads ({filteredThreads.length})
+            Official Communication Threads ({filteredThreads.length})
           </button>
         </div>
 
@@ -531,7 +531,7 @@ export default function NotificationCenter() {
                       <Paperclip className="w-4 h-4" />
                     </button>
                     <Input
-                      placeholder="Type a message to HR Benefits specialist..."
+                      placeholder="Type a message to Benefits Administrator..."
                       className="border-none bg-transparent h-8 focus-visible:ring-0 focus-visible:ring-offset-0 text-xs flex-1 shadow-none"
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}

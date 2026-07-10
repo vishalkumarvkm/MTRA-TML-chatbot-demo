@@ -6,6 +6,7 @@ import { useAppStore } from "@/store/appStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
+import { Button } from "@/components/ui/button";
 
 function LoginPageContent() {
   const router = useRouter();
@@ -46,7 +47,6 @@ function LoginPageContent() {
     const expectedPasswords: Record<string, string> = {
       "employee@montefiore.org": "montefiore01",
       "manager@montefiore.org": "montefiore02",
-      "hr@montefiore.org": "montefiore03",
       "admin@montefiore.org": "montefiore04",
     };
 
@@ -137,10 +137,10 @@ function LoginPageContent() {
           </div>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full h-11 mt-2 bg-brand-blue hover:bg-brand-blue/90 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-brand-blue/20 transition-all disabled:opacity-50"
+          className="w-full h-11 mt-2 rounded-xl text-sm font-bold shadow-md transition-all"
           data-ocid="login.submit_button"
         >
           {loading ? (
@@ -150,7 +150,7 @@ function LoginPageContent() {
               Sign In <ArrowRight className="w-4 h-4" />
             </>
           )}
-        </button>
+        </Button>
       </form>
 
 

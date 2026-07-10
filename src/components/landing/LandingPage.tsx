@@ -26,7 +26,7 @@ export default function LandingPage() {
           <div className="flex justify-center">
             <Link 
               href="/login"
-              className="inline-flex items-center justify-center gap-2 bg-brand-blue text-white px-10 py-4 rounded-xl font-bold text-[16px] hover:bg-[#002547] transition-all shadow-lg hover:shadow-xl active:scale-95 group w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-10 py-4 rounded-xl font-bold text-[16px] hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl active:scale-95 group w-full sm:w-auto"
             >
               Login to Platform
               <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

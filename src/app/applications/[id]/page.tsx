@@ -162,7 +162,7 @@ export default function CaseDetailsPage({
                       user: "HealthyME AI",
                     },
                     {
-                      label: "Assigned to HR",
+                      label: "Assigned to Admin",
                       date: "Dec 13, 9:15 am",
                       user: "System",
                     },

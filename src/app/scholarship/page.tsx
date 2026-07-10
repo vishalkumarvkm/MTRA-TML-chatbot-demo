@@ -288,7 +288,7 @@ export default function ScholarshipPortal() {
                                           <Button 
                                              onClick={() => setIsSubmitted(true)}
                                              size="sm" 
-                                             className="h-9 px-6 bg-primary font-bold text-xs gap-2"
+                                             className="h-9 px-6 bg-primary hover:bg-primary/90 font-bold text-xs gap-2"
                                           >
                                              <ClipboardCheck className="w-4 h-4" />
                                              Submit Final Score
@@ -339,11 +339,11 @@ export default function ScholarshipPortal() {
                             </div>
 
                             <div className="space-y-2 opacity-50 pointer-events-none">
-                               <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 gap-2">
+                               <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-10 gap-2">
                                   <CheckCircle2 className="w-4 h-4" />
                                   Award Scholarship
                                </Button>
-                               <Button variant="outline" className="w-full text-destructive border-destructive/20 font-bold h-10">
+                               <Button variant="outline" className="w-full border-border text-foreground hover:bg-muted font-bold h-10">
                                   Deny Application
                                </Button>
                             </div>
@@ -357,8 +357,8 @@ export default function ScholarshipPortal() {
                          </CardHeader>
                          <CardContent className="p-0">
                             {[
-                               { name: "Priya Nair", role: "HR Benefits", status: "completed" },
-                               { name: currentUser?.name && currentUser.name !== "Priya Nair" ? currentUser.name : "Sarah Kim", role: currentUser?.role === "admin" ? "HR Oversight" : "Nursing Ops", status: isSubmitted ? "completed" : "pending" },
+                               { name: "System Admin", role: "Benefits Admin", status: "completed" },
+                               { name: currentUser?.name && currentUser.name !== "System Admin" ? currentUser.name : "Sarah Kim", role: currentUser?.role === "admin" ? "Admin Oversight" : "Nursing Ops", status: isSubmitted ? "completed" : "pending" },
                                { name: "Derek Chen", role: "Finance", status: "pending" },
                                { name: "Dr. James Okonkwo", role: "Clinical Lead", status: "pending" },
                             ].map((reviewer, i) => (

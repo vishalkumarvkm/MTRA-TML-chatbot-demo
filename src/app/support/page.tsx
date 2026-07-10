@@ -25,7 +25,7 @@ import { useAppStore } from "@/store/appStore";
 import { mockApplications, mockEmployees } from "@/data/mockData";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, FileText, MessageSquare, Plus, Search } from "lucide-react";
+import { AlertCircle, FileText, MessageSquare, Plus, Search, User } from "lucide-react";
 import type { SupportCase } from "@/types";
 
 const CATEGORIES = [
@@ -42,12 +42,14 @@ export default function SupportCasesPage() {
   const { currentUser, supportCases, addSupportCase } = useAppStore();
   const [search, setSearch] = useState("");
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"All" | "Open" | "In Progress" | "Resolved" | "Closed">("All");
 
   // Form states
   const [subject, setSubject] = useState("");
   const [category, setCategory] = useState<typeof CATEGORIES[number]>("Document Issue");
   const [linkedAppId, setLinkedAppId] = useState("");
   const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
   const [error, setError] = useState("");
 
   if (!currentUser) return null;
@@ -68,8 +70,8 @@ export default function SupportCasesPage() {
       .filter((e) => e.managerId === currentEmployee.id || e.managerId === currentUser.employeeId)
       .flatMap((e) => [e.id, e.employeeId]);
     filteredCases = supportCases.filter((c) => reportIds.includes(c.employeeId));
-  } else if (userRole === "hr") {
-    // HR Specialists see cases assigned to them or unassigned
+  } else if (userRole === "admin") {
+    // Admin/Specialists see cases assigned to them or unassigned
     filteredCases = supportCases.filter(
       (c) => c.assignedTo === currentUser.name || c.assignedTo === ""
     );
@@ -85,6 +87,11 @@ export default function SupportCasesPage() {
         c.category.toLowerCase().includes(q) ||
         c.employeeName.toLowerCase().includes(q)
     );
+  }
+
+  // Status filter
+  if (activeTab !== "All") {
+    filteredCases = filteredCases.filter((c) => c.status === activeTab);
   }
 
   // Get active applications for the employee to link
@@ -126,8 +133,10 @@ export default function SupportCasesPage() {
       status: "Open",
       createdDate: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
-      assignedTo: "Priya Nair", // Auto-assign to default HR Benefits specialist
+      assignedTo: "System Admin", // Auto-assign to default Administrator
       reopenedFlag: false,
+      priority: priority,
+      unread: false,
       messages: [
         {
           id: `msg-${Date.now()}`,
@@ -146,6 +155,7 @@ export default function SupportCasesPage() {
     setCategory("Document Issue");
     setLinkedAppId("");
     setDescription("");
+    setPriority("Medium");
     setError("");
   };
 
@@ -156,7 +166,7 @@ export default function SupportCasesPage() {
       case "In Progress":
         return "bg-amber-100 text-amber-800 border-amber-200";
       case "Resolved":
-        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "Closed":
         return "bg-slate-100 text-slate-500 border-slate-200";
       default:
@@ -172,44 +182,90 @@ export default function SupportCasesPage() {
     });
   };
 
+  const getSubtitle = (role: string) => {
+    switch (role) {
+      case "manager":
+        return "Review and respond to support cases raised by employees across all tuition benefit programs.";
+      case "admin":
+        return "View and manage all support cases across all employees and programs. Assign, escalate, and audit cases.";
+      default:
+        return "Submit support tickets and track query resolutions linked to your tuition requests.";
+    }
+  };
+
   return (
     <Layout
       title="Support Tickets"
       breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Support Cases" }]}
     >
-      <div className="p-4 space-y-6 max-w-6xl mx-auto min-h-full">
+
+      <div className="p-4 md:p-6 space-y-6 w-full min-h-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold font-display text-foreground">
               Internal Support Helpdesk
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground mt-1 font-body">
-              Submit support tickets and track query resolutions linked to your tuition requests.
+              {getSubtitle(userRole)}
             </p>
           </div>
 
-          {userRole === "employee" && (
+          {userRole === "employee" ? (
             <Button
               onClick={() => setIsNewCaseOpen(true)}
-              className="bg-[#008573] hover:bg-[#006e5f] text-white gap-2 font-body text-xs font-semibold h-9 rounded-md shrink-0"
+              className="gap-2 font-body text-xs font-semibold h-9 rounded-md shrink-0 bg-[#003769] hover:bg-[#003769]/90 text-white"
             >
               <Plus className="w-4 h-4" /> Raise a support case
+            </Button>
+          ) : userRole === "manager" ? (
+            <Button
+              onClick={() => alert("Quick assign feature is for demonstration only.")}
+              className="gap-2 font-body text-xs font-semibold h-9 rounded-md shrink-0 bg-[#003769] hover:bg-[#003769]/90 text-white"
+            >
+              <User className="w-4 h-4" /> Assign case
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setIsNewCaseOpen(true)}
+              className="gap-2 font-body text-xs font-semibold h-9 rounded-md shrink-0 bg-[#003769] hover:bg-[#003769]/90 text-white"
+            >
+              <Plus className="w-4 h-4" /> Create case
             </Button>
           )}
         </div>
 
         {/* Filters */}
         <Card className="border-border shadow-sm">
-          <CardHeader className="p-0">
-            <div className="px-6 py-4 flex flex-wrap items-center gap-4">
-              <div className="relative flex-1 min-w-[240px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search tickets by ID, subject, or category..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-9 pl-9 text-xs"
-                />
+          <CardHeader className="p-0 border-b border-border bg-muted/5">
+            <div className="px-6 pt-4 pb-2 flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="relative flex-1 min-w-[240px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search tickets by ID, subject, or category..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="h-9 pl-9 text-xs bg-white"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
+                {(["All", "Open", "In Progress", "Resolved", "Closed"] as const).map((tab) => {
+                  const isActive = activeTab === tab;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-md border transition-all ${
+                        isActive
+                          ? "bg-[#003769] text-white border-transparent"
+                          : "bg-white text-muted-foreground hover:text-foreground border-border hover:bg-muted/10"
+                      }`}
+                    >
+                      {tab} Cases
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </CardHeader>
@@ -222,13 +278,13 @@ export default function SupportCasesPage() {
                 <div className="max-w-md mx-auto space-y-2">
                   <p className="text-sm font-bold text-foreground">No support cases yet.</p>
                   <p className="text-xs text-muted-foreground font-body">
-                    If you have a question or issue about your application, raise a support case to get assistance from HR.
+                    If you have a question or issue about your application, raise a support case to get assistance from the Administrator.
                   </p>
                 </div>
                 {userRole === "employee" && (
                   <Button
                     onClick={() => setIsNewCaseOpen(true)}
-                    className="bg-[#008573] hover:bg-[#006e5f] text-white text-xs font-semibold h-8 rounded-md"
+                    className="text-xs font-semibold h-8 rounded-md"
                   >
                     Raise a support case
                   </Button>
@@ -239,6 +295,7 @@ export default function SupportCasesPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent bg-muted/40 border-b border-border">
+                      <TableHead className="w-8"></TableHead>
                       <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11 w-28">
                         Case ID
                       </TableHead>
@@ -256,11 +313,14 @@ export default function SupportCasesPage() {
                       <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11">
                         Linked Request
                       </TableHead>
+                      <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11 w-24">
+                        Priority
+                      </TableHead>
                       <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11 w-28">
                         Status
                       </TableHead>
                       <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11">
-                        Created Date
+                        Updated Date
                       </TableHead>
                       <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground h-11 text-right pr-6 w-24">
                         Action
@@ -268,53 +328,83 @@ export default function SupportCasesPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredCases.map((c) => (
-                      <TableRow
-                        key={c.id}
-                        className="hover:bg-muted/30 border-b border-border/40 transition-colors cursor-pointer"
-                        onClick={() => router.push(`/support/${c.id}`)}
-                      >
-                        <TableCell className="font-mono text-xs font-bold text-foreground py-3">
-                          {c.id}
-                        </TableCell>
-                        {userRole !== "employee" && (
-                          <TableCell className="text-xs font-semibold py-3 text-foreground">
-                            {c.employeeName}
+                    {filteredCases.map((c) => {
+                      const getPriorityStyle = (p?: string) => {
+                        switch (p) {
+                          case "High":
+                            return "bg-red-50 text-red-800 border-red-200";
+                          case "Medium":
+                            return "bg-amber-50 text-amber-800 border-amber-200";
+                          case "Low":
+                            return "bg-slate-100 text-slate-800 border-slate-200";
+                          default:
+                            return "bg-slate-100 text-slate-800 border-slate-200";
+                        }
+                      };
+
+                      return (
+                        <TableRow
+                          key={c.id}
+                          className={`hover:bg-muted/30 border-b border-border/40 transition-colors cursor-pointer ${
+                            c.unread ? "bg-blue-50/10" : ""
+                          }`}
+                          onClick={() => router.push(`/support/${c.id}`)}
+                        >
+                          <TableCell className="text-center w-8 py-3">
+                            {c.unread && (
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#003769] inline-block animate-pulse" title="Unread activity" />
+                            )}
                           </TableCell>
-                        )}
-                        <TableCell className="text-xs font-bold text-slate-800 py-3 truncate max-w-xs">
-                          {c.subject}
-                        </TableCell>
-                        <TableCell className="text-xs py-3 font-medium text-slate-600">
-                          {c.category}
-                        </TableCell>
-                        <TableCell className="text-xs py-3 text-slate-500 font-mono">
-                          {c.linkedAppId ? c.linkedAppId : "None"}
-                        </TableCell>
-                        <TableCell className="py-3">
-                          <span
-                            className={`border text-[9px] font-bold px-2 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusStyle(
-                              c.status
-                            )}`}
-                          >
-                            {c.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-xs py-3 text-muted-foreground">
-                          {formatDate(c.createdDate)}
-                        </TableCell>
-                        <TableCell className="text-right pr-6 py-3" onClick={(e) => e.stopPropagation()}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/support/${c.id}`)}
-                            className="h-7 text-[10px] font-semibold border-[#008573]/20 text-[#008573] hover:bg-[#008573]/5"
-                          >
-                            View
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          <TableCell className="font-mono text-xs font-bold text-foreground py-3">
+                            {c.id}
+                          </TableCell>
+                          {userRole !== "employee" && (
+                            <TableCell className="text-xs font-semibold py-3 text-foreground">
+                              {c.employeeName}
+                            </TableCell>
+                          )}
+                          <TableCell className={`text-xs py-3 truncate max-w-xs ${c.unread ? "font-bold text-slate-900" : "font-bold text-slate-800"}`}>
+                            {c.subject}
+                          </TableCell>
+                          <TableCell className="text-xs py-3 font-medium text-slate-600">
+                            {c.category}
+                          </TableCell>
+                          <TableCell className="text-xs py-3 text-slate-500 font-mono">
+                            {c.linkedAppId ? c.linkedAppId : "None"}
+                          </TableCell>
+                          <TableCell className="py-3">
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${getPriorityStyle(c.priority)}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                c.priority === "High" ? "bg-red-500" : c.priority === "Medium" ? "bg-amber-500" : "bg-slate-400"
+                              }`} />
+                              {c.priority || "Medium"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="py-3">
+                            <span
+                              className={`border text-[9px] font-bold px-2 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusStyle(
+                                c.status
+                              )}`}
+                            >
+                              {c.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-xs py-3 text-muted-foreground">
+                            {formatDate(c.lastUpdated || c.createdDate)}
+                          </TableCell>
+                          <TableCell className="text-right pr-6 py-3" onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => router.push(`/support/${c.id}`)}
+                              className="h-7 text-[10px] font-semibold"
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
@@ -404,6 +494,43 @@ export default function SupportCasesPage() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="priority" className="text-xs font-bold text-foreground">
+                    Priority <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={priority}
+                    onValueChange={(val) => setPriority(val as "Low" | "Medium" | "High")}
+                  >
+                    <SelectTrigger id="priority" className="h-9 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low" className="text-xs">Low</SelectItem>
+                      <SelectItem value="Medium" className="text-xs">Medium</SelectItem>
+                      <SelectItem value="High" className="text-xs">High</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="contactMethod" className="text-xs font-bold text-foreground">
+                    Preferred Contact Method
+                  </Label>
+                  <Select defaultValue="Portal message (default)">
+                    <SelectTrigger id="contactMethod" className="h-9 text-xs">
+                      <SelectValue placeholder="Portal message (default)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Portal message (default)" className="text-xs">Portal message (default)</SelectItem>
+                      <SelectItem value="Email" className="text-xs">Email</SelectItem>
+                      <SelectItem value="Microsoft Teams" className="text-xs">Microsoft Teams</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="desc" className="text-xs font-bold text-foreground">
@@ -454,7 +581,7 @@ export default function SupportCasesPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="h-9 text-xs font-semibold px-5 rounded-md bg-[#008573] hover:bg-[#006e5f] text-white font-body"
+                  className="h-9 text-xs font-semibold px-5 rounded-md font-body"
                 >
                   Submit Case
                 </Button>

@@ -28,11 +28,8 @@ export function ProactiveAlert() {
         case "manager":
           alertText = "Hello! You have 3 pending approvals in your queue. 1 application is marked as urgent.";
           break;
-        case "hr":
-          alertText = "Attention: 2 NYSNA cases are approaching the 45-day SLA breach threshold. Would you like to review them now?";
-          break;
         case "admin":
-          alertText = "System health check complete. 2 nodes reported minor latency spikes in the last hour, but all services are currently nominal.";
+          alertText = "Attention: 2 NYSNA cases are approaching the 45-day SLA breach threshold. Would you like to review them now?";
           break;
       }
 

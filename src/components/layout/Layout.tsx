@@ -60,28 +60,27 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "hr", "admin"] },
+  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "admin"] },
   { label: "Apply Now", href: "/apply", icon: FilePlus, roles: ["employee"] },
-  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "hr", "admin"] },
+  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "admin"] },
   {
     label: "Manager Approvals",
     href: "/approvals",
     icon: CheckSquare,
-    roles: ["manager", "hr", "admin"],
+    roles: ["manager", "admin"],
   },
-  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "hr", "admin"] },
-  { label: "HR Operations", href: "/hr-ops", icon: Settings2, roles: ["hr", "admin"] },
-  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["hr", "admin"] },
-  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["hr", "admin"] },
+  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "admin"] },
+  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["admin"] },
+  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["admin"] },
   { label: "Payroll Feed", href: "/payroll", icon: CreditCard, roles: ["admin"] },
   {
     label: "Case Management",
     href: "/cases/case-001",
     icon: FolderOpen,
-    roles: ["hr", "admin"],
+    roles: ["admin"],
   },
   { label: "Policy Admin", href: "/admin/policy", icon: Settings, roles: ["admin"] },
-  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "hr", "admin"] },
+  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "admin"] },
 ];
 
 interface LayoutProps {
@@ -205,7 +204,6 @@ export function Layout({
     const map: Record<string, string> = {
       employee: "Employee",
       manager: "Manager",
-      hr: "HR Specialist",
       admin: "Administrator",
     };
     return map[role] ?? role;
@@ -320,7 +318,7 @@ export function Layout({
           </h1>
           <Button
             onClick={() => router.push("/apply")}
-            className="rounded-full bg-white text-[#003769] hover:bg-white/95 font-bold px-6 py-2.5 sm:py-3.5 shadow-sm shrink-0 w-full sm:w-auto text-center justify-center"
+            className="rounded-full bg-white text-primary hover:bg-white/95 font-bold px-6 py-2.5 sm:py-3.5 shadow-sm shrink-0 w-full sm:w-auto text-center justify-center"
             data-ocid="layout.quick_apply_button"
           >
             Apply Now
@@ -420,7 +418,7 @@ export function Layout({
         <main
           className={cn(
             "flex-1 bg-white flex flex-col min-w-0",
-            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto xl:overflow-hidden",
+            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden",
           )}
           data-ocid="main_content"
         >
@@ -434,8 +432,9 @@ export function Layout({
             )}>
               {children}
             </div>
-            {pathname !== "/apply" && <FooterDisclaimer />}
+            {!disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
           </div>
+          {disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
         </main>
         
         {/* Global AI Chat Agent */}

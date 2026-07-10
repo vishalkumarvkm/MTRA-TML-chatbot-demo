@@ -389,10 +389,10 @@ function DashboardPage() {
         </div>
 
         {/* Recent Applications & Updates (2-column layout, 50/50 split) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
           {/* Recent Applications Card */}
           <Card
-            className="border border-border shadow-sm rounded-none bg-white"
+            className="border border-border shadow-sm rounded-none bg-white h-full flex flex-col"
             data-ocid="dashboard.applications_section"
           >
             <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b border-slate-100">
@@ -409,10 +409,10 @@ function DashboardPage() {
                 View all
               </Button>
             </CardHeader>
-            <CardContent className="space-y-2.5 py-3 px-4">
+            <CardContent className="space-y-2.5 py-3 px-4 flex-1">
               {myApps.length === 0 ? (
                 <div
-                  className="text-center py-6 text-xs text-muted-foreground"
+                  className="text-center py-6 text-xs text-muted-foreground h-full flex flex-col justify-center"
                   data-ocid="dashboard.applications_empty_state"
                 >
                   <GraduationCap className="w-8 h-8 mx-auto mb-2 opacity-30" />
@@ -449,7 +449,7 @@ function DashboardPage() {
 
           {/* Application Updates Card */}
           <Card
-            className="border border-border shadow-sm rounded-none bg-white"
+            className="border border-border shadow-sm rounded-none bg-white h-full flex flex-col"
             data-ocid="dashboard.notifications_section"
           >
             <CardHeader className="py-3 px-4 flex flex-row items-center justify-between border-b border-slate-100">
@@ -475,7 +475,7 @@ function DashboardPage() {
                 Mark all read
               </button>
             </CardHeader>
-            <CardContent className="space-y-2.5 py-3 px-4">
+            <CardContent className="space-y-2.5 py-3 px-4 flex-1">
               {employeeNotifs.slice(0, 2).map((notif, idx) => (
                 <div
                   key={notif.id}

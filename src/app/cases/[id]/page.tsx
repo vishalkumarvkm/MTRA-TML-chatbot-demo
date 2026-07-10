@@ -156,7 +156,7 @@ export default function CaseDetailsPage({
       employee: { role: "Employee", name: employee.name, date: "04/15/2026", status: "complete" as const, order: 1 },
       admin: {
         role: "Administrator",
-        name: id === "case-001" ? "" : "Priya Nair",
+        name: id === "case-001" ? "" : "System Admin",
         date: id === "case-001" ? "" : "04/22/2026",
         status: id === "case-001" ? "pending" as const : "complete" as const,
         order: 2
@@ -207,8 +207,8 @@ export default function CaseDetailsPage({
         id: "a-3",
         timestamp: "2026-04-16 09:15 am",
         action: "TIER1_REVIEW_STARTED",
-        actor: "Priya Nair",
-        actorRole: "hr",
+        actor: "System Admin",
+        actorRole: "admin",
         entityId: caseData.id,
         entityType: "case",
         description: "Intake and completeness review initialized."
@@ -283,12 +283,12 @@ export default function CaseDetailsPage({
       }
       setCurrentStage(2);
       setHwStatus('under-review');
-      logAction("STAGE1_COMPLETED", "Priya Nair", "hr", "Tier 1 Intake Approved. Application routed to Health & Wellbeing review.");
+      logAction("STAGE1_COMPLETED", "System Admin", "admin", "Tier 1 Intake Approved. Application routed to Health & Wellbeing review.");
       showToast("Stage 1 Intake Approved! Routed to H&W.");
     } else if (currentStage === 2) {
       setHwStatus('approved');
       setCurrentStage(3);
-      logAction("STAGE2_COMPLETED", "Priya Nair", "hr", "Health & Wellbeing review approved. Routed to Stage 3 Approval Signatures.");
+      logAction("STAGE2_COMPLETED", "System Admin", "admin", "Health & Wellbeing review approved. Routed to Stage 3 Approval Signatures.");
       showToast("Stage 2 Approved! Routed to Signatures.");
     } else if (currentStage === 3) {
       if (signatures.admin.status !== 'complete' || signatures.deptHead.status !== 'complete') {
@@ -308,7 +308,7 @@ export default function CaseDetailsPage({
     } else if (currentStage === 4) {
       setPayrollStatus('processed');
       setCurrentStage(5);
-      logAction("STAGE4_COMPLETED", "Priya Nair", "hr", "Posted to Workday Payroll. GL Code: 61200-TUIT assigned. Tax split optimized.");
+      logAction("STAGE4_COMPLETED", "System Admin", "admin", "Posted to Workday Payroll. GL Code: 61200-TUIT assigned. Tax split optimized.");
       showToast("Stage 4 Completed! Posted to Workday.");
     } else if (currentStage === 5) {
       setPaymentStatus('paid');
@@ -324,14 +324,14 @@ export default function CaseDetailsPage({
     
     if (currentStage === 1) {
       setTier1Status('incomplete');
-      logAction("TIER1_REJECTED", "Priya Nair", "hr", `Returned to employee. Reason: ${reason}`);
+      logAction("TIER1_REJECTED", "System Admin", "admin", `Returned to employee. Reason: ${reason}`);
       showToast("Intake incomplete. Sent back to employee.");
     } else if (currentStage === 2) {
       setHwStatus('rejected');
-      logAction("HW_REJECTED", "Priya Nair", "hr", `H&W rejected. Reason: ${reason}`);
+      logAction("HW_REJECTED", "System Admin", "admin", `H&W rejected. Reason: ${reason}`);
       showToast("H&W review rejected.");
     } else {
-      logAction("CASE_REJECTED", "Priya Nair", "hr", `Case rejected. Reason: ${reason}`);
+      logAction("CASE_REJECTED", "System Admin", "admin", `Case rejected. Reason: ${reason}`);
       showToast("Case rejected.");
     }
   };
@@ -342,7 +342,7 @@ export default function CaseDetailsPage({
     if (!reason) return;
     
     setTier1Status('escalated');
-    logAction("CASE_ESCALATED", "Priya Nair", "hr", `Case escalated to HR Benefits Director. Reason: ${reason}`);
+    logAction("CASE_ESCALATED", "System Admin", "admin", `Case escalated to Benefits Director. Reason: ${reason}`);
     showToast("Case escalated to Benefits Director.");
   };
 
@@ -371,7 +371,7 @@ export default function CaseDetailsPage({
     }));
     // Also toggle the checklist item of signatures
     setChecklist(prev => ({ ...prev, allSignatures: signatures.deptHead.status === "complete" }));
-    logAction("SIGNATURE_ADDED", "Priya Nair", "hr", `Administrator signature verified. Name: ${adminNameInput}. Date: ${adminDateInput}.`);
+    logAction("SIGNATURE_ADDED", "System Admin", "admin", `Administrator signature verified. Name: ${adminNameInput}. Date: ${adminDateInput}.`);
     showToast("Administrator signature added!");
   };
 
@@ -460,7 +460,7 @@ export default function CaseDetailsPage({
         id: "alert-4",
         severity: "info" as const,
         title: "Health & Wellbeing Review Active",
-        message: "HR Benefits Specialist is performing policy eligibility checks and credit limit calculations."
+        message: "Benefits Administrator is performing policy eligibility checks and credit limit calculations."
       });
     }
     return list;
@@ -488,14 +488,13 @@ export default function CaseDetailsPage({
       title={`Case ${caseData.id}`}
       breadcrumbs={[
         { label: "Overview", href: "/" },
-        { label: "HR Operations", href: "/hr-ops" },
-        { label: caseData.id },
+        { label: `Case ${caseData.id}` },
       ]}
       disableScroll={true}
     >
-      <div className="flex flex-col xl:flex-row xl:h-full xl:overflow-hidden bg-muted/20">
+      <div className="flex flex-col xl:flex-row xl:flex-1 xl:min-h-0 xl:overflow-hidden bg-muted/20">
         {/* Left Sidebar: Employee Profile */}
-        <aside className="w-full xl:w-72 bg-card border-b xl:border-b-0 xl:border-r border-border xl:overflow-y-auto flex-shrink-0 xl:h-full">
+        <aside className="w-full xl:w-72 bg-card border-b xl:border-b-0 xl:border-r border-border xl:overflow-y-auto flex-shrink-0 xl:h-auto">
           <div className="p-6 flex flex-col md:flex-row xl:flex-col gap-6 md:items-start xl:items-stretch space-y-0">
             <div className="flex flex-col items-center text-center space-y-3 md:w-1/4 xl:w-full flex-shrink-0">
               <Avatar className="w-20 h-20 border-2 border-primary/10 shadow-sm">
@@ -703,9 +702,9 @@ export default function CaseDetailsPage({
                       </div>
                       <div className="p-4 space-y-1">
                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-                            <User className="w-3 h-3" /> Assigned HR
+                            <User className="w-3 h-3" /> Assigned Admin
                          </p>
-                         <p className="text-xs font-bold italic">{caseData.assignedHR}</p>
+                         <p className="text-xs font-bold italic">{caseData.assignedAdmin}</p>
                       </div>
                    </div>
                 </CardContent>
@@ -776,7 +775,7 @@ export default function CaseDetailsPage({
                                        onClick={() => {
                                          setCurrentStage(2);
                                          setHwStatus('under-review');
-                                         logAction("STAGE1_COMPLETED", "Priya Nair", "hr", "Intake approved. Routed to Health & Wellbeing review.");
+                                         logAction("STAGE1_COMPLETED", "System Admin", "admin", "Intake approved. Routed to Health & Wellbeing review.");
                                          showToast("Stage 1 Approved! Routed to H&W.");
                                        }}
                                        className="h-8 text-[10px] bg-primary font-bold text-white shadow-sm"
@@ -799,7 +798,7 @@ export default function CaseDetailsPage({
                                   {getStageBadge(2, hwStatus)}
                                </div>
                                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                                  HR Benefits Specialist validates policy compliance, tenure eligibility, balances, and generates the required Service Agreement.
+                                  Benefits Administrator validates policy compliance, tenure eligibility, balances, and generates the required Service Agreement.
                                </p>
                                {currentStage === 2 && (
                                   <div className="mt-3 p-3 bg-muted/20 border rounded-xl flex items-center justify-between">
@@ -809,7 +808,7 @@ export default function CaseDetailsPage({
                                        onClick={() => {
                                          setHwStatus('approved');
                                          setCurrentStage(3);
-                                         logAction("STAGE2_COMPLETED", "Priya Nair", "hr", "Health & Wellbeing review completed and approved.");
+                                         logAction("STAGE2_COMPLETED", "System Admin", "admin", "Health & Wellbeing review completed and approved.");
                                          showToast("Stage 2 Approved! Routed to Signatures.");
                                        }}
                                        className="h-8 text-[10px] bg-primary font-bold text-white shadow-sm"
@@ -843,7 +842,7 @@ export default function CaseDetailsPage({
                                   </div>
                                   
                                   <div className="flex items-center justify-between text-[11px] p-2 bg-muted/20 rounded-lg border">
-                                     <span>Line 2: <strong>Administrator</strong> (Priya Nair)</span>
+                                     <span>Line 2: <strong>Administrator</strong> (System Admin)</span>
                                      {signatures.admin.status === "complete" ? (
                                         <Badge className="bg-emerald-50 text-emerald-700 text-[9px]">✅ Signed {signatures.admin.date}</Badge>
                                      ) : (
@@ -864,7 +863,7 @@ export default function CaseDetailsPage({
                                {/* Dynamic Sign-in panels */}
                                {currentStage === 3 && signatures.admin.status === "pending" && (
                                  <div className="mt-4 p-3 border rounded-xl bg-card space-y-3 shadow-inner animate-in fade-in">
-                                    <p className="text-[10px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5 text-primary"><FileSignature className="w-3.5 h-3.5" /> Sign as Administrator (Priya Nair)</p>
+                                    <p className="text-[10px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5 text-primary"><FileSignature className="w-3.5 h-3.5" /> Sign as Administrator (System Admin)</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                        <div className="space-y-1">
                                           <label className="text-[9px] font-bold text-muted-foreground uppercase">Printed Name</label>
@@ -872,7 +871,7 @@ export default function CaseDetailsPage({
                                              type="text" 
                                              value={adminNameInput}
                                              onChange={(e) => setAdminNameInput(e.target.value)}
-                                             placeholder="Priya Nair"
+                                             placeholder="System Admin"
                                              className="w-full text-xs h-8 px-2.5 border rounded-lg bg-card outline-none"
                                           />
                                        </div>
@@ -1003,7 +1002,7 @@ export default function CaseDetailsPage({
                                        onClick={() => {
                                          setPayrollStatus('processed');
                                          setCurrentStage(5);
-                                         logAction("STAGE4_COMPLETED", "Priya Nair", "hr", "Sync + post to Workday payroll complete. Pre-tax optimization active.");
+                                         logAction("STAGE4_COMPLETED", "System Admin", "admin", "Sync + post to Workday payroll complete. Pre-tax optimization active.");
                                          showToast("Stage 4 Approved! Posted to Workday.");
                                        }}
                                        className="h-8 text-[10px] bg-primary font-bold text-white shadow-sm"
@@ -1091,8 +1090,8 @@ export default function CaseDetailsPage({
                                              setChecklist(prev => ({ ...prev, [item.id]: checked }));
                                              logAction(
                                                checked ? "CHECKLIST_ITEM_PASSED" : "CHECKLIST_ITEM_FAILED", 
-                                               "Priya Nair", 
-                                               "hr", 
+                                               "System Admin", 
+                                               "admin", 
                                                `Checklist item '${item.label}' changed to ${checked ? "Pass" : "Fail"}.`
                                              );
                                           }}
@@ -1157,8 +1156,8 @@ export default function CaseDetailsPage({
                       <CardContent className="space-y-6 pt-4">
                          {[
                            { 
-                             name: "Priya Nair", 
-                             role: "HR Specialist", 
+                             name: "System Admin", 
+                             role: "Benefits Admin", 
                              time: "Apr 16, 2026, 2:45 pm", 
                              initials: "PN",
                              color: "blue",
@@ -1170,11 +1169,11 @@ export default function CaseDetailsPage({
                              time: "Apr 17, 2026, 8:00 pm", 
                              initials: "DJ",
                              color: "emerald",
-                             text: "Maria is an outstanding team member and this course directly supports her role as charge nurse. I fully support this application. Pending HR clearance of transcript." 
+                             text: "Maria is an outstanding team member and this course directly supports her role as charge nurse. I fully support this application. Pending Admin clearance of transcript." 
                            },
                            { 
-                             name: "Priya Nair", 
-                             role: "HR Specialist", 
+                             name: "System Admin", 
+                             role: "Benefits Admin", 
                              time: "Apr 22, 2026, 4:30 pm", 
                              initials: "PN",
                              color: "blue",

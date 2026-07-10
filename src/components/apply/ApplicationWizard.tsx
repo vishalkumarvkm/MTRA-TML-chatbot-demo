@@ -562,10 +562,9 @@ function Step4CourseDetails({
               {index > 0 && (
                 <Button
                   type="button"
-                  variant="destructive"
                   size="sm"
                   onClick={() => removeCourse(course.id, index)}
-                  className="h-7 px-2.5 text-xs font-semibold rounded-md font-body"
+                  className="h-7 px-2.5 text-xs font-semibold rounded-md font-body bg-blue-600 hover:bg-blue-700 text-white border-none shadow-none"
                 >
                   Remove
                 </Button>
@@ -730,7 +729,7 @@ function Step4CourseDetails({
           <AlertDialogFooter>
             <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-body"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-body"
               onClick={() => {
                 if (courseToRemove) {
                   const updated = courses.filter((c) => c.id !== courseToRemove.id);

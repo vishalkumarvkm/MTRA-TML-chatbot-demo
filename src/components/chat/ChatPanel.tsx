@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bot, Send, Sparkles, User, X, Trash2 } from "lucide-react";
+import { Bot, Send, Sparkles, User, X } from "lucide-react";
 import type { ChatMessage } from "@/types";
 
 export function ChatPanel() {
@@ -87,26 +87,10 @@ export function ChatPanel() {
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-display text-[13px] font-semibold text-foreground">{persona.name}</span>
-              <Badge variant="outline" className="text-[8px] h-3.5 px-1 border-primary/30 text-primary uppercase font-bold tracking-wider">
-                {persona.role}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse" />
-              <span className="text-[10px] text-muted-foreground font-medium">System Online</span>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-9 w-9 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors"
-            onClick={() => useAppStore.getState().clearChat()}
-            title="Clear history"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
           <Button 
             variant="ghost" 
             size="icon" 
