@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: 'Lora', serif;
+    --font-body: 'Source Sans 3', Arial, sans-serif;
+    --font-mono: "Geist Mono";
+    --radius: 0.625rem;
+
+    --brand-blue: #003769;
+    --brand-teal: #008573;
+    --brand-black: #1A1A1A;
+    --brand-white: #ffffff;
+    --brand-lightblue: #e6f0f5;
+    --brand-mint: #acd3c0;
+    --brand-lightblue2: #94c5e3;
+    --brand-grey: #e6e6e6;
+
+    --background: #ffffff;
+    --foreground: #1A1A1A;
+    --card: #ffffff;
+    --card-foreground: #1A1A1A;
+    --popover: #ffffff;
+    --popover-foreground: #1A1A1A;
+
+    --primary: #003769;
+    --primary-foreground: #ffffff;
+
+    --secondary: #008573;
+    --secondary-foreground: #ffffff;
+    --muted: #e6f0f5;
+    --muted-foreground: #003769;
+
+    --accent: #acd3c0;
+    --accent-foreground: #008573;
+
+    --destructive: #1A1A1A;
+    --destructive-foreground: #ffffff;
+
+    --border: #e6e6e6;
+    --input: #e6e6e6;
+    --ring: #008573;
+
+    --chart-1: #003769;
+    --chart-2: #008573;
+    --chart-3: #94c5e3;
+    --chart-4: #acd3c0;
+    --chart-5: #e6e6e6;
+
+    --sidebar: #ffffff;
+    --sidebar-foreground: #1A1A1A;
+    --sidebar-primary: #003769;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e6f0f5;
+    --sidebar-accent-foreground: #003769;
+    --sidebar-border: #e6e6e6;
+    --sidebar-ring: #008573;
+
+    --success: #acd3c0;
+    --warning: #94c5e3;
+    --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px
+      rgba(0, 0, 0, 0.04);
+  }
+
+  .dark {
+    --success: #acd3c0;
+    --warning: #94c5e3;
+    --background: #1A1A1A;
+    --foreground: #ffffff;
+    --card: #1A1A1A;
+    --card-foreground: #ffffff;
+    --popover: #1A1A1A;
+    --popover-foreground: #ffffff;
+
+    --primary: #94c5e3;
+    --primary-foreground: #1A1A1A;
+
+    --secondary: #acd3c0;
+    --secondary-foreground: #1A1A1A;
+    --muted: #2d2d2d;
+    --muted-foreground: #94c5e3;
+
+    --accent: #008573;
+    --accent-foreground: #ffffff;
+
+    --border: #333333;
+    --input: #333333;
+    --ring: #94c5e3;
+
+    --chart-1: #94c5e3;
+    --chart-2: #acd3c0;
+    --chart-3: #008573;
+    --chart-4: #e6f0f5;
+    --chart-5: #e6e6e6;
+
+    --sidebar: #1A1A1A;
+    --sidebar-foreground: #ffffff;
+    --sidebar-primary: #94c5e3;
+    --sidebar-primary-foreground: #1A1A1A;
+    --sidebar-accent: #222222;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #333333;
+    --sidebar-ring: #94c5e3;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  /* HealthyME Typography Constraints (GBL-01) */
+  h1 {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 600;
+    text-transform: none;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 600;
+    text-transform: none;
+  }
+  h3 {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: none;
+  }
+  body, p, span, div, input, select, textarea, label, td, th {
+    font-family: var(--font-body);
+  }
+  button, .btn, [role="button"], a.button {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: none !important; /* Force Sentence case, prevent ALL CAPS on buttons */
+  }
+  /* Font weights mapping: 400, 600, 700 only */
+  .font-light, .font-thin, .font-extralight {
+    font-weight: 400 !important;
+  }
+  .font-normal {
+    font-weight: 400 !important;
+  }
+  .font-medium, .font-semibold {
+    font-weight: 600 !important;
+  }
+  .font-bold, .font-extrabold, .font-black {
+    font-weight: 700 !important;
+  }
+  /* Minimum font size: 9px. No text below this. */
+  .text-\[8px\], .text-\[7px\], .text-\[6px\], .text-xxs {
+    font-size: 9px !important;
+  }
+  /* Section labels: 10px/Fakt/700/UPPERCASE */
+  p[class*="uppercase"][class*="text-muted-foreground"],
+  span[class*="uppercase"][class*="text-muted-foreground"],
+  div[class*="uppercase"][class*="text-muted-foreground"],
+  span[class*="uppercase"][class*="text-slate-400"],
+  p[class*="uppercase"][class*="text-slate-400"],
+  div[class*="uppercase"][class*="text-slate-400"] {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+  }
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-display: swap;
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .bg-gradient-mesh {
+    background-color: #ffffff;
+    background-image: 
+      radial-gradient(ellipse at 0% 0%, rgba(172, 211, 192, 0.35) 0%, rgba(255, 255, 255, 0) 50%),
+      radial-gradient(ellipse at 100% 0%, rgba(230, 240, 245, 0.85) 0%, rgba(255, 255, 255, 0) 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(148, 197, 227, 0.25) 0%, rgba(255, 255, 255, 0) 60%);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .bg-brand-mesh {
+    background-color: #003769;
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(230, 240, 245, 0.65) 0%, rgba(0, 55, 105, 0) 60%),
+      radial-gradient(ellipse at 100% 30%, rgba(148, 197, 227, 0.6) 0%, rgba(0, 55, 105, 0) 60%),
+      radial-gradient(ellipse at 0% 100%, rgba(0, 37, 74, 0.6) 0%, rgba(0, 55, 105, 0) 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(148, 197, 227, 0.5) 0%, rgba(0, 55, 105, 0) 60%);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 55, 105, 0.08);
+  }
+}
+
+/* Hide placeholders globally on focus */
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
