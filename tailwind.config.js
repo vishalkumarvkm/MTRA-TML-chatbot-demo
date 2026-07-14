@@ -288,11 +288,11 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-body)", "sans-serif"],
-        serif: ["var(--font-display)", "serif"],
-        display: ["var(--font-display)", "serif"],
-        body: ["var(--font-body)", "sans-serif"],
-        mono: ["var(--font-mono)", "monospace"],
+        sans: ["Arial", "sans-serif"],
+        serif: ["'Times New Roman'", "Times", "serif"],
+        display: ["'Times New Roman'", "Times", "serif"],
+        body: ["Arial", "sans-serif"],
+        mono: ["Arial", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

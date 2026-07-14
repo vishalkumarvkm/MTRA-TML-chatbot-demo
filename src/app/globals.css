@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap');
+/* HealthyME Brand Typography — Leitura (serif) + Fakt (sans-serif) */
+/* Fallbacks: Times New Roman (serif) / Arial (sans-serif) per brand guidelines */
 
 @tailwind base;
 @tailwind components;
@@ -6,9 +7,9 @@
 
 @layer base {
   :root {
-    --font-display: 'Lora', serif;
-    --font-body: 'Source Sans 3', Arial, sans-serif;
-    --font-mono: "Geist Mono";
+    --font-display: 'Times New Roman', Times, serif;
+    --font-body: Arial, Helvetica, sans-serif;
+    --font-mono: Arial, sans-serif;
     --radius: 0.625rem;
 
     --brand-blue: #003769;
@@ -170,24 +171,6 @@
     font-weight: 700 !important;
     text-transform: uppercase !important;
   }
-}
-
-@font-face {
-  font-family: "Space Grotesk";
-  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "General Sans";
-  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Geist Mono";
-  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
-  font-display: swap;
 }
 
 @layer utilities {

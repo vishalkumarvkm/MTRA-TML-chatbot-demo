@@ -60,27 +60,28 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "admin"] },
+  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "hr", "admin"] },
   { label: "Apply Now", href: "/apply", icon: FilePlus, roles: ["employee"] },
-  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "admin"] },
+  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "hr", "admin"] },
   {
     label: "Manager Approvals",
     href: "/approvals",
     icon: CheckSquare,
-    roles: ["manager", "admin"],
+    roles: ["manager", "hr", "admin"],
   },
-  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "admin"] },
-  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["admin"] },
-  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["admin"] },
+  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "hr", "admin"] },
+  { label: "HR Operations", href: "/hr-ops", icon: Settings2, roles: ["hr", "admin"] },
+  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["hr", "admin"] },
+  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["hr", "admin"] },
   { label: "Payroll Feed", href: "/payroll", icon: CreditCard, roles: ["admin"] },
   {
     label: "Case Management",
     href: "/cases/case-001",
     icon: FolderOpen,
-    roles: ["admin"],
+    roles: ["hr", "admin"],
   },
   { label: "Policy Admin", href: "/admin/policy", icon: Settings, roles: ["admin"] },
-  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "admin"] },
+  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "hr", "admin"] },
 ];
 
 interface LayoutProps {
@@ -123,10 +124,10 @@ export function Layout({
       }
 
       // Find current item's required roles
-      const activeItem = NAV_ITEMS.find((item) => 
+      const activeItem = NAV_ITEMS.find((item) =>
         pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"))
       );
-      
+
       if (activeItem?.roles) {
         if (!currentUser || !activeItem.roles.includes(currentUser.role)) {
           console.warn("Unauthorized access attempt. Redirecting...");
@@ -204,6 +205,7 @@ export function Layout({
     const map: Record<string, string> = {
       employee: "Employee",
       manager: "Manager",
+      hr: "HR Specialist",
       admin: "Administrator",
     };
     return map[role] ?? role;
@@ -309,8 +311,8 @@ export function Layout({
 
       {/* Welcome Banner (Overview page only) */}
       {pathname === "/" && (
-        <div 
-          className="w-full bg-brand-mesh flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 sm:px-12 py-6 sm:py-8 flex-shrink-0 border-b border-border"
+        <div
+          className="bg-[radial-gradient(ellipse_28%_260%_at_6%_55%,#1d6b74_0%,transparent_70%),radial-gradient(ellipse_30%_240%_at_22%_65%,#2d8a8f_0%,transparent_65%),radial-gradient(ellipse_34%_260%_at_58%_60%,#6fb0d6_0%,transparent_60%),radial-gradient(ellipse_28%_240%_at_94%_55%,#b9d3e6_0%,transparent_60%),linear-gradient(90deg,#1d6b74,#429ea6,#77b0d9,#d9e8f2)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 sm:px-12 py-6 sm:py-8 flex-shrink-0 border-b border-border"
           data-ocid="layout.welcome_banner"
         >
           <h1 className="text-white font-display font-medium text-xl sm:text-2xl md:text-3xl tracking-wide text-left">
@@ -318,7 +320,7 @@ export function Layout({
           </h1>
           <Button
             onClick={() => router.push("/apply")}
-            className="rounded-full bg-white text-primary hover:bg-white/95 font-bold px-6 py-2.5 sm:py-3.5 shadow-sm shrink-0 w-full sm:w-auto text-center justify-center"
+            className="rounded-full bg-white text-[#003769] hover:bg-white/95 font-bold px-6 py-2.5 sm:py-3.5 shadow-sm shrink-0 w-full sm:w-auto text-center justify-center"
             data-ocid="layout.quick_apply_button"
           >
             Apply Now
@@ -333,7 +335,7 @@ export function Layout({
       )}>
         {/* Sidebar Overlay for mobile */}
         {!sidebarCollapsed && isMobile && (
-          <div 
+          <div
             className="fixed inset-0 z-20 bg-background/80 backdrop-blur-sm lg:hidden mt-[176px]"
             onClick={toggleSidebar}
           />
@@ -357,7 +359,7 @@ export function Layout({
                 pathname === item.href ||
                 (item.href !== "/" &&
                   (pathname?.startsWith(item.href + "/") ||
-                   (item.href.split("/")[1] === pathname?.split("/")[1])));
+                    (item.href.split("/")[1] === pathname?.split("/")[1])));
               return (
                 <Link
                   key={item.href}
@@ -418,7 +420,7 @@ export function Layout({
         <main
           className={cn(
             "flex-1 bg-white flex flex-col min-w-0",
-            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden",
+            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto xl:overflow-hidden",
           )}
           data-ocid="main_content"
         >
@@ -432,11 +434,10 @@ export function Layout({
             )}>
               {children}
             </div>
-            {!disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
+            {pathname !== "/apply" && <FooterDisclaimer />}
           </div>
-          {disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
         </main>
-        
+
         {/* Global AI Chat Agent */}
         <ProactiveAlert />
         <ChatButton />
@@ -455,7 +456,7 @@ function FooterDisclaimer() {
           backgroundColor: "#F59E0B",
           color: "#003769",
           padding: "6px 12px",
-          fontFamily: '"Fakt", Arial, sans-serif',
+          fontFamily: 'Arial, sans-serif',
           fontWeight: 600,
         }}
       >

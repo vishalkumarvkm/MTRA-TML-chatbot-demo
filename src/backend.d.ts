@@ -88,7 +88,7 @@ export interface CaseItem {
     submittedDate: Timestamp;
     status: ApplicationStatus;
     employeeName: string;
-    assignedAdmin: string;
+    assignedHR: string;
     applicationId: ApplicationId;
     escalated: boolean;
     dueDate: Timestamp;

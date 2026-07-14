@@ -21,7 +21,7 @@ export type SlaStatus = "OnTrack" | "AtRisk" | "Overdue";
 
 export type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Escalated" | "Expired";
 
-export type UserRole = "employee" | "manager" | "admin";
+export type UserRole = "employee" | "manager" | "hr" | "admin";
 
 export interface Document {
   id: string;
@@ -90,7 +90,7 @@ export interface CaseItem {
   dueDate: string;
   slaStatus: SlaStatus;
   aiConfidence: number;
-  assignedAdmin: string;
+  assignedHR: string;
   escalated: boolean;
   amount: number;
   institution: string;
@@ -270,14 +270,10 @@ export interface ChatMessage {
 export interface SupportCaseMessage {
   id: string;
   senderName: string;
-  senderRole: "employee" | "manager" | "admin" | "system";
+  senderRole: "employee" | "manager" | "hr" | "system";
   message: string;
   timestamp: string;
   isInternal?: boolean;
-  attachment?: {
-    name: string;
-    size: string;
-  };
 }
 
 export interface SupportCase {
@@ -300,6 +296,4 @@ export interface SupportCase {
   resolutionNotes?: string;
   reopenedFlag?: boolean;
   reopenedDate?: string;
-  priority?: "Low" | "Medium" | "High";
-  unread?: boolean;
 }

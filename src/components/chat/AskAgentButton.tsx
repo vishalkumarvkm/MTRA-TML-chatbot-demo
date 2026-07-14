@@ -2,6 +2,8 @@
 
 import { useAppStore } from "@/store/appStore";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles } from "lucide-react";
 
 interface AskAgentButtonProps {
   className?: string;
@@ -18,20 +20,19 @@ export function AskAgentButton({ className, size = "md" }: AskAgentButtonProps) 
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
         className={cn(
-          "relative rounded-full shadow-[0_4px_12px_rgba(0,55,105,0.3)] flex flex-col items-center justify-center transition-all duration-300 pointer-events-auto active:scale-95 group",
-          "bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 w-16 h-16 border border-white/10",
+          "relative rounded-full shadow-[0_4px_12px_rgba(0,55,105,0.3)] flex items-center gap-1.5 transition-all duration-300 pointer-events-auto active:scale-95 group",
+          "bg-[#003769] text-white hover:bg-[#00254a] hover:-translate-y-0.5 px-3 h-8 text-[10px] font-bold font-body",
           className
         )}
         title="Open HealthyME Navigator"
         data-ocid="ask_agent_button"
       >
-        <span className="text-[8px] font-bold tracking-wider leading-tight text-center uppercase block">
-          HealthyME<br /><span className="text-[7px] opacity-80">Navigator</span>
-        </span>
+        <Sparkles className="text-white w-3.5 h-3.5" />
+        <span>HealthyME Navigator</span>
         {unreadChatCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-destructive text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-white shadow-md">
+          <Badge className="bg-destructive text-white border-slate-900 flex items-center justify-center p-0 font-bold shadow-lg min-w-[14px] h-[14px] text-[8px] rounded-full">
             {unreadChatCount}
-          </span>
+          </Badge>
         )}
       </button>
     );
@@ -41,22 +42,21 @@ export function AskAgentButton({ className, size = "md" }: AskAgentButtonProps) 
     <button
       onClick={() => setIsChatOpen(!isChatOpen)}
       className={cn(
-        "relative rounded-full shadow-[0_8px_30px_rgba(0,55,105,0.4)] flex flex-col items-center justify-center transition-all duration-300 pointer-events-auto active:scale-95 group",
-        "bg-primary text-white hover:bg-primary/95 hover:-translate-y-1 w-20 h-20 border-2 border-white/20",
+        "relative rounded-full shadow-[0_6px_20px_rgba(0,55,105,0.35)] flex items-center gap-2 transition-all duration-300 pointer-events-auto active:scale-95 group",
+        "bg-[#003769] text-white hover:bg-[#00254a] hover:-translate-y-0.5 px-5 h-11 text-xs font-bold font-body",
         className
       )}
       title="Open HealthyME Navigator"
       data-ocid="ask_agent_button"
     >
-      <span className="text-[10px] font-bold tracking-wider leading-tight text-center uppercase block">
-        HealthyME<br /><span className="text-[8.5px] opacity-90">Navigator</span>
-      </span>
+      <Sparkles className="text-white w-4 h-4 animate-pulse group-hover:scale-110 transition-transform" />
+      <span>HealthyME Navigator</span>
       {unreadChatCount > 0 && (
-        <span 
-          className="absolute -top-1 -right-1 bg-destructive text-white border-white flex items-center justify-center p-0 font-bold shadow-lg w-5 h-5 text-[9px] rounded-full border"
+        <Badge 
+          className="bg-destructive text-white border-slate-900 flex items-center justify-center p-0 font-bold shadow-lg min-w-[20px] h-[20px] text-[10px] rounded-full border"
         >
           {unreadChatCount > 9 ? "9+" : unreadChatCount}
-        </span>
+        </Badge>
       )}
     </button>
   );
