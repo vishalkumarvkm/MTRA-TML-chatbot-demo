@@ -110,7 +110,7 @@ export default function HROpsPage() {
       (c) =>
          c.employeeName.toLowerCase().includes(search.toLowerCase()) ||
          c.id.toLowerCase().includes(search.toLowerCase()) ||
-         c.assignedHR.toLowerCase().includes(search.toLowerCase())
+         c.assignedAdmin.toLowerCase().includes(search.toLowerCase())
    );
 
    return (

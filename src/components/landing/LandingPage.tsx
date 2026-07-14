@@ -2,12 +2,9 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAppStore } from "@/store/appStore";
-import { mockAuthUsers } from "@/data/mockData";
+import Link from "next/link";
 
 export default function LandingPage() {
-  const { loginAs } = useAppStore();
-
   return (
     <main className="flex flex-col min-h-screen bg-gradient-mesh overflow-hidden relative">
       {/* Main Content Section */}
@@ -27,13 +24,13 @@ export default function LandingPage() {
           </div>
           
           <div className="flex justify-center">
-            <button 
-              onClick={() => loginAs(mockAuthUsers[0])}
-              className="inline-flex items-center justify-center gap-2 bg-brand-blue text-white px-10 py-4 rounded-xl font-bold text-[16px] hover:bg-[#002547] transition-all shadow-lg hover:shadow-xl active:scale-95 group w-full sm:w-auto"
+            <Link 
+              href="/login"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-10 py-4 rounded-xl font-bold text-[16px] hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl active:scale-95 group w-full sm:w-auto"
             >
               Login to Platform
               <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </button>
+            </Link>
           </div>
         </motion.div>
 
@@ -60,7 +57,7 @@ function FooterDisclaimer() {
           backgroundColor: "#F59E0B",
           color: "#003769",
           padding: "6px 12px",
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: '"Fakt", Arial, sans-serif',
           fontWeight: 600,
         }}
       >

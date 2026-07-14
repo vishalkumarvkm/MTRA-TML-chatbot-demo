@@ -60,28 +60,27 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "hr", "admin"] },
+  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "admin"] },
   { label: "Apply Now", href: "/apply", icon: FilePlus, roles: ["employee"] },
-  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "hr", "admin"] },
+  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "admin"] },
   {
     label: "Manager Approvals",
     href: "/approvals",
     icon: CheckSquare,
-    roles: ["manager", "hr", "admin"],
+    roles: ["manager", "admin"],
   },
-  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "hr", "admin"] },
-  { label: "HR Operations", href: "/hr-ops", icon: Settings2, roles: ["hr", "admin"] },
-  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["hr", "admin"] },
-  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["hr", "admin"] },
+  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "admin"] },
+  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["admin"] },
+  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["admin"] },
   { label: "Payroll Feed", href: "/payroll", icon: CreditCard, roles: ["admin"] },
   {
     label: "Case Management",
     href: "/cases/case-001",
     icon: FolderOpen,
-    roles: ["hr", "admin"],
+    roles: ["admin"],
   },
   { label: "Policy Admin", href: "/admin/policy", icon: Settings, roles: ["admin"] },
-  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "hr", "admin"] },
+  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "admin"] },
 ];
 
 interface LayoutProps {
@@ -124,10 +123,10 @@ export function Layout({
       }
 
       // Find current item's required roles
-      const activeItem = NAV_ITEMS.find((item) =>
+      const activeItem = NAV_ITEMS.find((item) => 
         pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"))
       );
-
+      
       if (activeItem?.roles) {
         if (!currentUser || !activeItem.roles.includes(currentUser.role)) {
           console.warn("Unauthorized access attempt. Redirecting...");
@@ -205,7 +204,6 @@ export function Layout({
     const map: Record<string, string> = {
       employee: "Employee",
       manager: "Manager",
-      hr: "HR Specialist",
       admin: "Administrator",
     };
     return map[role] ?? role;
@@ -335,7 +333,7 @@ export function Layout({
       )}>
         {/* Sidebar Overlay for mobile */}
         {!sidebarCollapsed && isMobile && (
-          <div
+          <div 
             className="fixed inset-0 z-20 bg-background/80 backdrop-blur-sm lg:hidden mt-[176px]"
             onClick={toggleSidebar}
           />
@@ -359,7 +357,7 @@ export function Layout({
                 pathname === item.href ||
                 (item.href !== "/" &&
                   (pathname?.startsWith(item.href + "/") ||
-                    (item.href.split("/")[1] === pathname?.split("/")[1])));
+                   (item.href.split("/")[1] === pathname?.split("/")[1])));
               return (
                 <Link
                   key={item.href}
@@ -420,7 +418,7 @@ export function Layout({
         <main
           className={cn(
             "flex-1 bg-white flex flex-col min-w-0",
-            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto xl:overflow-hidden",
+            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden",
           )}
           data-ocid="main_content"
         >
@@ -434,10 +432,11 @@ export function Layout({
             )}>
               {children}
             </div>
-            {pathname !== "/apply" && <FooterDisclaimer />}
+            {!disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
           </div>
+          {disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
         </main>
-
+        
         {/* Global AI Chat Agent */}
         <ProactiveAlert />
         <ChatButton />
@@ -456,7 +455,7 @@ function FooterDisclaimer() {
           backgroundColor: "#F59E0B",
           color: "#003769",
           padding: "6px 12px",
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: '"Fakt", Arial, sans-serif',
           fontWeight: 600,
         }}
       >

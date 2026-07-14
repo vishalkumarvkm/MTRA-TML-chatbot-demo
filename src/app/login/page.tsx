@@ -6,14 +6,15 @@ import { useAppStore } from "@/store/appStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
+import { Button } from "@/components/ui/button";
 
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTarget = searchParams?.get("redirect") || "/";
   const { loginAs, isAuthenticated } = useAppStore();
-  const [email, setEmail] = useState("employee@montefiore.org");
-  const [password, setPassword] = useState("montefiore01");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,20 +32,43 @@ function LoginPageContent() {
       setError("Please enter your email address.");
       return;
     }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
 
     setLoading(true);
     setError("");
 
     // Simulate auth delay
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 800));
+
+    // Validate email and password combination for core roles
+    const expectedPasswords: Record<string, string> = {
+      "employee@montefiore.org": "montefiore01",
+      "manager@montefiore.org": "montefiore02",
+      "admin@montefiore.org": "montefiore04",
+    };
+
+    const userEmailKey = email.toLowerCase();
+    if (!expectedPasswords[userEmailKey] || password !== expectedPasswords[userEmailKey]) {
+      setError("Invalid email or password.");
+      setLoading(false);
+      return;
+    }
 
     // Find user by email or assign default
     const matchedUser = mockAuthUsers.find(
       (u) => u.email.toLowerCase() === email.toLowerCase()
-    ) ?? mockAuthUsers[0];
+    );
 
-    loginAs(matchedUser);
-    router.push(redirectTarget);
+    if (matchedUser) {
+      loginAs(matchedUser);
+      router.push(redirectTarget);
+    } else {
+      setError("Invalid email or password.");
+      setLoading(false);
+    }
   };
 
   if (isAuthenticated) {
@@ -113,10 +137,10 @@ function LoginPageContent() {
           </div>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full h-11 mt-2 bg-brand-blue hover:bg-brand-blue/90 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-brand-blue/20 transition-all disabled:opacity-50"
+          className="w-full h-11 mt-2 rounded-xl text-sm font-bold shadow-md transition-all"
           data-ocid="login.submit_button"
         >
           {loading ? (
@@ -126,7 +150,7 @@ function LoginPageContent() {
               Sign In <ArrowRight className="w-4 h-4" />
             </>
           )}
-        </button>
+        </Button>
       </form>
 
 

@@ -71,7 +71,7 @@ export interface CaseItem {
   'submittedDate' : Timestamp,
   'status' : ApplicationStatus,
   'employeeName' : string,
-  'assignedHR' : string,
+  'assignedAdmin' : string,
   'applicationId' : ApplicationId,
   'escalated' : boolean,
   'dueDate' : Timestamp,
