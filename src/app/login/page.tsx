@@ -1,12 +1,12 @@
 "use client";
 
 import { AuthLayout } from "@/components/layout/AuthLayout";
+import { Button } from "@/components/ui/button";
 import { mockAuthUsers } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
+import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
-import { useState, useEffect, Suspense } from "react";
-import { Button } from "@/components/ui/button";
+import { Suspense, useEffect, useState } from "react";
 
 function LoginPageContent() {
   const router = useRouter();
@@ -51,7 +51,10 @@ function LoginPageContent() {
     };
 
     const userEmailKey = email.toLowerCase();
-    if (!expectedPasswords[userEmailKey] || password !== expectedPasswords[userEmailKey]) {
+    if (
+      !expectedPasswords[userEmailKey] ||
+      password !== expectedPasswords[userEmailKey]
+    ) {
       setError("Invalid email or password.");
       setLoading(false);
       return;
@@ -59,7 +62,7 @@ function LoginPageContent() {
 
     // Find user by email or assign default
     const matchedUser = mockAuthUsers.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
+      (u) => u.email.toLowerCase() === email.toLowerCase(),
     );
 
     if (matchedUser) {
@@ -95,7 +98,9 @@ function LoginPageContent() {
         )}
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-foreground block">Email Address</label>
+          <label className="text-xs font-bold text-foreground block">
+            Email Address
+          </label>
           <div className="relative">
             <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -111,7 +116,9 @@ function LoginPageContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-foreground block">Password</label>
+          <label className="text-xs font-bold text-foreground block">
+            Password
+          </label>
           <div className="relative">
             <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -152,22 +159,24 @@ function LoginPageContent() {
           )}
         </Button>
       </form>
-
-
     </AuthLayout>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <span className="text-sm text-muted-foreground">Loading login portal...</span>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <span className="text-sm text-muted-foreground">
+              Loading login portal...
+            </span>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <LoginPageContent />
     </Suspense>
   );

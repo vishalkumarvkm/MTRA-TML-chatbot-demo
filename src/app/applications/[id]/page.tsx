@@ -1,13 +1,12 @@
 "use client";
 
 import { Layout } from "@/components/layout/Layout";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { AIConfidenceBadge } from "@/components/ui/AIConfidenceBadge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockApplications } from "@/data/mockData";
-import { use } from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -19,6 +18,7 @@ import {
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { use } from "react";
 
 export default function CaseDetailsPage({
   params,
@@ -46,7 +46,10 @@ export default function CaseDetailsPage({
         { label: id },
       ]}
     >
-      <div className="p-6 space-y-6 max-w-6xl mx-auto" data-ocid="case_details.page">
+      <div
+        className="p-6 space-y-6 max-w-6xl mx-auto"
+        data-ocid="case_details.page"
+      >
         <div className="flex items-center gap-4 mb-2">
           <Button
             variant="ghost"
@@ -131,7 +134,11 @@ export default function CaseDetailsPage({
                         </div>
                         <div className="flex items-center gap-3">
                           <AIConfidenceBadge confidence={98} size="sm" />
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
                             <Download className="w-4 h-4" />
                           </Button>
                         </div>

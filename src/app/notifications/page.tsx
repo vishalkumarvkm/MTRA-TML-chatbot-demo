@@ -1,39 +1,63 @@
 "use client";
 
 import { Layout } from "@/components/layout/Layout";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { mockNotifications, mockEmployees } from "@/data/mockData";
+import { mockEmployees, mockNotifications } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
 import {
-  Bell,
-  CheckCircle2,
-  Clock,
-  Search,
   AlertTriangle,
+  Bell,
   BookOpen,
-  Info,
+  CheckCircle2,
   ChevronRight,
+  Clock,
+  History,
+  Info,
   Mail,
   MessageSquare,
-  Smartphone,
-  Send,
   Paperclip,
-  History,
+  Search,
+  Send,
+  Smartphone,
 } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 const NOTIF_ICONS: Record<string, any> = {
-  approval: { icon: CheckCircle2, color: "text-emerald-500 border-emerald-200", bg: "bg-emerald-500/10 dark:bg-emerald-500/20" },
-  deadline: { icon: AlertTriangle, color: "text-amber-500 border-amber-200", bg: "bg-amber-500/10 dark:bg-amber-500/20" },
-  status_change: { icon: Clock, color: "text-primary border-primary/20", bg: "bg-primary/10 dark:bg-primary/20" },
-  sla: { icon: AlertTriangle, color: "text-destructive border-destructive/20", bg: "bg-destructive/10 dark:bg-destructive/20" },
-  document: { icon: BookOpen, color: "text-blue-500 border-blue-200", bg: "bg-blue-500/10 dark:bg-blue-500/20" },
-  system: { icon: Info, color: "text-muted-foreground border-border", bg: "bg-muted" },
+  approval: {
+    icon: CheckCircle2,
+    color: "text-emerald-500 border-emerald-200",
+    bg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+  },
+  deadline: {
+    icon: AlertTriangle,
+    color: "text-amber-500 border-amber-200",
+    bg: "bg-amber-500/10 dark:bg-amber-500/20",
+  },
+  status_change: {
+    icon: Clock,
+    color: "text-primary border-primary/20",
+    bg: "bg-primary/10 dark:bg-primary/20",
+  },
+  sla: {
+    icon: AlertTriangle,
+    color: "text-destructive border-destructive/20",
+    bg: "bg-destructive/10 dark:bg-destructive/20",
+  },
+  document: {
+    icon: BookOpen,
+    color: "text-blue-500 border-blue-200",
+    bg: "bg-blue-500/10 dark:bg-blue-500/20",
+  },
+  system: {
+    icon: Info,
+    color: "text-muted-foreground border-border",
+    bg: "bg-muted",
+  },
 };
 
 interface Message {
@@ -58,7 +82,9 @@ export default function NotificationCenter() {
   const [search, setSearch] = useState("");
   const [replyText, setReplyText] = useState("");
 
-  const employee = mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ?? mockEmployees[0];
+  const employee =
+    mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ??
+    mockEmployees[0];
 
   const [threads, setThreads] = useState<Thread[]>([
     {
@@ -71,31 +97,35 @@ export default function NotificationCenter() {
           id: "m1",
           senderName: "System",
           senderRole: "system",
-          message: "Application MTRA-2026-0041 for Fordham University has been successfully submitted and is under review.",
+          message:
+            "Application MTRA-2026-0041 for Fordham University has been successfully submitted and is under review.",
           timestamp: "2026-04-15T09:00:00Z",
         },
         {
           id: "m2",
           senderName: "System Admin",
           senderRole: "admin",
-          message: "Hi Maria, I am reviewing your tuition reimbursement request for Fordham. I noticed the uploaded transcript does not clearly indicate your enrollment status (full-time vs part-time) or the grading scale. Could you please clarify or upload the supplementary page?",
+          message:
+            "Hi Maria, I am reviewing your tuition reimbursement request for Fordham. I noticed the uploaded transcript does not clearly indicate your enrollment status (full-time vs part-time) or the grading scale. Could you please clarify or upload the supplementary page?",
           timestamp: "2026-04-16T14:30:00Z",
         },
         {
           id: "m3",
           senderName: "Maria Santos",
           senderRole: "employee",
-          message: "Hi Admin, I'm registered for 6 credits this semester, which is part-time for my program. I've just uploaded the syllabus and the official CUNY Lehman grading scale page to the document section. Please let me know if that works!",
+          message:
+            "Hi Admin, I'm registered for 6 credits this semester, which is part-time for my program. I've just uploaded the syllabus and the official CUNY Lehman grading scale page to the document section. Please let me know if that works!",
           timestamp: "2026-04-17T10:15:00Z",
         },
         {
           id: "m4",
           senderName: "System Admin",
           senderRole: "admin",
-          message: "Thanks, Maria! I see the grading scale document now. However, to finalize this, we also need the signed Service Agreement. Service agreements apply to all NYSNA nurses receiving tuition assistance. Please sign it so we can progress the application.",
+          message:
+            "Thanks, Maria! I see the grading scale document now. However, to finalize this, we also need the signed Service Agreement. Service agreements apply to all NYSNA nurses receiving tuition assistance. Please sign it so we can progress the application.",
           timestamp: "2026-04-20T08:00:00Z",
-        }
-      ]
+        },
+      ],
     },
     {
       id: "thread-002",
@@ -114,17 +144,19 @@ export default function NotificationCenter() {
           id: "t2-m2",
           senderName: "System",
           senderRole: "system",
-          message: "Application Approved. CME Reimbursement of $750 approved by Dr. James Okonkwo.",
+          message:
+            "Application Approved. CME Reimbursement of $750 approved by Dr. James Okonkwo.",
           timestamp: "2026-03-12T09:30:00Z",
         },
         {
           id: "t2-m3",
           senderName: "System Admin",
           senderRole: "admin",
-          message: "Hi Maria, your CME conference reimbursement has been approved and processed. It will be posted on your next bi-weekly payroll deposit.",
+          message:
+            "Hi Maria, your CME conference reimbursement has been approved and processed. It will be posted on your next bi-weekly payroll deposit.",
           timestamp: "2026-03-12T10:00:00Z",
-        }
-      ]
+        },
+      ],
     },
     {
       id: "thread-003",
@@ -135,49 +167,58 @@ export default function NotificationCenter() {
           id: "t3-m1",
           senderName: "Maria Santos",
           senderRole: "employee",
-          message: "Hi Benefits Team, I had a question about the IRS Section 127 limit. Since I am a NYSNA nurse and my credits are fully covered, will the reimbursement exceed $5,250 this year? If so, is the excess amount taxed as payroll income?",
+          message:
+            "Hi Benefits Team, I had a question about the IRS Section 127 limit. Since I am a NYSNA nurse and my credits are fully covered, will the reimbursement exceed $5,250 this year? If so, is the excess amount taxed as payroll income?",
           timestamp: "2026-04-29T11:12:00Z",
         },
         {
           id: "t3-m2",
           senderName: "Derek Chen",
           senderRole: "admin",
-          message: "Hi Maria, yes. Under IRS Section 127, any employer-provided educational assistance exceeding $5,250 in a calendar year is considered taxable wages and is subject to standard withholding. Our payroll system automatically flags and calculates this once approvals cross the limit.",
+          message:
+            "Hi Maria, yes. Under IRS Section 127, any employer-provided educational assistance exceeding $5,250 in a calendar year is considered taxable wages and is subject to standard withholding. Our payroll system automatically flags and calculates this once approvals cross the limit.",
           timestamp: "2026-04-30T10:00:00Z",
-        }
-      ]
-    }
+        },
+      ],
+    },
   ]);
 
   const filteredNotifs = mockNotifications.filter((n) => {
-    const matchesSearch = n.title.toLowerCase().includes(search.toLowerCase()) || 
-                          n.message.toLowerCase().includes(search.toLowerCase());
-    const matchesUser = n.userId === employee.id || currentUser?.role === 'admin';
+    const matchesSearch =
+      n.title.toLowerCase().includes(search.toLowerCase()) ||
+      n.message.toLowerCase().includes(search.toLowerCase());
+    const matchesUser =
+      n.userId === employee.id || currentUser?.role === "admin";
     return matchesSearch && matchesUser;
   });
 
   const filteredThreads = threads.filter((t) => {
-    const matchesSearch = t.subject.toLowerCase().includes(search.toLowerCase()) ||
-                          t.messages.some(m => m.message.toLowerCase().includes(search.toLowerCase()));
+    const matchesSearch =
+      t.subject.toLowerCase().includes(search.toLowerCase()) ||
+      t.messages.some((m) =>
+        m.message.toLowerCase().includes(search.toLowerCase()),
+      );
     return matchesSearch;
   });
 
   const [selectedNotifId, setSelectedNotifId] = useState<string | null>(
-    filteredNotifs.length > 0 ? filteredNotifs[0].id : null
-  );
-  
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(
-    threads.length > 0 ? threads[0].id : null
+    filteredNotifs.length > 0 ? filteredNotifs[0].id : null,
   );
 
-  const activeNotif = filteredNotifs.find(n => n.id === selectedNotifId) || filteredNotifs[0];
-  const activeThread = threads.find(t => t.id === selectedThreadId) || threads[0];
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(
+    threads.length > 0 ? threads[0].id : null,
+  );
+
+  const activeNotif =
+    filteredNotifs.find((n) => n.id === selectedNotifId) || filteredNotifs[0];
+  const activeThread =
+    threads.find((t) => t.id === selectedThreadId) || threads[0];
 
   const handleSendMessage = () => {
     if (!replyText.trim() || !selectedThreadId) return;
 
-    setThreads(prevThreads => 
-      prevThreads.map(thread => {
+    setThreads((prevThreads) =>
+      prevThreads.map((thread) => {
         if (thread.id === selectedThreadId) {
           return {
             ...thread,
@@ -189,12 +230,12 @@ export default function NotificationCenter() {
                 senderRole: "employee",
                 message: replyText,
                 timestamp: new Date().toISOString(),
-              }
-            ]
+              },
+            ],
           };
         }
         return thread;
-      })
+      }),
     );
     setReplyText("");
   };
@@ -229,14 +270,23 @@ export default function NotificationCenter() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold font-display text-foreground">Communication Hub</h1>
-            <p className="text-xs text-muted-foreground mt-1">Audit trail and official communications regarding your tuition assistance applications</p>
+            <h1 className="text-xl md:text-2xl font-bold font-display text-foreground">
+              Communication Hub
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1">
+              Audit trail and official communications regarding your tuition
+              assistance applications
+            </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button size="sm" className="h-9 px-4 font-bold text-xs">
               Mark All Read
             </Button>
-            <Button variant="outline" size="sm" className="h-9 w-9 p-0 text-primary hover:bg-primary/5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 w-9 p-0 text-primary hover:bg-primary/5"
+            >
               <History className="w-4 h-4" />
             </Button>
           </div>
@@ -299,7 +349,8 @@ export default function NotificationCenter() {
                 </div>
               ) : (
                 filteredNotifs.map((notif) => {
-                  const typeInfo = NOTIF_ICONS[notif.type] || NOTIF_ICONS.system;
+                  const typeInfo =
+                    NOTIF_ICONS[notif.type] || NOTIF_ICONS.system;
                   const NotifIcon = typeInfo.icon;
                   return (
                     <Card
@@ -312,12 +363,16 @@ export default function NotificationCenter() {
                       }`}
                     >
                       <CardContent className="p-4 flex gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${typeInfo.bg} ${typeInfo.color}`}>
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${typeInfo.bg} ${typeInfo.color}`}
+                        >
                           <NotifIcon className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start gap-2">
-                            <h3 className={`text-xs font-bold truncate ${notif.read ? "text-foreground" : "text-primary"}`}>
+                            <h3
+                              className={`text-xs font-bold truncate ${notif.read ? "text-foreground" : "text-primary"}`}
+                            >
                               {notif.title}
                             </h3>
                             {!notif.read && (
@@ -364,11 +419,16 @@ export default function NotificationCenter() {
                         )}
                       </div>
                       <p className="text-[10px] text-muted-foreground line-clamp-1">
-                        {lastMsg ? `${lastMsg.senderName}: ${lastMsg.message}` : "No messages yet"}
+                        {lastMsg
+                          ? `${lastMsg.senderName}: ${lastMsg.message}`
+                          : "No messages yet"}
                       </p>
                       <div className="flex items-center justify-between mt-3">
                         {thread.relatedAppId && (
-                          <Badge variant="outline" className="text-[8px] h-4 font-mono">
+                          <Badge
+                            variant="outline"
+                            className="text-[8px] h-4 font-mono"
+                          >
                             {thread.relatedAppId}
                           </Badge>
                         )}
@@ -391,14 +451,18 @@ export default function NotificationCenter() {
                   <div>
                     <CardHeader className="pb-3 border-b border-border flex flex-row justify-between items-start gap-4">
                       <div className="space-y-1.5">
-                        <Badge variant="outline" className="text-[9px] font-bold tracking-wider uppercase bg-muted/40">
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] font-bold tracking-wider uppercase bg-muted/40"
+                        >
                           {activeNotif.type.replace("_", " ")}
                         </Badge>
                         <CardTitle className="text-sm font-bold text-foreground">
                           {activeNotif.title}
                         </CardTitle>
                         <p className="text-[10px] text-muted-foreground">
-                          Alert Logged: {new Date(activeNotif.createdAt).toLocaleString()}
+                          Alert Logged:{" "}
+                          {new Date(activeNotif.createdAt).toLocaleString()}
                         </p>
                       </div>
                     </CardHeader>
@@ -415,27 +479,40 @@ export default function NotificationCenter() {
                           Communication Channels Sent
                         </h4>
                         <div className="flex gap-2">
-                          <Badge variant="outline" className="h-5 gap-1 text-[10px] text-muted-foreground font-medium">
-                            <Mail className="w-3 h-3 text-primary" /> Email Notification (Delivered)
+                          <Badge
+                            variant="outline"
+                            className="h-5 gap-1 text-[10px] text-muted-foreground font-medium"
+                          >
+                            <Mail className="w-3 h-3 text-primary" /> Email
+                            Notification (Delivered)
                           </Badge>
-                          <Badge variant="outline" className="h-5 gap-1 text-[10px] text-muted-foreground font-medium">
-                            <MessageSquare className="w-3 h-3 text-primary" /> In-App Portal Alert
+                          <Badge
+                            variant="outline"
+                            className="h-5 gap-1 text-[10px] text-muted-foreground font-medium"
+                          >
+                            <MessageSquare className="w-3 h-3 text-primary" />{" "}
+                            In-App Portal Alert
                           </Badge>
                           {activeNotif.priority === "high" && (
-                            <Badge variant="outline" className="h-5 gap-1 text-[10px] text-muted-foreground font-medium">
-                              <Smartphone className="w-3 h-3 text-primary" /> SMS Alert (Delivered)
+                            <Badge
+                              variant="outline"
+                              className="h-5 gap-1 text-[10px] text-muted-foreground font-medium"
+                            >
+                              <Smartphone className="w-3 h-3 text-primary" />{" "}
+                              SMS Alert (Delivered)
                             </Badge>
                           )}
                         </div>
                       </div>
                     </CardContent>
                   </div>
-                  
+
                   {activeNotif.actionUrl && (
                     <div className="p-4 bg-muted/20 border-t border-border flex justify-end">
                       <Link href={activeNotif.actionUrl} passHref>
                         <Button className="h-9 gap-1 text-xs font-bold shadow-sm">
-                          Resolve & View Request <ChevronRight className="w-4 h-4" />
+                          Resolve & View Request{" "}
+                          <ChevronRight className="w-4 h-4" />
                         </Button>
                       </Link>
                     </div>
@@ -445,7 +522,9 @@ export default function NotificationCenter() {
                 <Card className="border border-border bg-card shadow-sm h-full min-h-[450px] flex items-center justify-center">
                   <div className="text-center text-muted-foreground">
                     <Bell className="w-12 h-12 mx-auto mb-3 opacity-25" />
-                    <p className="text-sm font-medium">Select a status update to view details</p>
+                    <p className="text-sm font-medium">
+                      Select a status update to view details
+                    </p>
                   </div>
                 </Card>
               )
@@ -454,12 +533,19 @@ export default function NotificationCenter() {
                 {/* Thread Header */}
                 <div className="p-4 border-b border-border bg-muted/10 flex items-center justify-between">
                   <div className="min-w-0">
-                    <h2 className="text-xs font-bold text-foreground truncate">{activeThread.subject}</h2>
+                    <h2 className="text-xs font-bold text-foreground truncate">
+                      {activeThread.subject}
+                    </h2>
                     {activeThread.relatedAppId && (
-                      <span className="text-[10px] text-muted-foreground">Linked Application: {activeThread.relatedAppId}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        Linked Application: {activeThread.relatedAppId}
+                      </span>
                     )}
                   </div>
-                  <Badge variant="outline" className="text-[9px] uppercase border-emerald-200 bg-emerald-50 text-emerald-700 h-5">
+                  <Badge
+                    variant="outline"
+                    className="text-[9px] uppercase border-emerald-200 bg-emerald-50 text-emerald-700 h-5"
+                  >
                     Connected
                   </Badge>
                 </div>
@@ -494,7 +580,9 @@ export default function NotificationCenter() {
                           </Avatar>
                         )}
                         <div className={`space-y-1 max-w-[70%]`}>
-                          <div className={`flex items-center gap-1.5 ${isEmployee ? "justify-end" : "justify-start"}`}>
+                          <div
+                            className={`flex items-center gap-1.5 ${isEmployee ? "justify-end" : "justify-start"}`}
+                          >
                             <span className="text-[10px] font-bold text-foreground">
                               {isEmployee ? "You" : msg.senderName}
                             </span>
@@ -527,7 +615,10 @@ export default function NotificationCenter() {
                 {/* Composer */}
                 <div className="p-3 border-t border-border bg-card">
                   <div className="flex items-center gap-2 border border-border rounded-xl px-3 py-2 bg-muted/20">
-                    <button type="button" className="text-muted-foreground hover:text-foreground">
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
                       <Paperclip className="w-4 h-4" />
                     </button>
                     <Input
@@ -549,13 +640,21 @@ export default function NotificationCenter() {
                   </div>
                   <div className="flex gap-2 mt-2 font-display">
                     <button
-                      onClick={() => setReplyText("I have uploaded the requested grading scale document. Please review.")}
+                      onClick={() =>
+                        setReplyText(
+                          "I have uploaded the requested grading scale document. Please review.",
+                        )
+                      }
                       className="text-[9px] bg-muted/40 hover:bg-muted text-muted-foreground px-2 py-1 rounded border border-border transition-colors font-medium"
                     >
                       "Uploaded transcript scale"
                     </button>
                     <button
-                      onClick={() => setReplyText("I've successfully signed the service agreement via Docusign.")}
+                      onClick={() =>
+                        setReplyText(
+                          "I've successfully signed the service agreement via Docusign.",
+                        )
+                      }
                       className="text-[9px] bg-muted/40 hover:bg-muted text-muted-foreground px-2 py-1 rounded border border-border transition-colors font-medium"
                     >
                       "Signed agreement"
@@ -567,7 +666,9 @@ export default function NotificationCenter() {
               <Card className="border border-border bg-card shadow-sm h-full min-h-[500px] flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-25" />
-                  <p className="text-sm font-medium">Select a thread to view details</p>
+                  <p className="text-sm font-medium">
+                    Select a thread to view details
+                  </p>
                 </div>
               </Card>
             )}

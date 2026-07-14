@@ -2,11 +2,11 @@ import { mockAuthUsers } from "@/data/mockData";
 import type {
   ApplicationStatus,
   AuthUser,
+  ChatMessage,
   SlaStatus,
+  SupportCase,
   UserRole,
   WizardData,
-  ChatMessage,
-  SupportCase,
 } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -68,7 +68,8 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     linkedAppStatus: "PendingApproval",
     subject: "Missing Grades Transcript Upload Issue",
     category: "Document Issue",
-    description: "The system did not let me upload my Spring 2026 official transcript because of a PDF file size limit (currently 6MB). Can you please assist or increase the limit?",
+    description:
+      "The system did not let me upload my Spring 2026 official transcript because of a PDF file size limit (currently 6MB). Can you please assist or increase the limit?",
     status: "Open",
     createdDate: "2026-04-16T10:00:00Z",
     lastUpdated: "2026-04-16T10:00:00Z",
@@ -80,14 +81,15 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
         id: "msg-1",
         senderName: "Maria Santos",
         senderRole: "employee",
-        message: "The system did not let me upload my Spring 2026 official transcript because of a PDF file size limit (currently 6MB). Can you please assist or increase the limit?",
+        message:
+          "The system did not let me upload my Spring 2026 official transcript because of a PDF file size limit (currently 6MB). Can you please assist or increase the limit?",
         timestamp: "2026-04-16T10:00:00Z",
         attachment: {
           name: "Columbia_Transcript_Spring2026.pdf",
-          size: "2.4 MB"
-        }
-      }
-    ]
+          size: "2.4 MB",
+        },
+      },
+    ],
   },
   {
     id: "SUP-2026-0002",
@@ -99,7 +101,8 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     linkedAppStatus: "UnderReview",
     subject: "Eligibility status of HIT 520 Course",
     category: "Eligibility Question",
-    description: "I wanted to check if the Fordham HIT 520 course fits the job-related tuition reimbursement criteria for radiology techs. I haven't received a confirmation yet.",
+    description:
+      "I wanted to check if the Fordham HIT 520 course fits the job-related tuition reimbursement criteria for radiology techs. I haven't received a confirmation yet.",
     status: "Resolved",
     createdDate: "2026-04-21T09:00:00Z",
     lastUpdated: "2026-04-22T14:00:00Z",
@@ -111,17 +114,19 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
         id: "msg-2-1",
         senderName: "Latasha Williams",
         senderRole: "employee",
-        message: "I wanted to check if the Fordham HIT 520 course fits the job-related tuition reimbursement criteria for radiology techs. I haven't received a confirmation yet.",
+        message:
+          "I wanted to check if the Fordham HIT 520 course fits the job-related tuition reimbursement criteria for radiology techs. I haven't received a confirmation yet.",
         timestamp: "2026-04-21T09:00:00Z",
       },
       {
         id: "msg-2-2",
         senderName: "System Admin",
         senderRole: "admin",
-        message: "Hi Latasha, yes, health informatics courses are eligible for radiology techs. I've updated your status to Under Review. You're good to go!",
+        message:
+          "Hi Latasha, yes, health informatics courses are eligible for radiology techs. I've updated your status to Under Review. You're good to go!",
         timestamp: "2026-04-22T14:00:00Z",
-      }
-    ]
+      },
+    ],
   },
   {
     id: "SUP-2026-0003",
@@ -133,7 +138,8 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     linkedAppStatus: "Approved",
     subject: "CME Reimbursement Balance Discrepancy",
     category: "Payment Query",
-    description: "My approved CME reimbursement amount shows $750, but my total tuition bank shows a deduction of $1000. Can you please correct the balance statement?",
+    description:
+      "My approved CME reimbursement amount shows $750, but my total tuition bank shows a deduction of $1000. Can you please correct the balance statement?",
     status: "Resolved",
     createdDate: "2026-03-12T08:30:00Z",
     lastUpdated: "2026-03-14T11:00:00Z",
@@ -145,17 +151,19 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
         id: "msg-3-1",
         senderName: "Maria Santos",
         senderRole: "employee",
-        message: "My approved CME reimbursement amount shows $750, but my total tuition bank shows a deduction of $1000. Can you please correct the balance statement?",
+        message:
+          "My approved CME reimbursement amount shows $750, but my total tuition bank shows a deduction of $1000. Can you please correct the balance statement?",
         timestamp: "2026-03-12T08:30:00Z",
       },
       {
         id: "msg-3-2",
         senderName: "System Admin",
         senderRole: "admin",
-        message: "Hi Maria, we investigated and resolved the duplicate charge entry in your ledger. The adjusted remaining balance now correctly reflects $750. Please check your Overview dashboard to verify.",
+        message:
+          "Hi Maria, we investigated and resolved the duplicate charge entry in your ledger. The adjusted remaining balance now correctly reflects $750. Please check your Overview dashboard to verify.",
         timestamp: "2026-03-14T11:00:00Z",
-      }
-    ]
+      },
+    ],
   },
   {
     id: "SUP-2026-0004",
@@ -167,7 +175,8 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     linkedAppStatus: "UnderReview",
     subject: "Service Agreement Signature Verification Status",
     category: "Service Agreement",
-    description: "I signed the Service Agreement through DocuSign yesterday but the portal checklist status still shows 'Pending Signature'. Is there an expected delay or should I resubmit?",
+    description:
+      "I signed the Service Agreement through DocuSign yesterday but the portal checklist status still shows 'Pending Signature'. Is there an expected delay or should I resubmit?",
     status: "In Progress",
     createdDate: "2026-04-22T09:15:00Z",
     lastUpdated: "2026-04-23T10:00:00Z",
@@ -179,18 +188,20 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
         id: "msg-4-1",
         senderName: "Maria Santos",
         senderRole: "employee",
-        message: "I signed the Service Agreement through DocuSign yesterday but the portal checklist status still shows 'Pending Signature'. Is there an expected delay or should I resubmit?",
+        message:
+          "I signed the Service Agreement through DocuSign yesterday but the portal checklist status still shows 'Pending Signature'. Is there an expected delay or should I resubmit?",
         timestamp: "2026-04-22T09:15:00Z",
       },
       {
         id: "msg-4-2",
         senderName: "System Admin",
         senderRole: "admin",
-        message: "Hi Maria, our system syncs signed DocuSign documents once every 24 hours. I have manually triggered a fetch for your signed agreement, and it is now being processed. It should reflect as completed shortly.",
+        message:
+          "Hi Maria, our system syncs signed DocuSign documents once every 24 hours. I have manually triggered a fetch for your signed agreement, and it is now being processed. It should reflect as completed shortly.",
         timestamp: "2026-04-23T10:00:00Z",
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 export const useAppStore = create<StoreState>()(
@@ -218,7 +229,12 @@ export const useAppStore = create<StoreState>()(
       selectedCaseId: null,
       setSelectedCaseId: (id) => set({ selectedCaseId: id }),
 
-      caseFilters: { status: "All", slaStatus: "All", assignedAdmin: "", search: "" },
+      caseFilters: {
+        status: "All",
+        slaStatus: "All",
+        assignedAdmin: "",
+        search: "",
+      },
       setCaseFilters: (filters) =>
         set((state) => ({ caseFilters: { ...state.caseFilters, ...filters } })),
 
@@ -235,18 +251,23 @@ export const useAppStore = create<StoreState>()(
       isChatOpen: false,
       setIsChatOpen: (open) => set({ isChatOpen: open }),
       chatMessages: [],
-      addChatMessage: (msg) => set((state) => ({ chatMessages: [...state.chatMessages, msg] })),
-      clearChat: () => set({ chatMessages: [], hasSentProactive: false, unreadChatCount: 0 }),
+      addChatMessage: (msg) =>
+        set((state) => ({ chatMessages: [...state.chatMessages, msg] })),
+      clearChat: () =>
+        set({ chatMessages: [], hasSentProactive: false, unreadChatCount: 0 }),
       unreadChatCount: 0,
       setUnreadChatCount: (count) => set({ unreadChatCount: count }),
       hasSentProactive: false,
       setHasSentProactive: (sent) => set({ hasSentProactive: sent }),
       supportCases: MOCK_SUPPORT_CASES,
-      addSupportCase: (sc) => set((state) => ({ supportCases: [sc, ...state.supportCases] })),
+      addSupportCase: (sc) =>
+        set((state) => ({ supportCases: [sc, ...state.supportCases] })),
       updateSupportCase: (id, updates) =>
         set((state) => ({
           supportCases: state.supportCases.map((sc) =>
-            sc.id === id ? { ...sc, ...updates, lastUpdated: new Date().toISOString() } : sc
+            sc.id === id
+              ? { ...sc, ...updates, lastUpdated: new Date().toISOString() }
+              : sc,
           ),
         })),
     }),

@@ -1,4 +1,4 @@
-import { Bot, ShieldCheck, Users, Briefcase } from "lucide-react";
+import { Bot, Briefcase, ShieldCheck, Users } from "lucide-react";
 
 export interface Persona {
   name: string;
@@ -13,7 +13,8 @@ export const AGENT_PERSONAS: Record<string, Persona> = {
     name: "HealthyME Navigator",
     role: "Benefits Guide",
     avatar: Bot,
-    systemPrompt: "You are the HealthyME Navigator for Montefiore employees. You help with tuition reimbursement, CME balances, and application deadlines. Be helpful, clear, and refer to NYSNA Article 35 policy when relevant.",
+    systemPrompt:
+      "You are the HealthyME Navigator for Montefiore employees. You help with tuition reimbursement, CME balances, and application deadlines. Be helpful, clear, and refer to NYSNA Article 35 policy when relevant.",
     suggestions: [
       "What's my tuition balance?",
       "What documents do I still need?",
@@ -25,7 +26,8 @@ export const AGENT_PERSONAS: Record<string, Persona> = {
     name: "HealthyME Navigator",
     role: "Management Support",
     avatar: Users,
-    systemPrompt: "You are the HealthyME Navigator for Montefiore managers. You help summarize applications, highlight urgent approvals, and track team benefit utilization.",
+    systemPrompt:
+      "You are the HealthyME Navigator for Montefiore managers. You help summarize applications, highlight urgent approvals, and track team benefit utilization.",
     suggestions: [
       "Show my pending approvals",
       "Which approvals are urgent?",
@@ -37,7 +39,8 @@ export const AGENT_PERSONAS: Record<string, Persona> = {
     name: "HealthyME Navigator",
     role: "System Oversight",
     avatar: Briefcase,
-    systemPrompt: "You are the HealthyME Navigator for System Administrators and Benefits Specialists. You assist with case management, audit log verification, policy configuration insights, and NYSNA SLA monitoring.",
+    systemPrompt:
+      "You are the HealthyME Navigator for System Administrators and Benefits Specialists. You assist with case management, audit log verification, policy configuration insights, and NYSNA SLA monitoring.",
     suggestions: [
       "Show NYSNA cases at risk",
       "Show system health",

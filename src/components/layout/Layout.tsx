@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 
+import { AskAgentButton } from "@/components/chat/AskAgentButton";
+import { ChatButton } from "@/components/chat/ChatButton";
+import { ChatPanel } from "@/components/chat/ChatPanel";
+import { ProactiveAlert } from "@/components/chat/ProactiveAlert";
+import { LogoLockup } from "@/components/ui/LogoLockup";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,9 +20,6 @@ import {
 import { mockNotifications } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
-import { LogoLockup } from "@/components/ui/LogoLockup";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import {
   Activity,
   Bell,
@@ -25,11 +27,14 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
   FilePlus,
   FolderOpen,
   LayoutDashboard,
+  Lock,
   LogOut,
   Menu,
+  MessageSquare,
   Moon,
   Palette,
   Settings,
@@ -39,17 +44,12 @@ import {
   Sun,
   Trophy,
   User,
-  Zap,
   Wallet,
-  Lock,
-  CreditCard,
-  MessageSquare,
+  Zap,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { ChatButton } from "@/components/chat/ChatButton";
-import { ChatPanel } from "@/components/chat/ChatPanel";
-import { ProactiveAlert } from "@/components/chat/ProactiveAlert";
-import { AskAgentButton } from "@/components/chat/AskAgentButton";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavItem {
   label: string;
@@ -60,27 +60,67 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Overview", href: "/", icon: LayoutDashboard, roles: ["employee", "admin"] },
+  {
+    label: "Overview",
+    href: "/",
+    icon: LayoutDashboard,
+    roles: ["employee", "admin"],
+  },
   { label: "Apply Now", href: "/apply", icon: FilePlus, roles: ["employee"] },
-  { label: "My Applications", href: "/applications", icon: FolderOpen, roles: ["employee", "admin"] },
+  {
+    label: "My Applications",
+    href: "/applications",
+    icon: FolderOpen,
+    roles: ["employee", "admin"],
+  },
   {
     label: "Manager Approvals",
     href: "/approvals",
     icon: CheckSquare,
     roles: ["manager", "admin"],
   },
-  { label: "Application Status", href: "/notifications", icon: Bell, roles: ["employee", "admin"] },
-  { label: "Scholarship Review", href: "/scholarship", icon: Trophy, roles: ["admin"] },
-  { label: "Compliance Hub", href: "/compliance", icon: ShieldCheck, roles: ["admin"] },
-  { label: "Payroll Feed", href: "/payroll", icon: CreditCard, roles: ["admin"] },
+  {
+    label: "Application Status",
+    href: "/notifications",
+    icon: Bell,
+    roles: ["employee", "admin"],
+  },
+  {
+    label: "Scholarship Review",
+    href: "/scholarship",
+    icon: Trophy,
+    roles: ["admin"],
+  },
+  {
+    label: "Compliance Hub",
+    href: "/compliance",
+    icon: ShieldCheck,
+    roles: ["admin"],
+  },
+  {
+    label: "Payroll Feed",
+    href: "/payroll",
+    icon: CreditCard,
+    roles: ["admin"],
+  },
   {
     label: "Case Management",
     href: "/cases/case-001",
     icon: FolderOpen,
     roles: ["admin"],
   },
-  { label: "Policy Admin", href: "/admin/policy", icon: Settings, roles: ["admin"] },
-  { label: "Support Cases", href: "/support", icon: MessageSquare, roles: ["employee", "manager", "admin"] },
+  {
+    label: "Policy Admin",
+    href: "/admin/policy",
+    icon: Settings,
+    roles: ["admin"],
+  },
+  {
+    label: "Support Cases",
+    href: "/support",
+    icon: MessageSquare,
+    roles: ["employee", "manager", "admin"],
+  },
 ];
 
 interface LayoutProps {
@@ -114,19 +154,25 @@ export function Layout({
     if (hasHydrated) {
       if (!isAuthenticated) {
         if (pathname === "/") return;
-        const searchStr = typeof window !== "undefined" ? window.location.search : "";
+        const searchStr =
+          typeof window !== "undefined" ? window.location.search : "";
         const fullPath = pathname ? `${pathname}${searchStr}` : "";
-        const queryParam = fullPath && fullPath !== "/" ? `?redirect=${encodeURIComponent(fullPath)}` : "";
+        const queryParam =
+          fullPath && fullPath !== "/"
+            ? `?redirect=${encodeURIComponent(fullPath)}`
+            : "";
         console.warn("Unauthenticated access attempt. Redirecting to login...");
         router.replace(`/login${queryParam}`);
         return;
       }
 
       // Find current item's required roles
-      const activeItem = NAV_ITEMS.find((item) => 
-        pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href + "/"))
+      const activeItem = NAV_ITEMS.find(
+        (item) =>
+          pathname === item.href ||
+          (item.href !== "/" && pathname?.startsWith(item.href + "/")),
       );
-      
+
       if (activeItem?.roles) {
         if (!currentUser || !activeItem.roles.includes(currentUser.role)) {
           console.warn("Unauthorized access attempt. Redirecting...");
@@ -208,7 +254,6 @@ export function Layout({
     };
     return map[role] ?? role;
   };
-
 
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
@@ -327,13 +372,15 @@ export function Layout({
       )}
 
       {/* Main Body below Header */}
-      <div className={cn(
-        "flex flex-1 overflow-hidden transition-all duration-300 relative",
-        isChatOpen && "xl:pr-[400px]"
-      )}>
+      <div
+        className={cn(
+          "flex flex-1 overflow-hidden transition-all duration-300 relative",
+          isChatOpen && "xl:pr-[400px]",
+        )}
+      >
         {/* Sidebar Overlay for mobile */}
         {!sidebarCollapsed && isMobile && (
-          <div 
+          <div
             className="fixed inset-0 z-20 bg-background/80 backdrop-blur-sm lg:hidden mt-[176px]"
             onClick={toggleSidebar}
           />
@@ -343,7 +390,11 @@ export function Layout({
         <aside
           className={cn(
             "flex flex-col bg-card border-r border-border transition-all duration-300 ease-in-out flex-shrink-0 z-20 h-full",
-            isMobile ? (sidebarCollapsed ? "-translate-x-full fixed top-16 bottom-0 left-0" : "w-64 translate-x-0 fixed top-16 bottom-0 left-0") : "w-64 translate-x-0",
+            isMobile
+              ? sidebarCollapsed
+                ? "-translate-x-full fixed top-16 bottom-0 left-0"
+                : "w-64 translate-x-0 fixed top-16 bottom-0 left-0"
+              : "w-64 translate-x-0",
           )}
           data-ocid="sidebar"
         >
@@ -357,7 +408,7 @@ export function Layout({
                 pathname === item.href ||
                 (item.href !== "/" &&
                   (pathname?.startsWith(item.href + "/") ||
-                   (item.href.split("/")[1] === pathname?.split("/")[1])));
+                    item.href.split("/")[1] === pathname?.split("/")[1]));
               return (
                 <Link
                   key={item.href}
@@ -373,7 +424,7 @@ export function Layout({
                   <item.icon
                     className={cn(
                       "flex-shrink-0 transition-colors",
-                      (sidebarCollapsed && isMobile) ? "w-5 h-5" : "w-4 h-4",
+                      sidebarCollapsed && isMobile ? "w-5 h-5" : "w-4 h-4",
                       isActive
                         ? "text-sidebar-accent-foreground"
                         : "text-slate-400 group-hover:text-sidebar-accent-foreground dark:text-slate-500 dark:group-hover:text-white",
@@ -382,11 +433,13 @@ export function Layout({
                   {(!sidebarCollapsed || !isMobile) && (
                     <span className="truncate">{item.label}</span>
                   )}
-                  {(!sidebarCollapsed || !isMobile) && item.badge && item.badge > 0 && (
-                    <Badge className="ml-auto text-[10px] h-4 px-1.5 bg-destructive text-destructive-foreground">
-                      {item.badge}
-                    </Badge>
-                  )}
+                  {(!sidebarCollapsed || !isMobile) &&
+                    item.badge &&
+                    item.badge > 0 && (
+                      <Badge className="ml-auto text-[10px] h-4 px-1.5 bg-destructive text-destructive-foreground">
+                        {item.badge}
+                      </Badge>
+                    )}
                 </Link>
               );
             })}
@@ -418,25 +471,31 @@ export function Layout({
         <main
           className={cn(
             "flex-1 bg-white flex flex-col min-w-0",
-            !disableScroll ? "overflow-y-auto px-4 sm:px-0" : "flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden",
+            !disableScroll
+              ? "overflow-y-auto px-4 sm:px-0"
+              : "flex flex-col min-h-0 overflow-y-auto lg:overflow-hidden",
           )}
           data-ocid="main_content"
         >
-          <div className={cn(
-            "flex-1 flex flex-col",
-            disableScroll && "h-full min-h-0 overflow-hidden"
-          )}>
-            <div className={cn(
-              "flex-1 flex flex-col min-h-0",
-              !disableScroll && "pb-6"
-            )}>
+          <div
+            className={cn(
+              "flex-1 flex flex-col",
+              disableScroll && "h-full min-h-0 overflow-hidden",
+            )}
+          >
+            <div
+              className={cn(
+                "flex-1 flex flex-col min-h-0",
+                !disableScroll && "pb-6",
+              )}
+            >
               {children}
             </div>
             {!disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
           </div>
           {disableScroll && pathname !== "/apply" && <FooterDisclaimer />}
         </main>
-        
+
         {/* Global AI Chat Agent */}
         <ProactiveAlert />
         <ChatButton />
@@ -455,7 +514,7 @@ function FooterDisclaimer() {
           backgroundColor: "#F59E0B",
           color: "#003769",
           padding: "6px 12px",
-          fontFamily: '"Fakt", Arial, sans-serif',
+          fontFamily: "Arial, sans-serif",
           fontWeight: 600,
         }}
       >

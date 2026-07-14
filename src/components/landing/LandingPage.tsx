@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {
@@ -16,15 +16,15 @@ export default function LandingPage() {
           className="bg-white/95 backdrop-blur-md p-10 sm:p-16 rounded-[2rem] border border-brand-grey/40 shadow-ambient max-w-xl w-full text-center"
         >
           <div className="flex justify-center mb-8">
-            <img 
-              src="/assets/images/logo_lockup.jpg" 
-              alt="Healthy ME | Life @ Montefiore" 
+            <img
+              src="/assets/images/logo_lockup.jpg"
+              alt="Healthy ME | Life @ Montefiore"
               className="h-16 sm:h-20 object-contain"
             />
           </div>
-          
+
           <div className="flex justify-center">
-            <Link 
+            <Link
               href="/login"
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-10 py-4 rounded-xl font-bold text-[16px] hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl active:scale-95 group w-full sm:w-auto"
             >
@@ -36,13 +36,15 @@ export default function LandingPage() {
 
         {/* Subtle decorative element */}
         <div className="absolute bottom-12">
-           <div className="flex items-center gap-3">
-             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Systems Secure & Active</span>
-           </div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+              Systems Secure & Active
+            </span>
+          </div>
         </div>
       </div>
-      
+
       <FooterDisclaimer />
     </main>
   );
@@ -57,7 +59,7 @@ function FooterDisclaimer() {
           backgroundColor: "#F59E0B",
           color: "#003769",
           padding: "6px 12px",
-          fontFamily: '"Fakt", Arial, sans-serif',
+          fontFamily: "Arial, sans-serif",
           fontWeight: 600,
         }}
       >

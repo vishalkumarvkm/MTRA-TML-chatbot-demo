@@ -1,9 +1,9 @@
 "use client";
 
-import { useAppStore } from "@/store/appStore";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bot, MessageCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppStore } from "@/store/appStore";
+import { ArrowRight, Bot, MessageCircle, Sparkles } from "lucide-react";
 
 export function DashboardChat() {
   const { setIsChatOpen } = useAppStore();
@@ -25,10 +25,11 @@ export function DashboardChat() {
         <div className="space-y-2">
           <p className="text-sm font-semibold">Need help with your benefits?</p>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            I can help you check your tuition balance, verify eligibility, or summarize policy details.
+            I can help you check your tuition balance, verify eligibility, or
+            summarize policy details.
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => setIsChatOpen(true)}
           title="Open HealthyME Navigator"
           className="w-full gap-2 shadow-md hover:shadow-primary/20 transition-all"

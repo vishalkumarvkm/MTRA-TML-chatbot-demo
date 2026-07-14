@@ -32,9 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { mockEmployees, mockPrograms } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
-import type { Document, ProgramType, WizardData, CourseEntry } from "@/types";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import type { CourseEntry, Document, ProgramType, WizardData } from "@/types";
 import {
   AlertCircle,
   AlertTriangle,
@@ -50,6 +48,8 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Constants ────────────────────────────────────────────────
@@ -165,7 +165,11 @@ function WizardProgress({ step }: { step: number }) {
                         : "bg-muted border-border text-muted-foreground",
                   ].join(" ")}
                 >
-                  {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  ) : (
+                    stepNum
+                  )}
                 </div>
                 <span
                   className={[
@@ -204,7 +208,7 @@ function WizardProgress({ step }: { step: number }) {
           </span>
         </div>
         <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-primary transition-all duration-500 ease-out"
             style={{ width: `${(step / STEP_LABELS.length) * 100}%` }}
           />
@@ -261,7 +265,9 @@ function Step1Program({
                       </Badge>
                     )}
                     <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-[9px] text-muted-foreground">Up to</span>
+                      <span className="text-[9px] text-muted-foreground">
+                        Up to
+                      </span>
                       <span className="text-sm font-bold text-foreground">
                         ${prog.maxAmount.toLocaleString()}
                       </span>
@@ -292,7 +298,6 @@ function Step1Program({
     </div>
   );
 }
-
 
 // ─── Step 3: Employee Information ─────────────────────────────
 function Step3EmployeeInfo({
@@ -396,9 +401,14 @@ function Step3EmployeeInfo({
           {infoCorrect === "no" && (
             <Alert variant="destructive" className="mt-3">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="text-sm font-bold">Corrections are made in Workday</AlertTitle>
+              <AlertTitle className="text-sm font-bold">
+                Corrections are made in Workday
+              </AlertTitle>
               <AlertDescription className="text-xs leading-relaxed mt-1">
-                Employee record corrections cannot be performed within this portal. Please log in to <strong>Workday</strong> to update your profile. You will not be able to proceed with this application until your official record is correct.
+                Employee record corrections cannot be performed within this
+                portal. Please log in to <strong>Workday</strong> to update your
+                profile. You will not be able to proceed with this application
+                until your official record is correct.
               </AlertDescription>
             </Alert>
           )}
@@ -419,7 +429,10 @@ function Step4CourseDetails({
 }) {
   const emp = mockEmployees[0];
   const courses = data.courses && data.courses.length > 0 ? data.courses : [];
-  const [courseToRemove, setCourseToRemove] = useState<{ id: string; index: number } | null>(null);
+  const [courseToRemove, setCourseToRemove] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
 
   // Initialize course if list is empty
   useEffect(() => {
@@ -471,7 +484,11 @@ function Step4CourseDetails({
     });
   };
 
-  const updateCourseField = (id: string, field: keyof CourseEntry, value: any) => {
+  const updateCourseField = (
+    id: string,
+    field: keyof CourseEntry,
+    value: any,
+  ) => {
     const updated = courses.map((c) => {
       if (c.id === id) {
         return { ...c, [field]: value };
@@ -500,7 +517,7 @@ function Step4CourseDetails({
   const showCreditCapWarning = totalWithYtdCredits > 18;
 
   const showInProgressWarning = courses.some(
-    (c) => c.gradeReceived === "In Progress" || c.gradeReceived === "Enrolled"
+    (c) => c.gradeReceived === "In Progress" || c.gradeReceived === "Enrolled",
   );
 
   return (
@@ -510,7 +527,8 @@ function Step4CourseDetails({
           Course, Institution & Cost Details
         </h2>
         <p className="text-sm text-muted-foreground mt-1 font-body">
-          Complete the details below to submit your reimbursement request. You can add up to 6 courses per application.
+          Complete the details below to submit your reimbursement request. You
+          can add up to 6 courses per application.
         </p>
       </div>
 
@@ -519,16 +537,22 @@ function Step4CourseDetails({
         <CardContent className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-body">
             <div>
-              <span className="text-muted-foreground block">Applicant Name</span>
+              <span className="text-muted-foreground block">
+                Applicant Name
+              </span>
               <span className="font-semibold text-foreground">{emp.name}</span>
             </div>
             <div>
               <span className="text-muted-foreground block">Employee ID</span>
-              <span className="font-semibold text-foreground">{emp.employeeId}</span>
+              <span className="font-semibold text-foreground">
+                {emp.employeeId}
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground block">Department</span>
-              <span className="font-semibold text-foreground">{emp.department}</span>
+              <span className="font-semibold text-foreground">
+                {emp.department}
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground block">Job Title</span>
@@ -542,14 +566,17 @@ function Step4CourseDetails({
       {showCreditCapWarning && (
         <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-lg text-xs space-y-1 font-body">
           <span className="font-bold block">Credit Cap Warning</span>
-          Warning: Total credit hours across all courses in this application + YTD used credits ({totalWithYtdCredits} credits) exceeds 18-credit cap.
+          Warning: Total credit hours across all courses in this application +
+          YTD used credits ({totalWithYtdCredits} credits) exceeds 18-credit
+          cap.
         </div>
       )}
 
       {showInProgressWarning && (
         <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-lg text-xs space-y-1 font-body">
           <span className="font-bold block">Tier 1 SOP Checklist Warning</span>
-          Warning: Application contains in-progress or enrolled courses. Final reimbursement depends on grade verification.
+          Warning: Application contains in-progress or enrolled courses. Final
+          reimbursement depends on grade verification.
         </div>
       )}
 
@@ -558,7 +585,9 @@ function Step4CourseDetails({
         {courses.map((course, index) => (
           <Card key={course.id} className="border-border relative">
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Course {index + 1}</CardTitle>
+              <CardTitle className="text-sm font-semibold">
+                Course {index + 1}
+              </CardTitle>
               {index > 0 && (
                 <Button
                   type="button"
@@ -574,28 +603,45 @@ function Step4CourseDetails({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Course Name */}
                 <div className="space-y-1">
-                  <Label htmlFor={`course-name-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`course-name-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Course Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id={`course-name-${course.id}`}
                     value={course.courseTitle}
                     placeholder="e.g. Advanced Clinical Nursing Leadership"
-                    onChange={(e) => updateCourseField(course.id, "courseTitle", e.target.value)}
+                    onChange={(e) =>
+                      updateCourseField(
+                        course.id,
+                        "courseTitle",
+                        e.target.value,
+                      )
+                    }
                     data-ocid={`apply.course.name-${index}`}
                   />
                 </div>
 
                 {/* Institution Name Select */}
                 <div className="space-y-1">
-                  <Label htmlFor={`institution-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`institution-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Institution Name <span className="text-destructive">*</span>
                   </Label>
                   <Select
                     value={course.institution}
-                    onValueChange={(val) => updateCourseField(course.id, "institution", val)}
+                    onValueChange={(val) =>
+                      updateCourseField(course.id, "institution", val)
+                    }
                   >
-                    <SelectTrigger id={`institution-${course.id}`} data-ocid={`apply.course.institution-${index}`}>
+                    <SelectTrigger
+                      id={`institution-${course.id}`}
+                      data-ocid={`apply.course.institution-${index}`}
+                    >
                       <SelectValue placeholder="Select institution..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -612,21 +658,29 @@ function Step4CourseDetails({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Course Code */}
                 <div className="space-y-1">
-                  <Label htmlFor={`course-code-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`course-code-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Course Code
                   </Label>
                   <Input
                     id={`course-code-${course.id}`}
                     value={course.courseCode ?? ""}
                     placeholder="e.g. NUR 604"
-                    onChange={(e) => updateCourseField(course.id, "courseCode", e.target.value)}
+                    onChange={(e) =>
+                      updateCourseField(course.id, "courseCode", e.target.value)
+                    }
                     data-ocid={`apply.course.code-${index}`}
                   />
                 </div>
 
                 {/* Credit Hours */}
                 <div className="space-y-1">
-                  <Label htmlFor={`credits-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`credits-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Credit Hours <span className="text-destructive">*</span>
                   </Label>
                   <Input
@@ -635,14 +689,23 @@ function Step4CourseDetails({
                     min={1}
                     max={18}
                     value={course.credits}
-                    onChange={(e) => updateCourseField(course.id, "credits", Math.max(1, Number(e.target.value)))}
+                    onChange={(e) =>
+                      updateCourseField(
+                        course.id,
+                        "credits",
+                        Math.max(1, Number(e.target.value)),
+                      )
+                    }
                     data-ocid={`apply.course.credit_hours-${index}`}
                   />
                 </div>
 
                 {/* Tuition Amount */}
                 <div className="space-y-1">
-                  <Label htmlFor={`amount-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`amount-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Tuition Amount <span className="text-destructive">*</span>
                   </Label>
                   <div className="relative">
@@ -654,7 +717,13 @@ function Step4CourseDetails({
                       type="number"
                       min={0}
                       value={course.amount}
-                      onChange={(e) => updateCourseField(course.id, "amount", Math.max(0, Number(e.target.value)))}
+                      onChange={(e) =>
+                        updateCourseField(
+                          course.id,
+                          "amount",
+                          Math.max(0, Number(e.target.value)),
+                        )
+                      }
                       className="pl-7"
                       data-ocid={`apply.tuition.amount_input-${index}`}
                     />
@@ -663,18 +732,36 @@ function Step4CourseDetails({
 
                 {/* Grade Received */}
                 <div className="space-y-1">
-                  <Label htmlFor={`grade-${course.id}`} className="text-xs font-semibold font-body">
+                  <Label
+                    htmlFor={`grade-${course.id}`}
+                    className="text-xs font-semibold font-body"
+                  >
                     Grade Received <span className="text-destructive">*</span>
                   </Label>
                   <Select
                     value={course.gradeReceived ?? "In Progress"}
-                    onValueChange={(val) => updateCourseField(course.id, "gradeReceived", val)}
+                    onValueChange={(val) =>
+                      updateCourseField(course.id, "gradeReceived", val)
+                    }
                   >
-                    <SelectTrigger id={`grade-${course.id}`} data-ocid={`apply.course.grade-${index}`}>
+                    <SelectTrigger
+                      id={`grade-${course.id}`}
+                      data-ocid={`apply.course.grade-${index}`}
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {["A", "A-", "B+", "B", "B-", "C+", "C", "In Progress", "Enrolled"].map((g) => (
+                      {[
+                        "A",
+                        "A-",
+                        "B+",
+                        "B",
+                        "B-",
+                        "C+",
+                        "C",
+                        "In Progress",
+                        "Enrolled",
+                      ].map((g) => (
                         <SelectItem key={g} value={g}>
                           {g}
                         </SelectItem>
@@ -702,7 +789,8 @@ function Step4CourseDetails({
           </Button>
         ) : (
           <p className="text-xs text-destructive font-semibold font-body">
-            Maximum 6 courses per application. Submit a new application for additional courses.
+            Maximum 6 courses per application. Submit a new application for
+            additional courses.
           </p>
         )}
       </div>
@@ -710,7 +798,8 @@ function Step4CourseDetails({
       {/* Running Totals Summary Row */}
       <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200">
         <span className="text-xs font-bold text-slate-700 font-body">
-          Total Credit Hours: {totalCredits} | Total Tuition Amount: ${totalTuition.toLocaleString()}
+          Total Credit Hours: {totalCredits} | Total Tuition Amount: $
+          {totalTuition.toLocaleString()}
         </span>
         <span className="text-xs text-muted-foreground font-body">
           YTD Credits Used: {emp.creditUsed} / {emp.creditMax}
@@ -718,12 +807,20 @@ function Step4CourseDetails({
       </div>
 
       {/* Inline AlertDialog for removal confirmation */}
-      <AlertDialog open={courseToRemove !== null} onOpenChange={(open) => { if (!open) setCourseToRemove(null); }}>
+      <AlertDialog
+        open={courseToRemove !== null}
+        onOpenChange={(open) => {
+          if (!open) setCourseToRemove(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-display">Remove Course {courseToRemove ? courseToRemove.index + 1 : ""}</AlertDialogTitle>
+            <AlertDialogTitle className="font-display">
+              Remove Course {courseToRemove ? courseToRemove.index + 1 : ""}
+            </AlertDialogTitle>
             <AlertDialogDescription className="font-body">
-              Remove Course {courseToRemove ? courseToRemove.index + 1 : ""}? This cannot be undone.
+              Remove Course {courseToRemove ? courseToRemove.index + 1 : ""}?
+              This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -732,7 +829,9 @@ function Step4CourseDetails({
               className="bg-blue-600 hover:bg-blue-700 text-white font-body"
               onClick={() => {
                 if (courseToRemove) {
-                  const updated = courses.filter((c) => c.id !== courseToRemove.id);
+                  const updated = courses.filter(
+                    (c) => c.id !== courseToRemove.id,
+                  );
                   onUpdate({
                     courses: updated,
                     institution: updated[0]?.institution ?? "",
@@ -766,46 +865,47 @@ function Step6Documents({
   const [dragging, setDragging] = useState<DocTypeId | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  const docTypes = programType === "CMEReimbursement"
-    ? [
-        {
-          id: "invoice" as const,
-          label: "Registration Receipt / Invoice",
-          description: "Official registration bill or receipt",
-          icon: "💰",
-          required: true,
-        },
-        {
-          id: "transcript" as const,
-          label: "CME Certificate of Attendance",
-          description: "Certificate or proof of CME hours earned",
-          icon: "📜",
-          required: true,
-        },
-      ]
-    : [
-        {
-          id: "enrollment" as const,
-          label: "Enrollment Verification",
-          description: "Official enrollment letter or class schedule",
-          icon: "📋",
-          required: true,
-        },
-        {
-          id: "invoice" as const,
-          label: "Tuition Invoice",
-          description: "Official tuition bill or payment receipt",
-          icon: "💰",
-          required: true,
-        },
-        {
-          id: "transcript" as const,
-          label: "Grade Transcript",
-          description: "Official or unofficial academic transcript",
-          icon: "📄",
-          required: true,
-        },
-      ];
+  const docTypes =
+    programType === "CMEReimbursement"
+      ? [
+          {
+            id: "invoice" as const,
+            label: "Registration Receipt / Invoice",
+            description: "Official registration bill or receipt",
+            icon: "💰",
+            required: true,
+          },
+          {
+            id: "transcript" as const,
+            label: "CME Certificate of Attendance",
+            description: "Certificate or proof of CME hours earned",
+            icon: "📜",
+            required: true,
+          },
+        ]
+      : [
+          {
+            id: "enrollment" as const,
+            label: "Enrollment Verification",
+            description: "Official enrollment letter or class schedule",
+            icon: "📋",
+            required: true,
+          },
+          {
+            id: "invoice" as const,
+            label: "Tuition Invoice",
+            description: "Official tuition bill or payment receipt",
+            icon: "💰",
+            required: true,
+          },
+          {
+            id: "transcript" as const,
+            label: "Grade Transcript",
+            description: "Official or unofficial academic transcript",
+            icon: "📄",
+            required: true,
+          },
+        ];
 
   const handleFileInput = useCallback(
     (docTypeId: DocTypeId, files: FileList | null) => {
@@ -925,9 +1025,7 @@ function Step6Documents({
                       variant="outline"
                       size="sm"
                       className="h-8 text-xs font-bold shrink-0 shadow-sm border-primary/20 text-primary hover:bg-primary/5 px-3 rounded-none"
-                      onClick={() =>
-                        fileInputRefs.current[docType.id]?.click()
-                      }
+                      onClick={() => fileInputRefs.current[docType.id]?.click()}
                       data-ocid={`apply.upload.${docType.id}.upload_button`}
                     >
                       Browse Files
@@ -992,12 +1090,12 @@ function Step6Documents({
                                 className="flex items-center justify-between gap-2"
                               >
                                 <span className="text-[10px] text-muted-foreground capitalize">
-                                    {k.replace(/([A-Z])/g, " $1")}
-                                  </span>
-                                  <span className="text-[10px] font-medium text-foreground">
-                                    {v}
-                                  </span>
-                                </div>
+                                  {k.replace(/([A-Z])/g, " $1")}
+                                </span>
+                                <span className="text-[10px] font-medium text-foreground">
+                                  {v}
+                                </span>
+                              </div>
                             ),
                           )}
                         </div>
@@ -1045,7 +1143,8 @@ function Step8Review({
           Review & Submit
         </h2>
         <p className="text-xs text-muted-foreground mt-1">
-          Review your application before submitting. You cannot edit after submission.
+          Review your application before submitting. You cannot edit after
+          submission.
         </p>
       </div>
 
@@ -1053,7 +1152,8 @@ function Step8Review({
       <div className="flex items-center gap-3 py-2 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
         <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
         <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-          Eligibility Verified: Pre-approved to Proceed based on current HR records.
+          Eligibility Verified: Pre-approved to Proceed based on current HR
+          records.
         </div>
       </div>
 
@@ -1071,7 +1171,7 @@ function Step8Review({
                 "py-2 px-3",
                 issue.severity === "warning"
                   ? "border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800"
-                  : ""
+                  : "",
               ].join(" ")}
               data-ocid={`apply.gap_report.${issue.id}`}
             >
@@ -1080,9 +1180,13 @@ function Step8Review({
               ) : (
                 <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
               )}
-              <AlertTitle className="text-xs font-bold leading-tight mt-0.5">{issue.title}</AlertTitle>
+              <AlertTitle className="text-xs font-bold leading-tight mt-0.5">
+                {issue.title}
+              </AlertTitle>
               <AlertDescription className="space-y-1 mt-0.5">
-                <p className="text-[10px] leading-normal">{issue.description}</p>
+                <p className="text-[10px] leading-normal">
+                  {issue.description}
+                </p>
                 <div className="flex items-start gap-1.5 mt-0.5">
                   <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-blue-500" />
                   <p className="text-[10px] text-blue-700 dark:text-blue-400 leading-normal">
@@ -1110,7 +1214,10 @@ function Step8Review({
                 Employee
               </p>
               <p className="text-xs font-semibold text-foreground">
-                {emp.name} <span className="text-muted-foreground font-normal">({emp.employeeId})</span>
+                {emp.name}{" "}
+                <span className="text-muted-foreground font-normal">
+                  ({emp.employeeId})
+                </span>
               </p>
               <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
                 {emp.department}
@@ -1134,7 +1241,10 @@ function Step8Review({
             </p>
             <div className="space-y-2 max-h-[140px] overflow-y-auto pr-1">
               {(data.courses ?? []).map((course, idx) => (
-                <div key={course.id || idx} className="text-xs border-b border-border/40 pb-1.5 last:border-0 last:pb-0">
+                <div
+                  key={course.id || idx}
+                  className="text-xs border-b border-border/40 pb-1.5 last:border-0 last:pb-0"
+                >
                   <p className="font-semibold text-foreground truncate font-body">
                     {idx + 1}. {course.courseTitle || "Untitled Course"}
                   </p>
@@ -1142,7 +1252,14 @@ function Step8Review({
                     {course.institution} ({course.credits} cr)
                   </p>
                   <p className="text-[10px] text-muted-foreground font-body">
-                    Grade: <span className="font-medium text-foreground">{course.gradeReceived}</span> | Amount: <span className="font-medium text-foreground">${course.amount}</span>
+                    Grade:{" "}
+                    <span className="font-medium text-foreground">
+                      {course.gradeReceived}
+                    </span>{" "}
+                    | Amount:{" "}
+                    <span className="font-medium text-foreground">
+                      ${course.amount}
+                    </span>
                   </p>
                 </div>
               ))}
@@ -1152,7 +1269,10 @@ function Step8Review({
                     {data.institution ?? "Not specified"}
                   </p>
                   <p className="font-body">
-                    Course: <span className="font-semibold text-foreground">{data.courseTitle ?? "Not specified"}</span>
+                    Course:{" "}
+                    <span className="font-semibold text-foreground">
+                      {data.courseTitle ?? "Not specified"}
+                    </span>
                   </p>
                 </div>
               )}
@@ -1167,29 +1287,52 @@ function Step8Review({
               </p>
               <div className="space-y-0.5 text-xs text-muted-foreground font-body">
                 <p>
-                  Tuition: <span className="font-semibold text-foreground">${(data.courses?.reduce((sum, c) => sum + c.amount, 0) ?? data.amount ?? 320).toLocaleString()}</span>
+                  Tuition:{" "}
+                  <span className="font-semibold text-foreground">
+                    $
+                    {(
+                      data.courses?.reduce((sum, c) => sum + c.amount, 0) ??
+                      data.amount ??
+                      320
+                    ).toLocaleString()}
+                  </span>
                 </p>
                 <p>
-                  Credits: <span className="font-semibold text-foreground">{data.courses?.reduce((sum, c) => sum + c.credits, 0) ?? data.credits ?? 6} credits</span>
+                  Credits:{" "}
+                  <span className="font-semibold text-foreground">
+                    {data.courses?.reduce((sum, c) => sum + c.credits, 0) ??
+                      data.credits ??
+                      6}{" "}
+                    credits
+                  </span>
                 </p>
               </div>
             </div>
             <div className="pt-2 border-t border-border/60">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                Documents ({uploads.filter((u) => u.status === "complete").length} verified)
+                Documents (
+                {uploads.filter((u) => u.status === "complete").length}{" "}
+                verified)
               </p>
               {uploads.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No documents uploaded</p>
+                <p className="text-xs text-muted-foreground">
+                  No documents uploaded
+                </p>
               ) : (
                 <div className="space-y-0.5 mt-0.5">
                   {uploads.map((u) => (
-                    <div key={u.id} className="flex items-center gap-1.5 text-[10px] text-foreground">
+                    <div
+                      key={u.id}
+                      className="flex items-center gap-1.5 text-[10px] text-foreground"
+                    >
                       {u.status === "complete" ? (
                         <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
                       ) : (
                         <Loader2 className="w-3 h-3 animate-spin text-primary flex-shrink-0" />
                       )}
-                      <span className="truncate max-w-[150px]">{u.fileName}</span>
+                      <span className="truncate max-w-[150px]">
+                        {u.fileName}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -1214,7 +1357,10 @@ function Step8Review({
               htmlFor="service-agreement"
               className="text-xs leading-normal cursor-pointer font-bold text-foreground text-left"
             >
-              I agree to the Service Agreement requiring 2 years of continued employment (or completion of 18 credits) at Montefiore Health System following reimbursement approval. Failure to comply may result in repayment.
+              I agree to the Service Agreement requiring 2 years of continued
+              employment (or completion of 18 credits) at Montefiore Health
+              System following reimbursement approval. Failure to comply may
+              result in repayment.
             </Label>
           </div>
           <div className="flex items-start gap-3">
@@ -1229,7 +1375,9 @@ function Step8Review({
               htmlFor="code-of-conduct"
               className="text-xs leading-normal cursor-pointer font-medium text-foreground text-left"
             >
-              I certify that I have read and agree to comply with the Montefiore Health System Code of Conduct in connection with my participation in this educational reimbursement program.
+              I certify that I have read and agree to comply with the Montefiore
+              Health System Code of Conduct in connection with my participation
+              in this educational reimbursement program.
             </Label>
           </div>
           <div className="flex items-start gap-3">
@@ -1244,7 +1392,10 @@ function Step8Review({
               htmlFor="certification"
               className="text-xs leading-normal cursor-pointer text-left"
             >
-              I certify that all information provided in this application is accurate and complete. I understand that false or misleading information may result in denial of benefits and disciplinary action.
+              I certify that all information provided in this application is
+              accurate and complete. I understand that false or misleading
+              information may result in denial of benefits and disciplinary
+              action.
             </Label>
           </div>
         </CardContent>
@@ -1287,7 +1438,8 @@ function Step9Success() {
             Application Submitted!
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Your reimbursement application has been received and is being processed.
+            Your reimbursement application has been received and is being
+            processed.
           </p>
         </div>
       </div>
@@ -1344,7 +1496,9 @@ function Step9Success() {
               <p className="text-xs font-semibold text-foreground leading-none">
                 {step.label}
               </p>
-              <p className="text-[10px] text-muted-foreground mt-0.5 leading-none">{step.detail}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 leading-none">
+                {step.detail}
+              </p>
             </div>
           </div>
         ))}
@@ -1352,7 +1506,11 @@ function Step9Success() {
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
         <Link href="/applications">
-          <Button data-ocid="apply.success.view_applications_button" size="sm" className="h-8 text-xs">
+          <Button
+            data-ocid="apply.success.view_applications_button"
+            size="sm"
+            className="h-8 text-xs"
+          >
             View My Applications
           </Button>
         </Link>
@@ -1448,10 +1606,18 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
       case 3:
         if (wizardData.courses && wizardData.courses.length > 0) {
           return wizardData.courses.every(
-            (c) => c.courseTitle.trim() !== "" && c.institution.trim() !== "" && c.credits > 0 && c.amount >= 0
+            (c) =>
+              c.courseTitle.trim() !== "" &&
+              c.institution.trim() !== "" &&
+              c.credits > 0 &&
+              c.amount >= 0,
           );
         }
-        return Boolean(wizardData.institution && wizardData.courseTitle && (wizardData.amount ?? 0) > 0);
+        return Boolean(
+          wizardData.institution &&
+            wizardData.courseTitle &&
+            (wizardData.amount ?? 0) > 0,
+        );
       case 4:
         return true;
       case 5:
@@ -1554,7 +1720,8 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
 
           <div className="flex items-center gap-4">
             <span className="text-[11px] font-medium text-muted-foreground">
-              Step {wizardStep} <span className="hidden sm:inline">of {totalSteps - 1}</span>
+              Step {wizardStep}{" "}
+              <span className="hidden sm:inline">of {totalSteps - 1}</span>
             </span>
             {getNextLabel() !== null && (
               <Button

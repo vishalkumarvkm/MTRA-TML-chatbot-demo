@@ -1,7 +1,7 @@
 "use client";
 
-import { Layout } from "@/components/layout/Layout";
 import LandingPage from "@/components/landing/LandingPage";
+import { Layout } from "@/components/layout/Layout";
 import { AIConfidenceBadge } from "@/components/ui/AIConfidenceBadge";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -16,14 +16,13 @@ import {
   mockServiceAgreements,
 } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
-import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   Bell,
   BookOpen,
   Brain,
-  CalendarClock,
   CalendarCheck2,
+  CalendarClock,
   CheckCircle2,
   ChevronRight,
   Clock,
@@ -38,7 +37,8 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const PROGRAM_ICONS: Record<string, React.ReactNode> = {
   TuitionReimbursement: <GraduationCap className="w-5 h-5" />,
@@ -138,7 +138,10 @@ function getTenureYears(hireDateStr: string) {
   return diffDays / 365.25;
 }
 
-function isEligibleForProgram(employee: (typeof mockEmployees)[number], programType: string) {
+function isEligibleForProgram(
+  employee: (typeof mockEmployees)[number],
+  programType: string,
+) {
   const tenure = getTenureYears(employee.hireDate);
   const isPaOrPt =
     employee.title.toLowerCase().includes("physician assistant") ||
@@ -195,7 +198,9 @@ function DashboardPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <span className="text-sm text-muted-foreground">Checking authentication...</span>
+          <span className="text-sm text-muted-foreground">
+            Checking authentication...
+          </span>
         </div>
       </div>
     );
@@ -210,7 +215,11 @@ function DashboardPage() {
 
   const employeeNotifs = mockNotifications
     .filter((n) => n.userId === employee.id)
-    .filter((n) => n.title !== "New Program Available" && !n.title.toLowerCase().includes("program available"));
+    .filter(
+      (n) =>
+        n.title !== "New Program Available" &&
+        !n.title.toLowerCase().includes("program available"),
+    );
 
   const hasActionNeeded = employeeNotifs.some((n) =>
     n.title.toLowerCase().includes("service agreement"),
@@ -260,9 +269,11 @@ function DashboardPage() {
       maximumFractionDigits: 0,
     }).format(n);
 
-  const serviceAgreement = employee.isNYSNA === true
-    ? mockServiceAgreements.find((sa) => sa.employeeId === employee.id) ?? null
-    : null;
+  const serviceAgreement =
+    employee.isNYSNA === true
+      ? (mockServiceAgreements.find((sa) => sa.employeeId === employee.id) ??
+        null)
+      : null;
 
   const formatDate = (ts: number | string) =>
     new Date(ts).toLocaleDateString("en-US", {
@@ -311,7 +322,8 @@ function DashboardPage() {
                     Action Needed: Service Agreement Required
                   </h3>
                   <p className="text-[10px] text-muted-foreground leading-normal">
-                    You have 7 days to submit your service agreement for Application MTRA-2026-0041.
+                    You have 7 days to submit your service agreement for
+                    Application MTRA-2026-0041.
                   </p>
                 </div>
                 <button
@@ -559,7 +571,10 @@ function DashboardPage() {
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed border-t border-primary/10 pt-2">
-                You are required to remain employed at Montefiore Health System for 2 years (or completion of 18 credits) following reimbursement approval per your NYSNA service agreement. Early separation may result in prorated repayment.
+                You are required to remain employed at Montefiore Health System
+                for 2 years (or completion of 18 credits) following
+                reimbursement approval per your NYSNA service agreement. Early
+                separation may result in prorated repayment.
               </p>
             </CardContent>
           </Card>
@@ -575,7 +590,9 @@ function DashboardPage() {
               <Card
                 key={prog.id}
                 className="border border-[#008573]/20 bg-[#ebf3ef] shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 cursor-pointer group rounded-none h-[72px]"
-                onClick={() => router.push(`/apply?program=${prog.programType}`)}
+                onClick={() =>
+                  router.push(`/apply?program=${prog.programType}`)
+                }
               >
                 <CardContent className="py-2.5 px-4 flex gap-3 items-center h-full">
                   <div className="w-8 h-8 rounded-full bg-[#003769] text-white flex items-center justify-center shrink-0 text-sm">
@@ -599,7 +616,6 @@ function DashboardPage() {
             ))}
           </div>
         </div>
-
       </div>
     </Layout>
   );
@@ -613,7 +629,9 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <span className="text-sm text-muted-foreground">Checking authentication...</span>
+          <span className="text-sm text-muted-foreground">
+            Checking authentication...
+          </span>
         </div>
       </div>
     );

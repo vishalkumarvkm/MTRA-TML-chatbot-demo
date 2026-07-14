@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
-import { useAppStore } from "@/store/appStore";
 import { AGENT_PERSONAS } from "@/lib/chat/agentPersonas";
+import { useAppStore } from "@/store/appStore";
 import type { ChatMessage } from "@/types";
+import { useEffect } from "react";
 
 export function ProactiveAlert() {
-  const { 
-    currentUser, 
-    hasSentProactive, 
-    setHasSentProactive, 
-    addChatMessage, 
+  const {
+    currentUser,
+    hasSentProactive,
+    setHasSentProactive,
+    addChatMessage,
     setUnreadChatCount,
-    isChatOpen
+    isChatOpen,
   } = useAppStore();
 
   useEffect(() => {
@@ -23,13 +23,16 @@ export function ProactiveAlert() {
 
       switch (currentUser.role) {
         case "employee":
-          alertText = "Welcome back! You have 4 credits remaining this year. Your Fall 2026 application deadline is Dec 31.";
+          alertText =
+            "Welcome back! You have 4 credits remaining this year. Your Fall 2026 application deadline is Dec 31.";
           break;
         case "manager":
-          alertText = "Hello! You have 3 pending approvals in your queue. 1 application is marked as urgent.";
+          alertText =
+            "Hello! You have 3 pending approvals in your queue. 1 application is marked as urgent.";
           break;
         case "admin":
-          alertText = "Attention: 2 NYSNA cases are approaching the 45-day SLA breach threshold. Would you like to review them now?";
+          alertText =
+            "Attention: 2 NYSNA cases are approaching the 45-day SLA breach threshold. Would you like to review them now?";
           break;
       }
 
@@ -54,7 +57,14 @@ export function ProactiveAlert() {
         return () => clearTimeout(timer);
       }
     }
-  }, [currentUser, hasSentProactive, addChatMessage, setHasSentProactive, setUnreadChatCount, isChatOpen]);
+  }, [
+    currentUser,
+    hasSentProactive,
+    addChatMessage,
+    setHasSentProactive,
+    setUnreadChatCount,
+    isChatOpen,
+  ]);
 
   return null;
 }

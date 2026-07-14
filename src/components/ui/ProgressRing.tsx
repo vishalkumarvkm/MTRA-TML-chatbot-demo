@@ -125,7 +125,7 @@ export function ProgressRing({
           <span
             className={cn(
               "font-bold font-body text-foreground leading-none",
-              size < 60 ? "text-[10px]" : "text-sm"
+              size < 60 ? "text-[10px]" : "text-sm",
             )}
           >
             {displayValue}

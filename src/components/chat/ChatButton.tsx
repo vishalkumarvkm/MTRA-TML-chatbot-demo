@@ -1,8 +1,8 @@
 "use client";
 
 import { useAppStore } from "@/store/appStore";
-import { AskAgentButton } from "./AskAgentButton";
 import { usePathname } from "next/navigation";
+import { AskAgentButton } from "./AskAgentButton";
 
 export function ChatButton() {
   const { isAuthenticated, currentUser } = useAppStore();

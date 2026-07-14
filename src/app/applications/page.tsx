@@ -20,7 +20,7 @@ import {
   mockPrograms,
   mockServiceAgreements,
 } from "@/data/mockData";
-import { useRouter } from "next/navigation";
+import { useAppStore } from "@/store/appStore";
 import {
   CalendarCheck2,
   ChevronRight,
@@ -31,7 +31,7 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
-import { useAppStore } from "@/store/appStore";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ApplicationsPage() {
@@ -40,19 +40,23 @@ export default function ApplicationsPage() {
   const [search, setSearch] = useState("");
 
   // Current employee (Maria Santos in demo)
-  const currentEmployee = mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) || mockEmployees[0];
+  const currentEmployee =
+    mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ||
+    mockEmployees[0];
   const isNYSNA = currentEmployee.isNYSNA === true;
 
   // Find this employee's active service agreement (NYSNA only)
   const serviceAgreement = isNYSNA
-    ? mockServiceAgreements.find(
+    ? (mockServiceAgreements.find(
         (sa) => sa.employeeId === currentEmployee.id,
-      ) ?? null
+      ) ?? null)
     : null;
 
   let userApps = mockApplications;
   if (currentUser?.role === "employee") {
-    userApps = mockApplications.filter((app) => app.employeeId === currentEmployee.id);
+    userApps = mockApplications.filter(
+      (app) => app.employeeId === currentEmployee.id,
+    );
   }
 
   const filteredApps = userApps.filter(
@@ -93,7 +97,10 @@ export default function ApplicationsPage() {
         { label: "Applications" },
       ]}
     >
-      <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto" data-ocid="applications.page">
+      <div
+        className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto"
+        data-ocid="applications.page"
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl md:text-2xl font-bold font-display text-foreground">
@@ -103,7 +110,10 @@ export default function ApplicationsPage() {
               Track and manage your reimbursement requests.
             </p>
           </div>
-          <Button onClick={() => router.push("/apply")} className="gap-2 w-full sm:w-auto shadow-sm">
+          <Button
+            onClick={() => router.push("/apply")}
+            className="gap-2 w-full sm:w-auto shadow-sm"
+          >
             <Plus className="w-4 h-4" />
             New Application
           </Button>
@@ -177,7 +187,10 @@ export default function ApplicationsPage() {
               </div>
 
               <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed border-t border-primary/10 pt-3">
-                You are required to remain employed at Montefiore Health System for 2 years (or completion of 18 credits) following reimbursement approval per your NYSNA service agreement. Early separation may result in prorated repayment.
+                You are required to remain employed at Montefiore Health System
+                for 2 years (or completion of 18 credits) following
+                reimbursement approval per your NYSNA service agreement. Early
+                separation may result in prorated repayment.
               </p>
             </CardContent>
           </Card>
@@ -198,15 +211,27 @@ export default function ApplicationsPage() {
                 />
               </div>
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
-                <Button variant="outline" size="sm" className="h-9 gap-2 whitespace-nowrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2 whitespace-nowrap"
+                >
                   <Filter className="w-3.5 h-3.5" />
                   Filter
                 </Button>
-                <Button variant="outline" size="sm" className="h-9 gap-2 whitespace-nowrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2 whitespace-nowrap"
+                >
                   <SlidersHorizontal className="w-3.5 h-3.5" />
                   Sort
                 </Button>
-                <Button variant="outline" size="sm" className="h-9 gap-2 whitespace-nowrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-2 whitespace-nowrap"
+                >
                   <Download className="w-3.5 h-3.5" />
                   Export
                 </Button>
@@ -219,7 +244,9 @@ export default function ApplicationsPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent bg-muted/50">
-                    <TableHead className="w-[120px] font-semibold">ID</TableHead>
+                    <TableHead className="w-[120px] font-semibold">
+                      ID
+                    </TableHead>
                     <TableHead className="font-semibold">Details</TableHead>
                     <TableHead className="font-semibold">Program</TableHead>
                     <TableHead className="font-semibold">Amount</TableHead>
@@ -264,7 +291,9 @@ export default function ApplicationsPage() {
                             variant="outline"
                             className="text-[10px] font-medium whitespace-nowrap"
                           >
-                            {mockPrograms.find((p) => p.programType === app.programType)?.name ?? app.programType}
+                            {mockPrograms.find(
+                              (p) => p.programType === app.programType,
+                            )?.name ?? app.programType}
                           </Badge>
                         </TableCell>
                         <TableCell className="font-semibold text-foreground">
@@ -325,7 +354,9 @@ export default function ApplicationsPage() {
                         variant="outline"
                         className="text-[9px] font-medium bg-muted/30"
                       >
-                        {mockPrograms.find((p) => p.programType === app.programType)?.name ?? app.programType}
+                        {mockPrograms.find(
+                          (p) => p.programType === app.programType,
+                        )?.name ?? app.programType}
                       </Badge>
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-bold text-foreground">

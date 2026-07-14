@@ -6,20 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { mockApprovalItems } from "@/data/mockData";
 import {
-  Brain,
-  CheckCircle2,
-  ChevronRight,
-  ChevronDown,
-  ShieldCheck,
-  User,
-  Zap,
   AlertTriangle,
+  ArrowRight,
+  Brain,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
   Clock,
   DollarSign,
-  XCircle,
-  ArrowRight,
-  Check,
+  ShieldCheck,
+  User,
   X,
+  XCircle,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -44,8 +44,12 @@ export default function ApprovalsPage() {
     });
   });
 
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [actionStatuses, setActionStatuses] = useState<Record<string, ActionStatus>>({});
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [actionStatuses, setActionStatuses] = useState<
+    Record<string, ActionStatus>
+  >({});
 
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-US", {
@@ -100,18 +104,19 @@ export default function ApprovalsPage() {
   return (
     <Layout
       title="Pending Approvals"
-      breadcrumbs={[
-        { label: "Overview", href: "/" },
-        { label: "Approvals" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Approvals" }]}
     >
-      <div className="p-4 space-y-4 max-w-5xl mx-auto bg-muted/10 min-h-full" data-ocid="approvals.page">
+      <div
+        className="p-4 space-y-4 max-w-5xl mx-auto bg-muted/10 min-h-full"
+        data-ocid="approvals.page"
+      >
         <div>
           <h1 className="text-xl font-bold font-display text-foreground">
             Manager Approvals
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">
-            Review and approve reimbursement requests for your direct clinical reports and department associates.
+            Review and approve reimbursement requests for your direct clinical
+            reports and department associates.
           </p>
         </div>
 
@@ -148,12 +153,18 @@ export default function ApprovalsPage() {
                                 {approval.employeeName}
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                Employee ID: {approval.employeeId} • {approval.employeeTitle}
+                                Employee ID: {approval.employeeId} •{" "}
+                                {approval.employeeTitle}
                               </p>
                             </div>
                           </div>
-                          <Badge variant="outline" className="text-[9px] uppercase tracking-wider font-bold border-primary/20 text-primary bg-primary/5 h-5 px-2">
-                            {approval.programType.replace(/([A-Z])/g, ' $1').trim()}
+                          <Badge
+                            variant="outline"
+                            className="text-[9px] uppercase tracking-wider font-bold border-primary/20 text-primary bg-primary/5 h-5 px-2"
+                          >
+                            {approval.programType
+                              .replace(/([A-Z])/g, " $1")
+                              .trim()}
                           </Badge>
                         </div>
 
@@ -180,9 +191,13 @@ export default function ApprovalsPage() {
                             <p className="text-[9px] text-muted-foreground uppercase font-bold mb-0.5">
                               Due Date
                             </p>
-                            <p className={`text-xs font-semibold flex items-center gap-1 ${
-                              isSuspended ? "text-destructive font-bold" : "text-amber-600"
-                            }`}>
+                            <p
+                              className={`text-xs font-semibold flex items-center gap-1 ${
+                                isSuspended
+                                  ? "text-destructive font-bold"
+                                  : "text-amber-600"
+                              }`}
+                            >
                               <Clock className="w-3 h-3" />
                               {formatDate(approval.dueDate)}
                             </p>
@@ -196,9 +211,13 @@ export default function ApprovalsPage() {
                                 Escalated (Past Due)
                               </Badge>
                             ) : actionResult ? (
-                              <Badge className={`text-[8px] font-bold h-4 px-1 ${
-                                actionResult.action === "approved" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                              }`}>
+                              <Badge
+                                className={`text-[8px] font-bold h-4 px-1 ${
+                                  actionResult.action === "approved"
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
                                 {actionResult.action.toUpperCase()}
                               </Badge>
                             ) : (
@@ -214,9 +233,14 @@ export default function ApprovalsPage() {
                           <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2 text-amber-600">
                             <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600" />
                             <div>
-                              <p className="text-[11px] font-bold uppercase tracking-wide font-body">Escalated to Next Approver</p>
+                              <p className="text-[11px] font-bold uppercase tracking-wide font-body">
+                                Escalated to Next Approver
+                              </p>
                               <p className="text-[10px] text-amber-700 leading-relaxed mt-0.5 font-body">
-                                This request reached its due date ({formatDate(approval.dueDate)}) without a manager decision and was auto-escalated to the next approver. Actions are read-only.
+                                This request reached its due date (
+                                {formatDate(approval.dueDate)}) without a
+                                manager decision and was auto-escalated to the
+                                next approver. Actions are read-only.
                               </p>
                             </div>
                           </div>
@@ -224,11 +248,13 @@ export default function ApprovalsPage() {
 
                         {/* Interactive Action Feedbacks */}
                         {actionResult && (
-                          <div className={`mt-4 p-3 rounded-xl border flex items-start gap-2 text-xs font-medium leading-relaxed ${
-                            actionResult.action === "approved"
-                              ? "bg-emerald-50 text-emerald-800 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-300 dark:border-emerald-900"
-                              : "bg-red-50 text-red-800 border-red-100 dark:bg-red-950/20 dark:text-red-300 dark:border-red-900"
-                          }`}>
+                          <div
+                            className={`mt-4 p-3 rounded-xl border flex items-start gap-2 text-xs font-medium leading-relaxed ${
+                              actionResult.action === "approved"
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-300 dark:border-emerald-900"
+                                : "bg-red-50 text-red-800 border-red-100 dark:bg-red-950/20 dark:text-red-300 dark:border-red-900"
+                            }`}
+                          >
                             {actionResult.action === "approved" ? (
                               <Check className="w-4 h-4 flex-shrink-0 mt-0.5" />
                             ) : (
@@ -242,7 +268,13 @@ export default function ApprovalsPage() {
                       {/* Right actions sidebar (Approve, Reject, View Details) */}
                       <div className="border-t md:border-t-0 md:border-l border-border pt-3 md:pt-0 md:pl-4 flex flex-col justify-center gap-2 w-full md:w-48 flex-shrink-0">
                         <Button
-                          onClick={() => handleApprove(approval.id, approval.employeeName, approval.amount)}
+                          onClick={() =>
+                            handleApprove(
+                              approval.id,
+                              approval.employeeName,
+                              approval.amount,
+                            )
+                          }
                           disabled={isSuspended || !!actionResult}
                           className="w-full h-8 gap-1.5 bg-primary hover:bg-primary/90 text-white shadow-sm text-xs font-bold"
                         >
@@ -251,7 +283,9 @@ export default function ApprovalsPage() {
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={() => handleReject(approval.id, approval.employeeName)}
+                          onClick={() =>
+                            handleReject(approval.id, approval.employeeName)
+                          }
                           disabled={isSuspended || !!actionResult}
                           className="w-full h-8 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/5 border-destructive/20 text-xs font-bold"
                         >
@@ -265,7 +299,11 @@ export default function ApprovalsPage() {
                           onClick={() => toggleExpand(approval.id)}
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
-                          {isExpanded ? <ChevronDown className="w-3 h-3 rotate-180 transition-transform" /> : <ChevronRight className="w-3 h-3 transition-transform" />}
+                          {isExpanded ? (
+                            <ChevronDown className="w-3 h-3 rotate-180 transition-transform" />
+                          ) : (
+                            <ChevronRight className="w-3 h-3 transition-transform" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -276,16 +314,30 @@ export default function ApprovalsPage() {
                         {/* Course & Application Details */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           <div className="space-y-1">
-                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">Institution</h4>
-                            <p className="text-xs font-bold text-foreground">{approval.institution}</p>
+                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">
+                              Institution
+                            </h4>
+                            <p className="text-xs font-bold text-foreground">
+                              {approval.institution}
+                            </p>
                           </div>
                           <div className="space-y-1">
-                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">Course Title</h4>
-                            <p className="text-xs font-bold text-foreground">{approval.courseTitle}</p>
+                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">
+                              Course Title
+                            </h4>
+                            <p className="text-xs font-bold text-foreground">
+                              {approval.courseTitle}
+                            </p>
                           </div>
                           <div className="space-y-1">
-                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">Credits / Type</h4>
-                            <p className="text-xs font-bold text-foreground">{approval.credits > 0 ? `${approval.credits} Credits` : "CME Seminar"}</p>
+                            <h4 className="text-[9px] font-bold text-muted-foreground uppercase">
+                              Credits / Type
+                            </h4>
+                            <p className="text-xs font-bold text-foreground">
+                              {approval.credits > 0
+                                ? `${approval.credits} Credits`
+                                : "CME Seminar"}
+                            </p>
                           </div>
                         </div>
 
@@ -293,7 +345,9 @@ export default function ApprovalsPage() {
                         <div className="py-2.5 px-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1">
                           <div className="flex items-center gap-1.5 text-primary">
                             <Brain className="w-3.5 h-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">AI Policy Analysis Summary</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              AI Policy Analysis Summary
+                            </span>
                           </div>
                           <p className="text-xs text-muted-foreground leading-relaxed italic">
                             "{approval.aiSummary}"
@@ -303,55 +357,92 @@ export default function ApprovalsPage() {
                         {/* Approver Routing path & authority validation */}
                         <div className="space-y-2">
                           <h4 className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Approver Routing Verification
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                            Approver Routing Verification
                           </h4>
                           <div className="flex flex-col md:flex-row items-start md:items-center gap-2 p-2.5 rounded-lg border border-border bg-card text-xs">
                             <div className="flex items-center gap-1.5">
                               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                              <span className="font-semibold">Internal Medicine Nursing Dept</span>
+                              <span className="font-semibold">
+                                Internal Medicine Nursing Dept
+                              </span>
                             </div>
                             <ArrowRight className="hidden md:block w-3.5 h-3.5 text-muted-foreground/60" />
                             <div className="flex items-center gap-1.5">
                               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                              <span>Clinical Approver: <strong className="font-bold">Dr. James Okonkwo</strong></span>
+                              <span>
+                                Clinical Approver:{" "}
+                                <strong className="font-bold">
+                                  Dr. James Okonkwo
+                                </strong>
+                              </span>
                             </div>
                             <Badge className="ml-auto bg-emerald-50 text-emerald-700 border-transparent text-[8px] font-bold h-4">
                               Routing Path Verified
                             </Badge>
                           </div>
                           <p className="text-[10px] text-muted-foreground leading-relaxed pl-1">
-                            Note: Approvals for nursing degree courses (NUR 604) automatically route to designated Nurse Managers with clinical tuition program validation authority.
+                            Note: Approvals for nursing degree courses (NUR 604)
+                            automatically route to designated Nurse Managers
+                            with clinical tuition program validation authority.
                           </p>
                         </div>
 
                         {/* History Log / Audit Trail */}
                         <div className="space-y-2 border-t border-border pt-2">
-                          <h4 className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Application Audit History</h4>
+                          <h4 className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            Application Audit History
+                          </h4>
                           <div className="relative pl-4 space-y-3.5 border-l border-border/80 ml-2 pt-2">
                             <div className="relative">
                               <span className="absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-card shadow-sm" />
-                              <p className="text-[10px] font-bold text-foreground leading-none">Application Submitted</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">Submitted by associate {approval.employeeName} • {formatDate(approval.submittedDate)}</p>
+                              <p className="text-[10px] font-bold text-foreground leading-none">
+                                Application Submitted
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                Submitted by associate {approval.employeeName} •{" "}
+                                {formatDate(approval.submittedDate)}
+                              </p>
                             </div>
                             <div className="relative">
                               <span className="absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-card shadow-sm" />
-                              <p className="text-[10px] font-bold text-foreground leading-none">AI Eligibility Check Completed</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">AI extraction checked. 94% documentation verification confidence • {formatDate(approval.submittedDate)}</p>
+                              <p className="text-[10px] font-bold text-foreground leading-none">
+                                AI Eligibility Check Completed
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                AI extraction checked. 94% documentation
+                                verification confidence •{" "}
+                                {formatDate(approval.submittedDate)}
+                              </p>
                             </div>
                             <div className="relative">
                               <span className="absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full bg-amber-500 border border-card shadow-sm" />
-                              <p className="text-[10px] font-bold text-foreground leading-none">Awaiting Manager Approval</p>
-                              <p className="text-[9px] text-muted-foreground mt-0.5">Routed to designated Nurse Manager Dr. James Okonkwo • {formatDate(approval.submittedDate)}</p>
+                              <p className="text-[10px] font-bold text-foreground leading-none">
+                                Awaiting Manager Approval
+                              </p>
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                Routed to designated Nurse Manager Dr. James
+                                Okonkwo • {formatDate(approval.submittedDate)}
+                              </p>
                             </div>
                             {actionResult && (
                               <div className="relative">
-                                <span className={`absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full border border-card shadow-sm ${
-                                  actionResult.action === "approved" ? "bg-emerald-500" : "bg-red-500"
-                                }`} />
+                                <span
+                                  className={`absolute -left-[20.5px] top-1 w-2.5 h-2.5 rounded-full border border-card shadow-sm ${
+                                    actionResult.action === "approved"
+                                      ? "bg-emerald-500"
+                                      : "bg-red-500"
+                                  }`}
+                                />
                                 <p className="text-[10px] font-bold text-foreground leading-none">
-                                  {actionResult.action === "approved" ? "Approved by Manager" : "Rejected by Manager"}
+                                  {actionResult.action === "approved"
+                                    ? "Approved by Manager"
+                                    : "Rejected by Manager"}
                                 </p>
-                                <p className="text-[9px] text-muted-foreground mt-0.5">Decision completed on {new Date().toLocaleDateString()}</p>
+                                <p className="text-[9px] text-muted-foreground mt-0.5">
+                                  Decision completed on{" "}
+                                  {new Date().toLocaleDateString()}
+                                </p>
                               </div>
                             )}
                           </div>

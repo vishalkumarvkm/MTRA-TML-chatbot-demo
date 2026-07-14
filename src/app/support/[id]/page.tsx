@@ -1,10 +1,10 @@
 "use client";
 
 import { Layout } from "@/components/layout/Layout";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,30 +13,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { mockApplications, mockEmployees } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
-import { mockEmployees, mockApplications } from "@/data/mockData";
-import { use, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import type { SupportCaseMessage } from "@/types";
 import {
   ArrowLeft,
-  Clock,
-  User,
-  ShieldAlert,
-  Send,
-  MessageSquare,
-  Lock,
-  PlusCircle,
+  Bold,
   CheckCircle,
-  Paperclip,
-  Link as LinkIcon,
   ChevronDown,
   ChevronUp,
-  Bold,
-  Italic,
+  Clock,
   FileText,
+  Italic,
+  Link as LinkIcon,
+  Lock,
+  MessageSquare,
+  Paperclip,
+  PlusCircle,
+  Send,
+  ShieldAlert,
+  User,
   X,
 } from "lucide-react";
-import type { SupportCaseMessage } from "@/types";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useRef, useState } from "react";
 
 const ADMINISTRATORS = ["System Admin", "Derek Chen", "Sarah Kim"];
 
@@ -49,7 +49,9 @@ export default function SupportCaseDetailPage({
   const router = useRouter();
   const { currentUser, supportCases, updateSupportCase } = useAppStore();
   const [replyText, setReplyText] = useState("");
-  const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
+  const [expandedMessages, setExpandedMessages] = useState<
+    Record<string, boolean>
+  >({});
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const getAvatarColorClass = (role: string) => {
@@ -86,7 +88,9 @@ export default function SupportCaseDetailPage({
     return (
       <Layout title="Case Not Found">
         <div className="p-12 text-center space-y-4">
-          <p className="text-sm font-bold text-destructive">Support Case not found.</p>
+          <p className="text-sm font-bold text-destructive">
+            Support Case not found.
+          </p>
           <Button variant="outline" onClick={() => router.push("/support")}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Support Cases
           </Button>
@@ -103,14 +107,19 @@ export default function SupportCaseDetailPage({
   // Check if role is authorized to view
   const canView =
     userRole === "admin" ||
-    (userRole === "employee" && (supportCase.employeeId === currentEmployee.id || supportCase.employeeId === currentUser.employeeId || supportCase.employeeId === "emp-001")) ||
+    (userRole === "employee" &&
+      (supportCase.employeeId === currentEmployee.id ||
+        supportCase.employeeId === currentUser.employeeId ||
+        supportCase.employeeId === "emp-001")) ||
     userRole === "manager"; // managers can view cases linked to reports
 
   if (!canView) {
     return (
       <Layout title="Access Denied">
         <div className="p-12 text-center space-y-4 font-body">
-          <p className="text-sm font-bold text-destructive">You are not authorized to view this support case.</p>
+          <p className="text-sm font-bold text-destructive">
+            You are not authorized to view this support case.
+          </p>
           <Button variant="outline" onClick={() => router.push("/support")}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Support Cases
           </Button>
@@ -142,7 +151,8 @@ export default function SupportCaseDetailPage({
       id: `msg-esc-${Date.now()}`,
       senderName: currentUser.name,
       senderRole: "manager",
-      message: "[Escalation Alert] Unit Manager has flagged this ticket as 'Unable to Resolve' and escalated it to HR Specialists for policy exception review.",
+      message:
+        "[Escalation Alert] Unit Manager has flagged this ticket as 'Unable to Resolve' and escalated it to HR Specialists for policy exception review.",
       timestamp: new Date().toISOString(),
     };
 
@@ -221,8 +231,10 @@ export default function SupportCaseDetailPage({
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back to list
               </Button>
             </div>
-            
-            <h2 className="text-sm sm:text-base font-bold text-[#0D2B4E] mb-2 leading-snug">{supportCase.subject}</h2>
+
+            <h2 className="text-sm sm:text-base font-bold text-[#0D2B4E] mb-2 leading-snug">
+              {supportCase.subject}
+            </h2>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded font-bold">
@@ -233,7 +245,7 @@ export default function SupportCaseDetailPage({
                 </span>
                 <span
                   className={`border text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusBadgeColor(
-                    supportCase.status
+                    supportCase.status,
                   )}`}
                 >
                   {supportCase.status}
@@ -247,19 +259,23 @@ export default function SupportCaseDetailPage({
 
               {/* Thread Actions */}
               <div className="flex flex-wrap items-center gap-2">
-                {supportCase.status !== "Resolved" && supportCase.status !== "Closed" && (userRole === "manager" || userRole === "admin") && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      updateSupportCase(supportCase.id, { status: "Resolved" });
-                    }}
-                    className="h-7 text-[10px] px-2.5 gap-1 border-[#003769]/20 text-[#003769] hover:bg-blue-50 bg-blue-50/10 font-bold"
-                  >
-                    <CheckCircle className="w-3.5 h-3.5" /> Mark Resolved
-                  </Button>
-                )}
+                {supportCase.status !== "Resolved" &&
+                  supportCase.status !== "Closed" &&
+                  (userRole === "manager" || userRole === "admin") && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        updateSupportCase(supportCase.id, {
+                          status: "Resolved",
+                        });
+                      }}
+                      className="h-7 text-[10px] px-2.5 gap-1 border-[#003769]/20 text-[#003769] hover:bg-blue-50 bg-blue-50/10 font-bold"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5" /> Mark Resolved
+                    </Button>
+                  )}
 
                 {supportCase.status !== "Closed" && (
                   <Button
@@ -287,8 +303,15 @@ export default function SupportCaseDetailPage({
               // Hide internal notes if user is employee or manager
               if (msg.isInternal && userRole !== "admin") return null;
 
-              const isExpanded = expandedMessages[msg.id] !== undefined ? expandedMessages[msg.id] : true;
-              const initials = msg.senderName.split(" ").map((n) => n[0]).join("").toUpperCase();
+              const isExpanded =
+                expandedMessages[msg.id] !== undefined
+                  ? expandedMessages[msg.id]
+                  : true;
+              const initials = msg.senderName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase();
               const avatarColor = getAvatarColorClass(msg.senderRole);
 
               return (
@@ -301,13 +324,17 @@ export default function SupportCaseDetailPage({
                     onClick={() => toggleMessage(msg.id)}
                     className="flex items-start gap-3 px-4 py-3 cursor-pointer select-none hover:bg-muted/10 bg-white"
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5 ${avatarColor}`}>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5 ${avatarColor}`}
+                    >
                       {initials}
                     </div>
                     <div className="flex-1 min-w-0">
                       {/* Top row: name + badges */}
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <span className="font-semibold text-sm text-[#0D2B4E] leading-none">{msg.senderName}</span>
+                        <span className="font-semibold text-sm text-[#0D2B4E] leading-none">
+                          {msg.senderName}
+                        </span>
                         <span className="text-[10px] text-muted-foreground bg-muted/40 px-2 py-0.5 rounded font-semibold capitalize">
                           {msg.senderRole}
                         </span>
@@ -342,8 +369,12 @@ export default function SupportCaseDetailPage({
                           <div className="flex items-center gap-2 bg-[#F9FAFB] border border-border rounded-md px-3 py-2 text-xs text-[#0D2B4E] mt-3 max-w-xs">
                             <FileText className="w-4 h-4 text-muted-foreground" />
                             <div className="flex-1 min-w-0">
-                              <span className="font-semibold block truncate">{msg.attachment.name}</span>
-                              <span className="text-[10px] text-muted-foreground block">{msg.attachment.size}</span>
+                              <span className="font-semibold block truncate">
+                                {msg.attachment.name}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground block">
+                                {msg.attachment.size}
+                              </span>
                             </div>
                           </div>
                         )}
@@ -372,8 +403,13 @@ export default function SupportCaseDetailPage({
           {userRole === "employee" && supportCase.status === "Resolved" && (
             <div className="mx-6 my-4 p-4 bg-blue-50 border border-blue-100 text-blue-950 rounded-lg text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-body">
               <div>
-                <p className="font-bold">This support case has been marked as Resolved.</p>
-                <p className="text-muted-foreground mt-0.5">If the issue is still unresolved, you may re-open it to continue the discussion.</p>
+                <p className="font-bold">
+                  This support case has been marked as Resolved.
+                </p>
+                <p className="text-muted-foreground mt-0.5">
+                  If the issue is still unresolved, you may re-open it to
+                  continue the discussion.
+                </p>
               </div>
               <Button
                 onClick={handleReopen}
@@ -389,20 +425,30 @@ export default function SupportCaseDetailPage({
           <footer className="p-1.5 border-t border-border bg-card shrink-0">
             {supportCase.status === "Closed" ? (
               <div className="text-center py-2 text-xs text-muted-foreground font-semibold flex items-center justify-center gap-1">
-                <Lock className="w-3.5 h-3.5" /> This support ticket has been closed. Replies are disabled.
+                <Lock className="w-3.5 h-3.5" /> This support ticket has been
+                closed. Replies are disabled.
               </div>
             ) : (
               <div className="bg-white border border-border rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between px-3 py-1 border-b border-border bg-muted/10">
                   <div className="flex items-center gap-2">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${getAvatarColorClass(currentUser.role)}`}>
-                      {currentUser.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${getAvatarColorClass(currentUser.role)}`}
+                    >
+                      {currentUser.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
                     </div>
                     <span className="text-xs font-semibold text-[#0D2B4E]">
                       Reply from {currentUser.name}
                     </span>
                     <span className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-[10px] font-medium">
-                      To: {userRole === "admin" ? "Employee" : "Benefits Specialist"}
+                      To:{" "}
+                      {userRole === "admin"
+                        ? "Employee"
+                        : "Benefits Specialist"}
                     </span>
                   </div>
                 </div>
@@ -430,7 +476,8 @@ export default function SupportCaseDetailPage({
                         variant="outline"
                         className="h-7 text-[10px] font-semibold border-amber-500/30 text-amber-700 hover:bg-amber-500/5 gap-1 rounded-md px-2.5"
                       >
-                        <Lock className="w-3 h-3 text-amber-600" /> Internal Note
+                        <Lock className="w-3 h-3 text-amber-600" /> Internal
+                        Note
                       </Button>
                     )}
                     <Button
@@ -449,7 +496,11 @@ export default function SupportCaseDetailPage({
                     <button
                       type="button"
                       title="Attach file"
-                      onClick={() => alert("File attachment feature is for demonstration only.")}
+                      onClick={() =>
+                        alert(
+                          "File attachment feature is for demonstration only.",
+                        )
+                      }
                       className="w-7 h-7 flex items-center justify-center rounded bg-[#003769] text-white hover:bg-[#003769]/80 transition-colors"
                     >
                       <Paperclip className="w-3.5 h-3.5" />
@@ -478,7 +529,6 @@ export default function SupportCaseDetailPage({
         {/* Right Sidebar - Manager/Admin Only */}
         {(userRole === "manager" || userRole === "admin") && (
           <aside className="w-full lg:w-[280px] bg-card border-t lg:border-t-0 lg:border-l border-border p-5 flex flex-col gap-5 overflow-y-auto shrink-0 bg-white">
-            
             {/* Case Details Card */}
             <div className="space-y-3 bg-[#F9FAFB] border border-border rounded-lg p-4">
               <h3 className="text-xs font-bold text-[#0D2B4E] border-b border-border pb-1.5 uppercase tracking-wide">
@@ -487,38 +537,54 @@ export default function SupportCaseDetailPage({
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Status</span>
-                  <span className={`border text-[9px] font-bold px-2 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusBadgeColor(supportCase.status)}`}>
+                  <span
+                    className={`border text-[9px] font-bold px-2 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusBadgeColor(supportCase.status)}`}
+                  >
                     {supportCase.status}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Priority</span>
-                  <span className="font-semibold text-foreground">{supportCase.priority || "Medium"}</span>
+                  <span className="font-semibold text-foreground">
+                    {supportCase.priority || "Medium"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Category</span>
-                  <span className="font-semibold text-foreground">{supportCase.category}</span>
+                  <span className="font-semibold text-foreground">
+                    {supportCase.category}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Created</span>
-                  <span className="font-semibold text-foreground">{formatDate(supportCase.createdDate).split(",")[0]}</span>
+                  <span className="font-semibold text-foreground">
+                    {formatDate(supportCase.createdDate).split(",")[0]}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Linked App</span>
-                  <span className="font-mono font-semibold text-foreground">{supportCase.linkedAppId || "None"}</span>
+                  <span className="font-mono font-semibold text-foreground">
+                    {supportCase.linkedAppId || "None"}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Assigned to</span>
-                  <span className="font-semibold text-foreground">{supportCase.assignedTo || "Unassigned"}</span>
+                  <span className="font-semibold text-foreground">
+                    {supportCase.assignedTo || "Unassigned"}
+                  </span>
                 </div>
               </div>
-              
+
               {/* Quick Actions inside Case Details */}
               {supportCase.status !== "Closed" && (
                 <div className="flex flex-col gap-2 pt-2 border-t border-border mt-3">
                   {supportCase.status !== "Resolved" && (
                     <Button
-                      onClick={() => updateSupportCase(supportCase.id, { status: "Resolved" })}
+                      onClick={() =>
+                        updateSupportCase(supportCase.id, {
+                          status: "Resolved",
+                        })
+                      }
                       size="sm"
                       className="w-full h-8 text-[10px] font-semibold bg-[#003769] hover:bg-[#003769]/90 text-white border-none rounded-md"
                     >
@@ -541,10 +607,17 @@ export default function SupportCaseDetailPage({
 
             {/* Employee Profile Card */}
             {(() => {
-              const emp = mockEmployees.find(
-                (e) => e.employeeId === supportCase.employeeId || e.name === supportCase.employeeName
-              ) || mockEmployees[0];
-              const initials = emp.name.split(" ").map((n) => n[0]).join("").toUpperCase();
+              const emp =
+                mockEmployees.find(
+                  (e) =>
+                    e.employeeId === supportCase.employeeId ||
+                    e.name === supportCase.employeeName,
+                ) || mockEmployees[0];
+              const initials = emp.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase();
               const tenureYears = emp.hireDate
                 ? Math.max(1, 2026 - new Date(emp.hireDate).getFullYear())
                 : 4;
@@ -559,26 +632,38 @@ export default function SupportCaseDetailPage({
                       {initials}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-[#0D2B4E] truncate">{emp.name}</div>
-                      <div className="text-[10px] text-muted-foreground truncate">{emp.title}</div>
+                      <div className="text-xs font-bold text-[#0D2B4E] truncate">
+                        {emp.name}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground truncate">
+                        {emp.title}
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2 text-xs border-t border-border/60 pt-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Employee ID</span>
-                      <span className="font-semibold text-foreground">{emp.employeeId}</span>
+                      <span className="font-semibold text-foreground">
+                        {emp.employeeId}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Department</span>
-                      <span className="font-semibold text-foreground text-right">{emp.department.split("—")[0].trim()}</span>
+                      <span className="font-semibold text-foreground text-right">
+                        {emp.department.split("—")[0].trim()}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Tenure</span>
-                      <span className="font-semibold text-foreground">{tenureYears} years</span>
+                      <span className="font-semibold text-foreground">
+                        {tenureYears} years
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Union</span>
-                      <span className="font-semibold text-foreground">{emp.isNYSNA ? "NYSNA" : "Non-Union"}</span>
+                      <span className="font-semibold text-foreground">
+                        {emp.isNYSNA ? "NYSNA" : "Non-Union"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -589,7 +674,9 @@ export default function SupportCaseDetailPage({
             {(() => {
               if (!supportCase.linkedAppId) return null;
               const app = mockApplications.find(
-                (a) => a.id === supportCase.linkedAppId || a.trackingId === supportCase.linkedAppId
+                (a) =>
+                  a.id === supportCase.linkedAppId ||
+                  a.trackingId === supportCase.linkedAppId,
               );
               return (
                 <div className="space-y-3 bg-[#F9FAFB] border border-border rounded-lg p-4">
@@ -599,17 +686,24 @@ export default function SupportCaseDetailPage({
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Request ID</span>
-                      <span className="font-mono font-semibold text-foreground">{supportCase.linkedAppId}</span>
+                      <span className="font-mono font-semibold text-foreground">
+                        {supportCase.linkedAppId}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Program</span>
                       <span className="font-semibold text-foreground">
-                        {supportCase.linkedAppProgram?.replace("Reimbursement", "") || "Regular Tuition"}
+                        {supportCase.linkedAppProgram?.replace(
+                          "Reimbursement",
+                          "",
+                        ) || "Regular Tuition"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Amount</span>
-                      <span className="font-semibold text-foreground">$3,200</span>
+                      <span className="font-semibold text-foreground">
+                        $3,200
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">App Status</span>
@@ -619,7 +713,9 @@ export default function SupportCaseDetailPage({
                     </div>
                   </div>
                   <Button
-                    onClick={() => router.push(`/applications/${supportCase.linkedAppId}`)}
+                    onClick={() =>
+                      router.push(`/applications/${supportCase.linkedAppId}`)
+                    }
                     variant="outline"
                     size="sm"
                     className="w-full h-8 mt-2 text-[10px] font-semibold border-border hover:bg-muted/10 gap-1 rounded-md"

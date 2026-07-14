@@ -1,11 +1,18 @@
 "use client";
 
 import { Layout } from "@/components/layout/Layout";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -14,19 +21,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useAppStore } from "@/store/appStore";
 import { mockApplications, mockEmployees } from "@/data/mockData";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { AlertCircle, FileText, MessageSquare, Plus, Search, User } from "lucide-react";
+import { useAppStore } from "@/store/appStore";
 import type { SupportCase } from "@/types";
+import {
+  AlertCircle,
+  FileText,
+  MessageSquare,
+  Plus,
+  Search,
+  User,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const CATEGORIES = [
   "Document Issue",
@@ -42,11 +49,14 @@ export default function SupportCasesPage() {
   const { currentUser, supportCases, addSupportCase } = useAppStore();
   const [search, setSearch] = useState("");
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"All" | "Open" | "In Progress" | "Resolved" | "Closed">("All");
+  const [activeTab, setActiveTab] = useState<
+    "All" | "Open" | "In Progress" | "Resolved" | "Closed"
+  >("All");
 
   // Form states
   const [subject, setSubject] = useState("");
-  const [category, setCategory] = useState<typeof CATEGORIES[number]>("Document Issue");
+  const [category, setCategory] =
+    useState<(typeof CATEGORIES)[number]>("Document Issue");
   const [linkedAppId, setLinkedAppId] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
@@ -58,22 +68,32 @@ export default function SupportCasesPage() {
   const userRole = currentUser.role;
   let filteredCases = supportCases;
 
-  const currentEmployee = mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) || mockEmployees[0];
+  const currentEmployee =
+    mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ||
+    mockEmployees[0];
 
   if (userRole === "employee") {
     filteredCases = supportCases.filter(
-      (c) => c.employeeId === currentEmployee.id || c.employeeId === currentUser.employeeId
+      (c) =>
+        c.employeeId === currentEmployee.id ||
+        c.employeeId === currentUser.employeeId,
     );
   } else if (userRole === "manager") {
     // Managers see cases raised by reports they supervise
     const reportIds = mockEmployees
-      .filter((e) => e.managerId === currentEmployee.id || e.managerId === currentUser.employeeId)
+      .filter(
+        (e) =>
+          e.managerId === currentEmployee.id ||
+          e.managerId === currentUser.employeeId,
+      )
       .flatMap((e) => [e.id, e.employeeId]);
-    filteredCases = supportCases.filter((c) => reportIds.includes(c.employeeId));
+    filteredCases = supportCases.filter((c) =>
+      reportIds.includes(c.employeeId),
+    );
   } else if (userRole === "admin") {
     // Admin/Specialists see cases assigned to them or unassigned
     filteredCases = supportCases.filter(
-      (c) => c.assignedTo === currentUser.name || c.assignedTo === ""
+      (c) => c.assignedTo === currentUser.name || c.assignedTo === "",
     );
   }
 
@@ -85,7 +105,7 @@ export default function SupportCasesPage() {
         c.id.toLowerCase().includes(q) ||
         c.subject.toLowerCase().includes(q) ||
         c.category.toLowerCase().includes(q) ||
-        c.employeeName.toLowerCase().includes(q)
+        c.employeeName.toLowerCase().includes(q),
     );
   }
 
@@ -96,7 +116,9 @@ export default function SupportCasesPage() {
 
   // Get active applications for the employee to link
   const employeeApps = mockApplications.filter(
-    (app) => app.employeeId === currentEmployee.id || app.employeeId === currentUser.employeeId
+    (app) =>
+      app.employeeId === currentEmployee.id ||
+      app.employeeId === currentUser.employeeId,
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -114,7 +136,9 @@ export default function SupportCasesPage() {
       return;
     }
 
-    const app = mockApplications.find((a) => a.id === linkedAppId || a.trackingId === linkedAppId);
+    const app = mockApplications.find(
+      (a) => a.id === linkedAppId || a.trackingId === linkedAppId,
+    );
 
     const nextIdNum = supportCases.length + 1;
     const formattedId = `SUP-2026-${String(nextIdNum).padStart(4, "0")}`;
@@ -196,9 +220,11 @@ export default function SupportCasesPage() {
   return (
     <Layout
       title="Support Tickets"
-      breadcrumbs={[{ label: "Overview", href: "/" }, { label: "Support Cases" }]}
+      breadcrumbs={[
+        { label: "Overview", href: "/" },
+        { label: "Support Cases" },
+      ]}
     >
-
       <div className="p-4 md:p-6 space-y-6 w-full min-h-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -219,7 +245,9 @@ export default function SupportCasesPage() {
             </Button>
           ) : userRole === "manager" ? (
             <Button
-              onClick={() => alert("Quick assign feature is for demonstration only.")}
+              onClick={() =>
+                alert("Quick assign feature is for demonstration only.")
+              }
               className="gap-2 font-body text-xs font-semibold h-9 rounded-md shrink-0 bg-[#003769] hover:bg-[#003769]/90 text-white"
             >
               <User className="w-4 h-4" /> Assign case
@@ -250,7 +278,9 @@ export default function SupportCasesPage() {
                 </div>
               </div>
               <div className="flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
-                {(["All", "Open", "In Progress", "Resolved", "Closed"] as const).map((tab) => {
+                {(
+                  ["All", "Open", "In Progress", "Resolved", "Closed"] as const
+                ).map((tab) => {
                   const isActive = activeTab === tab;
                   return (
                     <button
@@ -276,9 +306,13 @@ export default function SupportCasesPage() {
                   <MessageSquare className="w-6 h-6" />
                 </div>
                 <div className="max-w-md mx-auto space-y-2">
-                  <p className="text-sm font-bold text-foreground">No support cases yet.</p>
+                  <p className="text-sm font-bold text-foreground">
+                    No support cases yet.
+                  </p>
                   <p className="text-xs text-muted-foreground font-body">
-                    If you have a question or issue about your application, raise a support case to get assistance from the Administrator.
+                    If you have a question or issue about your application,
+                    raise a support case to get assistance from the
+                    Administrator.
                   </p>
                 </div>
                 {userRole === "employee" && (
@@ -352,7 +386,10 @@ export default function SupportCasesPage() {
                         >
                           <TableCell className="text-center w-8 py-3">
                             {c.unread && (
-                              <span className="w-2.5 h-2.5 rounded-full bg-[#003769] inline-block animate-pulse" title="Unread activity" />
+                              <span
+                                className="w-2.5 h-2.5 rounded-full bg-[#003769] inline-block animate-pulse"
+                                title="Unread activity"
+                              />
                             )}
                           </TableCell>
                           <TableCell className="font-mono text-xs font-bold text-foreground py-3">
@@ -363,7 +400,9 @@ export default function SupportCasesPage() {
                               {c.employeeName}
                             </TableCell>
                           )}
-                          <TableCell className={`text-xs py-3 truncate max-w-xs ${c.unread ? "font-bold text-slate-900" : "font-bold text-slate-800"}`}>
+                          <TableCell
+                            className={`text-xs py-3 truncate max-w-xs ${c.unread ? "font-bold text-slate-900" : "font-bold text-slate-800"}`}
+                          >
                             {c.subject}
                           </TableCell>
                           <TableCell className="text-xs py-3 font-medium text-slate-600">
@@ -373,17 +412,25 @@ export default function SupportCasesPage() {
                             {c.linkedAppId ? c.linkedAppId : "None"}
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${getPriorityStyle(c.priority)}`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${
-                                c.priority === "High" ? "bg-red-500" : c.priority === "Medium" ? "bg-amber-500" : "bg-slate-400"
-                              }`} />
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${getPriorityStyle(c.priority)}`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  c.priority === "High"
+                                    ? "bg-red-500"
+                                    : c.priority === "Medium"
+                                      ? "bg-amber-500"
+                                      : "bg-slate-400"
+                                }`}
+                              />
                               {c.priority || "Medium"}
                             </span>
                           </TableCell>
                           <TableCell className="py-3">
                             <span
                               className={`border text-[9px] font-bold px-2 py-0.5 rounded-full inline-block uppercase tracking-wider ${getStatusStyle(
-                                c.status
+                                c.status,
                               )}`}
                             >
                               {c.status}
@@ -392,7 +439,10 @@ export default function SupportCasesPage() {
                           <TableCell className="text-xs py-3 text-muted-foreground">
                             {formatDate(c.lastUpdated || c.createdDate)}
                           </TableCell>
-                          <TableCell className="text-right pr-6 py-3" onClick={(e) => e.stopPropagation()}>
+                          <TableCell
+                            className="text-right pr-6 py-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <Button
                               variant="outline"
                               size="sm"
@@ -437,7 +487,10 @@ export default function SupportCasesPage() {
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="subject" className="text-xs font-bold text-foreground">
+                <Label
+                  htmlFor="subject"
+                  className="text-xs font-bold text-foreground"
+                >
                   Case Subject <span className="text-destructive">*</span>
                 </Label>
                 <Input
@@ -452,12 +505,17 @@ export default function SupportCasesPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="category" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="category"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Category <span className="text-destructive">*</span>
                   </Label>
                   <Select
                     value={category}
-                    onValueChange={(val) => setCategory(val as typeof CATEGORIES[number])}
+                    onValueChange={(val) =>
+                      setCategory(val as (typeof CATEGORIES)[number])
+                    }
                   >
                     <SelectTrigger id="category" className="h-9 text-xs">
                       <SelectValue />
@@ -473,7 +531,10 @@ export default function SupportCasesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="linkedApp" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="linkedApp"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Linked Application
                   </Label>
                   <Select value={linkedAppId} onValueChange={setLinkedAppId}>
@@ -485,8 +546,14 @@ export default function SupportCasesPage() {
                         None / General Query
                       </SelectItem>
                       {employeeApps.map((app) => (
-                        <SelectItem key={app.id} value={app.id} className="text-xs">
-                          {app.trackingId} - {app.programType.replace("Reimbursement", "")} ({formatDate(app.submittedAt || app.createdAt)})
+                        <SelectItem
+                          key={app.id}
+                          value={app.id}
+                          className="text-xs"
+                        >
+                          {app.trackingId} -{" "}
+                          {app.programType.replace("Reimbursement", "")} (
+                          {formatDate(app.submittedAt || app.createdAt)})
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -496,26 +563,40 @@ export default function SupportCasesPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="priority" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="priority"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Priority <span className="text-destructive">*</span>
                   </Label>
                   <Select
                     value={priority}
-                    onValueChange={(val) => setPriority(val as "Low" | "Medium" | "High")}
+                    onValueChange={(val) =>
+                      setPriority(val as "Low" | "Medium" | "High")
+                    }
                   >
                     <SelectTrigger id="priority" className="h-9 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Low" className="text-xs">Low</SelectItem>
-                      <SelectItem value="Medium" className="text-xs">Medium</SelectItem>
-                      <SelectItem value="High" className="text-xs">High</SelectItem>
+                      <SelectItem value="Low" className="text-xs">
+                        Low
+                      </SelectItem>
+                      <SelectItem value="Medium" className="text-xs">
+                        Medium
+                      </SelectItem>
+                      <SelectItem value="High" className="text-xs">
+                        High
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="contactMethod" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="contactMethod"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Preferred Contact Method
                   </Label>
                   <Select defaultValue="Portal message (default)">
@@ -523,9 +604,18 @@ export default function SupportCasesPage() {
                       <SelectValue placeholder="Portal message (default)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Portal message (default)" className="text-xs">Portal message (default)</SelectItem>
-                      <SelectItem value="Email" className="text-xs">Email</SelectItem>
-                      <SelectItem value="Microsoft Teams" className="text-xs">Microsoft Teams</SelectItem>
+                      <SelectItem
+                        value="Portal message (default)"
+                        className="text-xs"
+                      >
+                        Portal message (default)
+                      </SelectItem>
+                      <SelectItem value="Email" className="text-xs">
+                        Email
+                      </SelectItem>
+                      <SelectItem value="Microsoft Teams" className="text-xs">
+                        Microsoft Teams
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -533,7 +623,10 @@ export default function SupportCasesPage() {
 
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="desc" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="desc"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Case Description <span className="text-destructive">*</span>
                   </Label>
                   <span className="text-[10px] text-muted-foreground font-medium">
@@ -553,8 +646,14 @@ export default function SupportCasesPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="file" className="text-xs font-bold text-foreground">
-                  Attachment <span className="text-muted-foreground font-normal">(optional, Max 5MB)</span>
+                <Label
+                  htmlFor="file"
+                  className="text-xs font-bold text-foreground"
+                >
+                  Attachment{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (optional, Max 5MB)
+                  </span>
                 </Label>
                 <div className="border border-dashed border-input rounded-md p-3 flex items-center justify-between bg-muted/20">
                   <span className="text-xs text-muted-foreground flex items-center gap-1.5">

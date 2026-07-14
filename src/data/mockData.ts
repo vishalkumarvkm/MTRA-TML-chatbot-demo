@@ -6,11 +6,11 @@ import type {
   AuditEntry,
   AuthUser,
   CaseItem,
+  CommitteeScore,
   Employee,
   Notification,
   Program,
   ScholarshipApplicant,
-  CommitteeScore,
   ServiceAgreement,
 } from "@/types";
 
@@ -145,7 +145,8 @@ export const mockPrograms: Program[] = [
     id: "prog-001",
     programType: "TuitionReimbursement",
     name: "Employee Tuition Reimbursement",
-    description: "Reimbursement for accredited degree programs and job-related coursework.",
+    description:
+      "Reimbursement for accredited degree programs and job-related coursework.",
     maxAmount: 5000,
     maxCredits: 18,
     eligibilityRules: [
@@ -198,7 +199,8 @@ export const mockPrograms: Program[] = [
     id: "prog-004",
     programType: "DependentTuition",
     name: "Physician/Executive Dependent Tuition",
-    description: "Tuition assistance for eligible dependents of physicians, scientists, and executives.",
+    description:
+      "Tuition assistance for eligible dependents of physicians, scientists, and executives.",
     maxAmount: 3000,
     maxCredits: 0,
     eligibilityRules: [
@@ -752,7 +754,8 @@ export const mockNotifications: Notification[] = [
     userId: "emp-002",
     type: "sla",
     title: "⚠️ OVERDUE APPROVAL: Action Required",
-    message: "The tuition reimbursement request of $3,250 for Carlos Rivera (Application MTRA-2026-0031) is now past its approval due date of April 24, 2026. This case has been Suspended. Please contact HR Benefits Specialist System Admin to reactivate and complete the review.",
+    message:
+      "The tuition reimbursement request of $3,250 for Carlos Rivera (Application MTRA-2026-0031) is now past its approval due date of April 24, 2026. This case has been Suspended. Please contact HR Benefits Specialist System Admin to reactivate and complete the review.",
     createdAt: "2026-04-25T09:00:00Z",
     read: false,
     actionUrl: "/approvals",
@@ -763,7 +766,8 @@ export const mockNotifications: Notification[] = [
     userId: "emp-002",
     type: "system",
     title: "Approver Routing Confirmed",
-    message: "Approver audit completed for Aisha Thompson's Columbia DPT Residency Seminar request. Dr. James Okonkwo confirmed as direct clinical manager. Request successfully routed.",
+    message:
+      "Approver audit completed for Aisha Thompson's Columbia DPT Residency Seminar request. Dr. James Okonkwo confirmed as direct clinical manager. Request successfully routed.",
     createdAt: "2026-05-02T10:00:00Z",
     read: true,
     actionUrl: "/approvals",
@@ -1152,7 +1156,8 @@ export const mockScholarshipApplicants: ScholarshipApplicant[] = [
     institution: "Albert Einstein College of Medicine",
     gpa: 3.92,
     financialNeedScore: 8,
-    aiSummary: "Exceptional candidate with 7+ years of clinical experience. Strong academic record. Financial need verified via FAFSA. Leadership potential highlighted in personal statement.",
+    aiSummary:
+      "Exceptional candidate with 7+ years of clinical experience. Strong academic record. Financial need verified via FAFSA. Leadership potential highlighted in personal statement.",
     status: "Pending",
     conflictFlag: false,
   },
@@ -1164,7 +1169,8 @@ export const mockScholarshipApplicants: ScholarshipApplicant[] = [
     institution: "Fordham University",
     gpa: 3.75,
     financialNeedScore: 5,
-    aiSummary: "Mid-career professional seeking transition to operations. Solid GPA. Moderate financial need. AI detects high relevance to current department growth plans.",
+    aiSummary:
+      "Mid-career professional seeking transition to operations. Solid GPA. Moderate financial need. AI detects high relevance to current department growth plans.",
     status: "Pending",
     conflictFlag: true, // Reports to the same manager as a committee member
   },
@@ -1176,7 +1182,8 @@ export const mockScholarshipApplicants: ScholarshipApplicant[] = [
     institution: "Columbia University",
     gpa: 3.98,
     financialNeedScore: 9,
-    aiSummary: "Top-tier applicant. Clinical lead in ICU. High financial need. Research proposal on patient safety systems is highly rated by AI evaluation.",
+    aiSummary:
+      "Top-tier applicant. Clinical lead in ICU. High financial need. Research proposal on patient safety systems is highly rated by AI evaluation.",
     status: "Pending",
     conflictFlag: false,
   },
@@ -1190,7 +1197,8 @@ export const mockCommitteeScores: CommitteeScore[] = [
     financialNeed: 8,
     academicStanding: 9,
     leadershipPotential: 10,
-    comments: "Maria is a clear leader in the ICU. Her academic performance is stellar.",
+    comments:
+      "Maria is a clear leader in the ICU. Her academic performance is stellar.",
     submittedAt: "2026-05-01T14:00:00Z",
   },
 ];

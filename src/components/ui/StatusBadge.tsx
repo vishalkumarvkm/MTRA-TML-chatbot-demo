@@ -8,7 +8,8 @@ const APP_STATUS_CONFIG: Record<
 > = {
   Draft: {
     label: "Draft",
-    className: "bg-brand-grey text-brand-black border-brand-grey hover:bg-brand-grey",
+    className:
+      "bg-brand-grey text-brand-black border-brand-grey hover:bg-brand-grey",
   },
   Submitted: {
     label: "Submitted",
@@ -122,7 +123,8 @@ export function StatusBadge({
 
   if (!config) return null;
 
-  const labelText = status === "Expired" && isHROps ? "Timed Out — Escalated" : config.label;
+  const labelText =
+    status === "Expired" && isHROps ? "Timed Out — Escalated" : config.label;
 
   return (
     <Badge

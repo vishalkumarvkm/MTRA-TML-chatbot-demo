@@ -1,5 +1,3 @@
-
-
 import { LogoLockup } from "@/components/ui/LogoLockup";
 
 interface AuthLayoutProps {
@@ -19,7 +17,10 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         }}
       >
         {/* Background pattern */}
-        <div className="absolute inset-0 opacity-[0.06] text-white" aria-hidden="true">
+        <div
+          className="absolute inset-0 opacity-[0.06] text-white"
+          aria-hidden="true"
+        >
           <svg
             width="100%"
             height="100%"
@@ -45,14 +46,13 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           </svg>
         </div>
 
-
         {/* Logo */}
         <div className="relative z-10 space-y-8 flex flex-col items-start">
           <div>
             <LogoLockup variant="blue" size="lg" />
           </div>
 
-          <h2 
+          <h2
             className="text-white font-display font-bold text-3xl leading-tight mb-4"
             style={{ marginTop: "100px" }}
           >
@@ -66,9 +66,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           </p>
         </div>
 
-        <div className="relative z-10">
-          {/* Features section removed */}
-        </div>
+        <div className="relative z-10">{/* Features section removed */}</div>
 
         {/* Footer */}
         <div className="relative z-10">

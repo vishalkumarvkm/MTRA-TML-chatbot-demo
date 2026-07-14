@@ -1,7 +1,7 @@
 "use client";
 
-import { Layout } from "@/components/layout/Layout";
 import { ApplicationWizard } from "@/components/apply/ApplicationWizard";
+import { Layout } from "@/components/layout/Layout";
 import { useAppStore } from "@/store/appStore";
 
 export default function ApplyPage() {

@@ -4,7 +4,8 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "HealthyME — Montefiore Tuition Reimbursement Agent",
-  description: "Enterprise healthcare HR SaaS platform for tuition reimbursement.",
+  description:
+    "Enterprise healthcare HR SaaS platform for tuition reimbursement.",
 };
 
 export default function RootLayout({

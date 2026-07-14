@@ -8,14 +8,18 @@ interface LogoLockupProps {
   size?: "sm" | "lg";
 }
 
-export function LogoLockup({ className, variant = "light", size = "sm" }: LogoLockupProps) {
-  const src = variant === "blue"
-    ? "/assets/images/logo_lockup_blue.png"
-    : "/logo_lockup.jpg";
+export function LogoLockup({
+  className,
+  variant = "light",
+  size = "sm",
+}: LogoLockupProps) {
+  const src =
+    variant === "blue"
+      ? "/assets/images/logo_lockup_blue.png"
+      : "/logo_lockup.jpg";
 
-  const heightClass = size === "lg"
-    ? "h-[38px] md:h-[48px]"
-    : "h-[28px] md:h-[36px]";
+  const heightClass =
+    size === "lg" ? "h-[38px] md:h-[48px]" : "h-[28px] md:h-[36px]";
 
   const maxH = size === "lg" ? "48px" : "36px";
   const minH = size === "lg" ? "38px" : "28px";

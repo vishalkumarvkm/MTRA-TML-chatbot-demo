@@ -19,7 +19,12 @@ export type ApplicationStatus =
 
 export type SlaStatus = "OnTrack" | "AtRisk" | "Overdue";
 
-export type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Escalated" | "Expired";
+export type ApprovalStatus =
+  | "Pending"
+  | "Approved"
+  | "Rejected"
+  | "Escalated"
+  | "Expired";
 
 export type UserRole = "employee" | "manager" | "admin";
 
@@ -289,7 +294,13 @@ export interface SupportCase {
   linkedAppDate?: string;
   linkedAppStatus?: string;
   subject: string;
-  category: "Document Issue" | "Eligibility Question" | "Payment Query" | "Service Agreement" | "Technical Issue" | "Other";
+  category:
+    | "Document Issue"
+    | "Eligibility Question"
+    | "Payment Query"
+    | "Service Agreement"
+    | "Technical Issue"
+    | "Other";
   description: string;
   status: "Open" | "In Progress" | "Resolved" | "Closed";
   createdDate: string;
