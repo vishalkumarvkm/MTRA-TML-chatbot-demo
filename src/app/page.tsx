@@ -15,6 +15,7 @@ import {
   mockPrograms,
   mockServiceAgreements,
 } from "@/data/mockData";
+import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
 import {
   AlertTriangle,
@@ -172,7 +173,7 @@ function isEligibleForProgram(
 }
 
 function DashboardPage() {
-  const { currentUser, isAuthenticated, hasHydrated } = useAppStore();
+  const { currentUser, isAuthenticated, hasHydrated, isChatOpen } = useAppStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -339,10 +340,17 @@ function DashboardPage() {
         )}
 
         {/* Stats Cards Row (Full Width) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-4 transition-all duration-300",
+            isChatOpen
+              ? "2xl:grid-cols-3 xl:grid-cols-1 md:grid-cols-3"
+              : "md:grid-cols-3",
+          )}
+        >
           {/* Tuition Balance (Annual Budget) */}
           <Card className="border border-sky-300 rounded-none bg-white shadow-none h-20 max-h-[80px]">
-            <CardContent className="py-3 px-4 flex items-center gap-4 h-full">
+            <CardContent className="py-3 px-3 sm:px-4 flex items-center gap-2 sm:gap-4 h-full">
               <ProgressRing
                 value={employee.tuitionUsed}
                 max={employee.tuitionMax}
@@ -352,18 +360,19 @@ function DashboardPage() {
                 valueDisplay=""
                 sublabel=""
                 label="Tuition Balance"
+                className="shrink-0"
               />
               <div className="min-w-0 flex-1 space-y-0.5">
-                <div className="text-sm font-bold text-[#003769] font-body leading-none">
+                <div className="text-sm font-bold text-[#003769] font-body leading-none truncate">
                   Annual Budget
                 </div>
-                <div className="text-xs font-bold text-[#008573] font-body leading-none py-0.5">
+                <div className="text-xs font-bold text-[#008573] font-body leading-none py-0.5 whitespace-nowrap">
                   {formatCurrency(employee.tuitionBalance)} left
                 </div>
-                <div className="text-[10px] font-semibold text-slate-600 font-body leading-tight">
-                  Annual Budget: {formatCurrency(employee.tuitionMax)}/year
+                <div className="text-[10px] font-semibold text-slate-600 font-body leading-tight whitespace-nowrap">
+                  Max: {formatCurrency(employee.tuitionMax)}/yr
                 </div>
-                <div className="text-[10px] font-medium text-slate-500 font-body leading-none">
+                <div className="text-[10px] font-medium text-slate-500 font-body leading-none whitespace-nowrap">
                   {formatCurrency(employee.tuitionUsed)} used
                 </div>
               </div>
@@ -372,12 +381,12 @@ function DashboardPage() {
 
           {/* Active Applications */}
           <Card className="border border-sky-300 rounded-none bg-white shadow-none h-20 max-h-[80px]">
-            <CardContent className="py-3 px-4 flex flex-col justify-center h-full">
-              <div className="text-sm font-bold text-[#003769] font-body text-left leading-none">
+            <CardContent className="py-3 px-3 sm:px-4 flex flex-col justify-center h-full">
+              <div className="text-sm font-bold text-[#003769] font-body text-left leading-none truncate">
                 Active Applications
               </div>
               <div className="mt-2 text-left">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 whitespace-nowrap">
                   <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
                   <span>Pending Approval: {activeApps.length}</span>
                 </div>
@@ -387,16 +396,16 @@ function DashboardPage() {
 
           {/* Total Reimbursed */}
           <Card className="border border-sky-300 rounded-none bg-white shadow-none h-20 max-h-[80px]">
-            <CardContent className="py-3 px-4 flex flex-col justify-center h-full">
-              <div className="text-sm font-bold text-[#003769] font-body text-left leading-none">
+            <CardContent className="py-3 px-3 sm:px-4 flex flex-col justify-center h-full">
+              <div className="text-sm font-bold text-[#003769] font-body text-left leading-none truncate">
                 Total Reimbursed
               </div>
-              <div className="mt-1 text-left flex items-baseline gap-2">
-                <span className="text-2xl font-bold font-body text-slate-800 leading-none">
+              <div className="mt-1 text-left flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
+                <span className="text-2xl font-bold font-body text-slate-800 leading-none whitespace-nowrap">
                   {formatCurrency(ytdReimbursed)}
                 </span>
-                <span className="text-xs font-medium text-slate-500 font-body">
-                  Year-to-date: {approvedApps.length} Approved
+                <span className="text-xs font-medium text-slate-500 font-body whitespace-nowrap">
+                  {approvedApps.length} Approved YTD
                 </span>
               </div>
             </CardContent>
