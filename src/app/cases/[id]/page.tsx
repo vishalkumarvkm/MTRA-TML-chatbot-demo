@@ -227,7 +227,7 @@ export default function CaseDetailsPage({
       },
       admin: {
         role: "Administrator",
-        name: id === "case-001" ? "" : "System Admin",
+        name: id === "case-001" ? "" : "Maria Santos",
         date: id === "case-001" ? "" : "04/22/2026",
         status:
           id === "case-001" ? ("pending" as const) : ("complete" as const),
@@ -235,7 +235,7 @@ export default function CaseDetailsPage({
       },
       deptHead: {
         role: "Department Head",
-        name: id === "case-001" ? "" : "Dr. James Okonkwo",
+        name: id === "case-001" ? "" : "Maria Santos",
         date: id === "case-001" ? "" : "04/25/2026",
         status:
           id === "case-001" ? ("pending" as const) : ("complete" as const),
@@ -282,7 +282,7 @@ export default function CaseDetailsPage({
         id: "a-3",
         timestamp: "2026-04-16 09:15 am",
         action: "TIER1_REVIEW_STARTED",
-        actor: "System Admin",
+        actor: "Maria Santos",
         actorRole: "admin",
         entityId: caseData.id,
         entityType: "case",
@@ -398,7 +398,7 @@ export default function CaseDetailsPage({
       setHwStatus("under-review");
       logAction(
         "STAGE1_COMPLETED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         "Tier 1 Intake Approved. Application routed to Health & Wellbeing review.",
       );
@@ -408,7 +408,7 @@ export default function CaseDetailsPage({
       setCurrentStage(3);
       logAction(
         "STAGE2_COMPLETED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         "Health & Wellbeing review approved. Routed to Stage 3 Approval Signatures.",
       );
@@ -447,7 +447,7 @@ export default function CaseDetailsPage({
       setCurrentStage(5);
       logAction(
         "STAGE4_COMPLETED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         "Posted to Workday Payroll. GL Code: 61200-TUIT assigned. Tax split optimized.",
       );
@@ -473,7 +473,7 @@ export default function CaseDetailsPage({
       setTier1Status("incomplete");
       logAction(
         "TIER1_REJECTED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         `Returned to employee. Reason: ${reason}`,
       );
@@ -482,7 +482,7 @@ export default function CaseDetailsPage({
       setHwStatus("rejected");
       logAction(
         "HW_REJECTED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         `H&W rejected. Reason: ${reason}`,
       );
@@ -490,7 +490,7 @@ export default function CaseDetailsPage({
     } else {
       logAction(
         "CASE_REJECTED",
-        "System Admin",
+        "Maria Santos",
         "admin",
         `Case rejected. Reason: ${reason}`,
       );
@@ -506,7 +506,7 @@ export default function CaseDetailsPage({
     setTier1Status("escalated");
     logAction(
       "CASE_ESCALATED",
-      "System Admin",
+      "Maria Santos",
       "admin",
       `Case escalated to Benefits Director. Reason: ${reason}`,
     );
@@ -545,7 +545,7 @@ export default function CaseDetailsPage({
     }));
     logAction(
       "SIGNATURE_ADDED",
-      "System Admin",
+      "Maria Santos",
       "admin",
       `Administrator signature verified. Name: ${adminNameInput}. Date: ${adminDateInput}.`,
     );
@@ -590,7 +590,7 @@ export default function CaseDetailsPage({
     setChecklist((prev) => ({ ...prev, allSignatures: true }));
     logAction(
       "SIGNATURE_ADDED",
-      "Dr. James Okonkwo",
+      "Maria Santos",
       "manager",
       `Department Head signature verified. Name: ${deptHeadNameInput}. Date: ${deptHeadDateInput}.`,
     );
@@ -776,7 +776,7 @@ export default function CaseDetailsPage({
                   <ShieldCheck className="w-3 h-3" /> Manager
                 </p>
                 <p className="text-xs font-medium text-primary hover:underline cursor-pointer">
-                  Dr. James Okonkwo
+                  Maria Santos
                 </p>
               </div>
             </div>
@@ -1106,7 +1106,7 @@ export default function CaseDetailsPage({
                                 setHwStatus("under-review");
                                 logAction(
                                   "STAGE1_COMPLETED",
-                                  "System Admin",
+                                  "Maria Santos",
                                   "admin",
                                   "Intake approved. Routed to Health & Wellbeing review.",
                                 );
@@ -1156,7 +1156,7 @@ export default function CaseDetailsPage({
                                 setCurrentStage(3);
                                 logAction(
                                   "STAGE2_COMPLETED",
-                                  "System Admin",
+                                  "Maria Santos",
                                   "admin",
                                   "Health & Wellbeing review completed and approved.",
                                 );
@@ -1211,8 +1211,7 @@ export default function CaseDetailsPage({
 
                           <div className="flex items-center justify-between text-[11px] p-2 bg-muted/20 rounded-lg border">
                             <span>
-                              Line 2: <strong>Administrator</strong> (System
-                              Admin)
+                              Line 2: <strong>Administrator</strong> (Maria Santos)
                             </span>
                             {signatures.admin.status === "complete" ? (
                               <Badge className="bg-emerald-50 text-emerald-700 text-[9px]">
@@ -1227,8 +1226,7 @@ export default function CaseDetailsPage({
 
                           <div className="flex items-center justify-between text-[11px] p-2 bg-muted/20 rounded-lg border">
                             <span>
-                              Line 3: <strong>Department Head</strong> (Dr.
-                              James Okonkwo)
+                              Line 3: <strong>Department Head</strong> (Maria Santos)
                             </span>
                             {signatures.deptHead.status === "complete" ? (
                               <Badge className="bg-emerald-50 text-emerald-700 text-[9px]">
@@ -1248,7 +1246,7 @@ export default function CaseDetailsPage({
                             <div className="mt-4 p-3 border rounded-xl bg-card space-y-3 shadow-inner animate-in fade-in">
                               <p className="text-[10px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5 text-primary">
                                 <FileSignature className="w-3.5 h-3.5" /> Sign
-                                as Administrator (System Admin)
+                                as Administrator (Maria Santos)
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div className="space-y-1">
@@ -1261,7 +1259,7 @@ export default function CaseDetailsPage({
                                     onChange={(e) =>
                                       setAdminNameInput(e.target.value)
                                     }
-                                    placeholder="System Admin"
+                                    placeholder="Maria Santos"
                                     className="w-full text-xs h-8 px-2.5 border rounded-lg bg-card outline-none"
                                   />
                                 </div>
@@ -1319,7 +1317,7 @@ export default function CaseDetailsPage({
                             <div className="mt-4 p-3 border rounded-xl bg-card space-y-3 shadow-inner animate-in fade-in">
                               <p className="text-[10px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5 text-primary">
                                 <FileSignature className="w-3.5 h-3.5" /> Sign
-                                as Department Head (Dr. James Okonkwo)
+                                as Department Head (Maria Santos)
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div className="space-y-1">
@@ -1332,7 +1330,7 @@ export default function CaseDetailsPage({
                                     onChange={(e) =>
                                       setDeptHeadNameInput(e.target.value)
                                     }
-                                    placeholder="Dr. James Okonkwo"
+                                    placeholder="Maria Santos"
                                     className="w-full text-xs h-8 px-2.5 border rounded-lg bg-card outline-none"
                                   />
                                 </div>
@@ -1461,7 +1459,7 @@ export default function CaseDetailsPage({
                                 setCurrentStage(5);
                                 logAction(
                                   "STAGE4_COMPLETED",
-                                  "System Admin",
+                                  "Maria Santos",
                                   "admin",
                                   "Sync + post to Workday payroll complete. Pre-tax optimization active.",
                                 );
@@ -1598,7 +1596,7 @@ export default function CaseDetailsPage({
                                     checked
                                       ? "CHECKLIST_ITEM_PASSED"
                                       : "CHECKLIST_ITEM_FAILED",
-                                    "System Admin",
+                                    "Maria Santos",
                                     "admin",
                                     `Checklist item '${item.label}' changed to ${checked ? "Pass" : "Fail"}.`,
                                   );
@@ -1711,26 +1709,26 @@ export default function CaseDetailsPage({
                   <CardContent className="space-y-6 pt-4">
                     {[
                       {
-                        name: "System Admin",
+                        name: "Maria Santos",
                         role: "Benefits Admin",
                         time: "Apr 16, 2026, 2:45 pm",
-                        initials: "PN",
+                        initials: "MS",
                         color: "blue",
                         text: "Reviewed all submitted documents. Enrollment confirmed with CUNY Lehman registrar. Receipt matches tuition schedule. Transcript still in pending state — AI OCR flagged for manual review. Forwarding to manager for approval once transcript is cleared.",
                       },
                       {
-                        name: "Dr. James Okonkwo",
+                        name: "Maria Santos",
                         role: "Nurse Manager",
                         time: "Apr 17, 2026, 8:00 pm",
-                        initials: "DJ",
+                        initials: "MS",
                         color: "emerald",
                         text: "Maria is an outstanding team member and this course directly supports her role as charge nurse. I fully support this application. Pending Admin clearance of transcript.",
                       },
                       {
-                        name: "System Admin",
+                        name: "Maria Santos",
                         role: "Benefits Admin",
                         time: "Apr 22, 2026, 4:30 pm",
-                        initials: "PN",
+                        initials: "MS",
                         color: "blue",
                         text: "Transcript re-submitted for AI reprocessing. OCR confidence improved to 73%. Manual verification in progress. SLA clock at 7 days. Expected resolution by Apr 29.",
                       },

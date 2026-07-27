@@ -4,7 +4,8 @@ import { Layout } from "@/components/layout/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { mockApprovalItems } from "@/data/mockData";
+import { mockApprovalItems, mockEmployees } from "@/data/mockData";
+import { useManagerApprovals } from "@/hooks/useManagerApprovals";
 import {
   AlertTriangle,
   ArrowRight,
@@ -17,11 +18,15 @@ import {
   DollarSign,
   ShieldCheck,
   User,
+  FileText,
+  Download,
+  Loader2,
   X,
   XCircle,
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { useAppStore } from "@/store/appStore";
 
 interface ActionStatus {
   itemId: string;
@@ -30,19 +35,7 @@ interface ActionStatus {
 }
 
 export default function ApprovalsPage() {
-  // We initialize approvals with the first item having a future due date for active testing,
-  // while others remain past-due to test auto-suspension.
-  const [approvals, setApprovals] = useState(() => {
-    return mockApprovalItems.map((item, idx) => {
-      if (idx === 0) {
-        return {
-          ...item,
-          dueDate: "2026-07-15", // Future due date
-        };
-      }
-      return item;
-    });
-  });
+  const { approvals, isLoading, approveApplication, rejectApplication, verifyApplicationDocuments } = useManagerApprovals();
 
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {},
@@ -50,6 +43,57 @@ export default function ApprovalsPage() {
   const [actionStatuses, setActionStatuses] = useState<
     Record<string, ActionStatus>
   >({});
+  
+  const [aiSummaries, setAiSummaries] = useState<Record<string, any>>({});
+  const [verifying, setVerifying] = useState<Record<string, boolean>>({});
+
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
+  const handleDocumentDownload = async (doc: { id: number; filename: string; filepath?: string }) => {
+    try {
+      const token = useAppStore.getState().accessToken;
+      const targetUrl = doc.filepath && (doc.filepath.startsWith("http://") || doc.filepath.startsWith("https://"))
+        ? doc.filepath
+        : `${API_BASE_URL}/documents/${doc.id}/download${token ? `?token=${encodeURIComponent(token)}` : ""}`;
+
+      const res = await fetch(targetUrl);
+      if (!res.ok) throw new Error("Fetch failed");
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = doc.filename || "document";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download error:", err);
+      if (doc.filepath && doc.filepath.startsWith("http")) {
+        const a = document.createElement("a");
+        a.href = doc.filepath;
+        a.download = doc.filename || "document";
+        a.target = "_blank";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    }
+  };
+
+  const handleVerify = async (appId: string) => {
+    setVerifying((prev) => ({ ...prev, [appId]: true }));
+    try {
+      const res = await verifyApplicationDocuments.mutateAsync(appId);
+      setAiSummaries((prev) => ({ ...prev, [appId]: res.data }));
+    } catch (e) {
+      console.error("Verification failed", e);
+      setAiSummaries((prev) => ({ ...prev, [appId]: { summary: "Failed to verify documents." } }));
+    } finally {
+      setVerifying((prev) => ({ ...prev, [appId]: false }));
+    }
+  };
 
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-US", {
@@ -71,26 +115,38 @@ export default function ApprovalsPage() {
     }));
   };
 
-  const handleApprove = (id: string, name: string, amount: number) => {
-    setActionStatuses((prev) => ({
-      ...prev,
-      [id]: {
-        itemId: id,
-        action: "approved",
-        message: `✅ Approved: Reimbursement request of ${formatCurrency(amount)} for ${name} has been approved and forwarded to HR Benefits for payroll processing.`,
-      },
-    }));
+  const handleApprove = async (id: string, name: string, amount: number) => {
+    try {
+      await approveApplication.mutateAsync({ appId: id, remarks: "Approved by manager" });
+      setActionStatuses((prev) => ({
+        ...prev,
+        [id]: {
+          itemId: id,
+          action: "approved",
+          message: `✅ Approved: Reimbursement request of ${formatCurrency(amount)} for ${name} has been approved and forwarded to HR Benefits for payroll processing.`,
+        },
+      }));
+    } catch (e) {
+      console.error(e);
+      alert("Failed to approve");
+    }
   };
 
-  const handleReject = (id: string, name: string) => {
-    setActionStatuses((prev) => ({
-      ...prev,
-      [id]: {
-        itemId: id,
-        action: "rejected",
-        message: `❌ Rejected: Reimbursement request for ${name} has been rejected and returned to the associate for correction.`,
-      },
-    }));
+  const handleReject = async (id: string, name: string) => {
+    try {
+      await rejectApplication.mutateAsync({ appId: id, remarks: "Rejected by manager" });
+      setActionStatuses((prev) => ({
+        ...prev,
+        [id]: {
+          itemId: id,
+          action: "rejected",
+          message: `❌ Rejected: Reimbursement request for ${name} has been rejected and returned to the associate for correction.`,
+        },
+      }));
+    } catch (e) {
+      console.error(e);
+      alert("Failed to reject");
+    }
   };
 
   const getSystemDate = () => new Date("2026-06-26");
@@ -130,6 +186,8 @@ export default function ApprovalsPage() {
               const isExpanded = !!expandedItems[approval.id];
               const actionResult = actionStatuses[approval.id];
               const isSuspended = isCaseSuspended(approval.dueDate);
+              const employee = mockEmployees.find((e) => e.id === approval.employeeId);
+              const displayEmpId = employee ? employee.employeeId : approval.employeeId;
 
               return (
                 <Card
@@ -153,7 +211,7 @@ export default function ApprovalsPage() {
                                 {approval.employeeName}
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                Employee ID: {approval.employeeId} •{" "}
+                                Employee ID: {displayEmpId} •{" "}
                                 {approval.employeeTitle}
                               </p>
                             </div>
@@ -275,22 +333,22 @@ export default function ApprovalsPage() {
                               approval.amount,
                             )
                           }
-                          disabled={isSuspended || !!actionResult}
-                          className="w-full h-8 gap-1.5 bg-primary hover:bg-primary/90 text-white shadow-sm text-xs font-bold"
+                          disabled={isSuspended || !!actionResult || approval.status !== "Submitted"}
+                          className="w-full h-8 gap-1.5 bg-primary hover:bg-primary/90 text-white shadow-sm text-xs font-bold disabled:opacity-50"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          Approve
+                          {approval.status === "PendingApproval" ? "Approved" : "Approve"}
                         </Button>
                         <Button
                           variant="outline"
                           onClick={() =>
                             handleReject(approval.id, approval.employeeName)
                           }
-                          disabled={isSuspended || !!actionResult}
-                          className="w-full h-8 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/5 border-destructive/20 text-xs font-bold"
+                          disabled={isSuspended || !!actionResult || approval.status !== "Submitted"}
+                          className="w-full h-8 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/5 border-destructive/20 text-xs font-bold disabled:opacity-50"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          Reject
+                          {approval.status === "Rejected" ? "Rejected" : "Reject"}
                         </Button>
                         <Button
                           variant="ghost"
@@ -341,17 +399,99 @@ export default function ApprovalsPage() {
                           </div>
                         </div>
 
-                        {/* AI Summary details */}
-                        <div className="py-2.5 px-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1">
-                          <div className="flex items-center gap-1.5 text-primary">
-                            <Brain className="w-3.5 h-3.5" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
-                              AI Policy Analysis Summary
-                            </span>
+                        {/* Documents Section */}
+                        {approval.documents && approval.documents.length > 0 && (
+                          <div className="py-2.5 space-y-2">
+                            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                              <FileText className="w-3.5 h-3.5" /> Uploaded Documents
+                            </h4>
+                            <div className="space-y-2">
+                              {approval.documents.map((doc: any) => (
+                                <div key={doc.id} className="flex items-center justify-between p-2 rounded-lg border border-border bg-card">
+                                  <div className="flex flex-col">
+                                    <span className="text-xs font-semibold text-foreground truncate max-w-[200px]">{doc.filename}</span>
+                                    <span className="text-[10px] text-muted-foreground">{(doc.size_bytes / 1024).toFixed(1)} KB</span>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    title={`Download ${doc.filename}`}
+                                    onClick={() => handleDocumentDownload(doc)}
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed italic">
-                            "{approval.aiSummary}"
-                          </p>
+                        )}
+
+                        {/* AI Summary details */}
+                        <div className="py-2.5 px-3 rounded-lg bg-primary/5 border border-primary/10 space-y-3">
+                          <div className="flex items-center justify-between text-primary">
+                            <div className="flex items-center gap-1.5">
+                              <Brain className="w-3.5 h-3.5" />
+                              <span className="text-[10px] font-bold uppercase tracking-wider">
+                                AI Policy Analysis Summary
+                              </span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="h-7 text-[10px] font-bold text-primary border-primary/30 hover:bg-primary/10"
+                              disabled={verifying[approval.id]}
+                              onClick={() => handleVerify(approval.id)}
+                            >
+                              {verifying[approval.id] ? (
+                                <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Verifying...</>
+                              ) : (
+                                "Verify Documents"
+                              )}
+                            </Button>
+                          </div>
+                          
+                          {aiSummaries[approval.id] && aiSummaries[approval.id].studentName !== undefined ? (
+                            <div className="border-t border-primary/10 pt-3 mt-2 space-y-3">
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Student Name</span>
+                                  <p className="font-semibold text-foreground mt-0.5">{aiSummaries[approval.id].studentName || "N/A"}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Institution</span>
+                                  <p className="font-semibold text-foreground mt-0.5">{aiSummaries[approval.id].institution || "N/A"}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Term</span>
+                                  <p className="font-semibold text-foreground mt-0.5">{aiSummaries[approval.id].term || "N/A"}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Fees</span>
+                                  <p className="font-semibold text-foreground mt-0.5">{aiSummaries[approval.id].fees || "N/A"}</p>
+                                </div>
+                              </div>
+                              {aiSummaries[approval.id].courses && aiSummaries[approval.id].courses.length > 0 && (
+                                <div>
+                                  <span className="text-[9px] font-bold text-muted-foreground uppercase">Courses Detected</span>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {aiSummaries[approval.id].courses.map((c: string, i: number) => (
+                                      <Badge key={i} variant="secondary" className="text-[10px] font-semibold bg-primary/10 text-primary hover:bg-primary/20 border-transparent">
+                                        {c}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              <p className="text-xs text-muted-foreground leading-relaxed italic border-t border-primary/10 pt-2">
+                                "{aiSummaries[approval.id].summary}"
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground leading-relaxed italic border-t border-primary/10 pt-2">
+                              {aiSummaries[approval.id]?.summary || (typeof aiSummaries[approval.id] === 'string' ? aiSummaries[approval.id] : "Click verify to generate AI summary.")}
+                            </p>
+                          )}
                         </div>
 
                         {/* Approver Routing path & authority validation */}
@@ -373,7 +513,7 @@ export default function ApprovalsPage() {
                               <span>
                                 Clinical Approver:{" "}
                                 <strong className="font-bold">
-                                  Dr. James Okonkwo
+                                  Maria Santos
                                 </strong>
                               </span>
                             </div>
@@ -421,8 +561,7 @@ export default function ApprovalsPage() {
                                 Awaiting Manager Approval
                               </p>
                               <p className="text-[9px] text-muted-foreground mt-0.5">
-                                Routed to designated Nurse Manager Dr. James
-                                Okonkwo • {formatDate(approval.submittedDate)}
+                                Routed to designated Nurse Manager Maria Santos • {formatDate(approval.submittedDate)}
                               </p>
                             </div>
                             {actionResult && (

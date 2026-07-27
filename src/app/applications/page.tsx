@@ -15,12 +15,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  mockApplications,
   mockEmployees,
   mockPrograms,
   mockServiceAgreements,
 } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
+import { useApplications } from "@/hooks/useApplications";
 import {
   CalendarCheck2,
   ChevronRight,
@@ -38,6 +38,7 @@ export default function ApplicationsPage() {
   const router = useRouter();
   const { currentUser } = useAppStore();
   const [search, setSearch] = useState("");
+  const { applications, isLoading } = useApplications();
 
   // Current employee (Maria Santos in demo)
   const currentEmployee =
@@ -52,12 +53,7 @@ export default function ApplicationsPage() {
       ) ?? null)
     : null;
 
-  let userApps = mockApplications;
-  if (currentUser?.role === "employee") {
-    userApps = mockApplications.filter(
-      (app) => app.employeeId === currentEmployee.id,
-    );
-  }
+  let userApps = applications || [];
 
   const filteredApps = userApps.filter(
     (app) =>

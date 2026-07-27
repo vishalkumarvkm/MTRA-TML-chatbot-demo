@@ -70,14 +70,14 @@ const AGENT_ACTIVITY = [
     id: 3,
     type: "sla",
     text: "SLA threshold triggered - case-003",
-    sub: "Carlos Rivera | Overdue by 13 days",
+    sub: "Maria Santos | Overdue by 13 days",
     time: "12m ago",
     icon: <ShieldAlert className="w-3.5 h-3.5 text-destructive" />,
   },
   {
     id: 4,
     type: "check",
-    text: "Eligibility check passed for Aisha Thompson",
+    text: "Eligibility check passed for Maria Santos",
     sub: "TuitionReimbursement | Columbia Univ.",
     time: "28m ago",
     icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />,
@@ -102,7 +102,7 @@ const AGENT_ACTIVITY = [
     id: 7,
     type: "user",
     text: "Case auto-assigned to Priya Nair",
-    sub: "MTRA-2026-0047 | Latasha Williams",
+    sub: "MTRA-2026-0047 | Maria Santos",
     time: "1h ago",
     icon: <Users className="w-3.5 h-3.5 text-muted-foreground" />,
   },
@@ -237,14 +237,14 @@ export default function HROpsPage() {
                 <div className="space-y-2">
                   {[
                     {
-                      name: "Carlos Rivera",
+                      name: "Maria Santos",
                       sub: "St. John's University",
                       status: "Overdue",
                       time: "14d overdue",
                       alert: true,
                     },
                     {
-                      name: "Latasha Williams",
+                      name: "Maria Santos",
                       sub: "CUNY Bronx CC",
                       status: "At Risk",
                       time: "2d left",
@@ -273,7 +273,7 @@ export default function HROpsPage() {
                 </div>
               </CardContent>
             </Card>
-
+ 
             {/* Escalated Cases */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 px-1">
@@ -291,7 +291,7 @@ export default function HROpsPage() {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-3.5 h-3.5 text-destructive" />
-                        <p className="text-xs font-bold">Carlos Rivera</p>
+                        <p className="text-xs font-bold">Maria Santos</p>
                       </div>
                       <p className="text-xs font-bold">$3,250</p>
                     </div>
@@ -321,7 +321,7 @@ export default function HROpsPage() {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
-                        <p className="text-xs font-bold">Latasha Williams</p>
+                        <p className="text-xs font-bold">Maria Santos</p>
                       </div>
                       <p className="text-xs font-bold">$1,600</p>
                     </div>

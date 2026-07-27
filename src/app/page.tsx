@@ -1,5 +1,10 @@
 "use client";
 
+import { useApplications } from "@/hooks/useApplications";
+import { useEmployeeProfile } from "@/hooks/useEmployees";
+import { useNotifications } from "@/hooks/useNotifications";
+import { usePrograms } from "@/hooks/usePrograms";
+
 import LandingPage from "@/components/landing/LandingPage";
 import { Layout } from "@/components/layout/Layout";
 import { AIConfidenceBadge } from "@/components/ui/AIConfidenceBadge";
@@ -188,47 +193,59 @@ function DashboardPage() {
   const [readNotifs] = useState<string[]>([]);
   const [markedAllRead, setMarkedAllRead] = useState(false);
 
-  const employee =
-    mockEmployees.find((e) => e.employeeId === currentUser?.employeeId) ??
-    mockEmployees[0];
+  const { data: employee, isLoading: empLoading, error: empError } = useEmployeeProfile();
+  const { notifications, markAsRead } = useNotifications();
+  const { applications: myAppsData, isLoading: appsLoading, error: appsError } = useApplications();
+  const { data: programsData, isLoading: progsLoading, error: progsError } = usePrograms();
 
-  const isNysna = employee.isNYSNA === true;
-
-  if (!hasHydrated || !isAuthenticated) {
+  if (!hasHydrated || !isAuthenticated || empLoading || appsLoading || progsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           <span className="text-sm text-muted-foreground">
-            Checking authentication...
+            Loading dashboard data...
           </span>
         </div>
       </div>
     );
   }
 
-  const myApps = mockApplications.filter((a) => a.employeeId === employee.id);
+  if (empError || appsError || progsError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-destructive p-4 text-center">
+          <span className="text-sm font-bold">Failed to load dashboard data</span>
+          <span className="text-xs">{String((empError || appsError || progsError)?.message || "Unknown error")}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!employee) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <span className="text-sm text-muted-foreground">
+          Employee profile not found.
+        </span>
+      </div>
+    );
+  }
+
+  const isNysna = employee.isNYSNA === true;
+
+  const myApps = myAppsData || [];
   const activeApps = myApps.filter(
     (a) => !["Approved", "Rejected"].includes(a.status),
   );
   const approvedApps = myApps.filter((a) => a.status === "Approved");
   const ytdReimbursed = approvedApps.reduce((sum, a) => sum + a.amount, 0);
 
-  const employeeNotifs = mockNotifications
-    .filter((n) => n.userId === employee.id)
-    .filter(
-      (n) =>
-        n.title !== "New Program Available" &&
-        !n.title.toLowerCase().includes("program available"),
-    );
-
-  const hasActionNeeded = employeeNotifs.some((n) =>
-    n.title.toLowerCase().includes("service agreement"),
+  const unreadNotifs = notifications.filter((n) => !n.read);
+  
+  const hasActionNeeded = notifications.some((n) =>
+    n.message.toLowerCase().includes("service agreement"),
   );
-
-  const unreadNotifs = markedAllRead
-    ? []
-    : employeeNotifs.filter((n) => !n.read && !readNotifs.includes(n.id));
 
   const activeStatusBreakdown = [
     {
@@ -250,7 +267,7 @@ function DashboardPage() {
 
   const visibleRecs = AI_RECS.filter((r) => !dismissedRecs.includes(r.id));
 
-  const qualifiedPrograms = mockPrograms.filter((prog) =>
+  const qualifiedPrograms = (programsData || []).filter((prog) =>
     isEligibleForProgram(employee, prog.programType),
   );
 
@@ -500,7 +517,7 @@ function DashboardPage() {
               </button>
             </CardHeader>
             <CardContent className="space-y-2.5 py-3 px-4 flex-1">
-              {employeeNotifs.slice(0, 2).map((notif, idx) => (
+              {notifications.slice(0, 2).map((notif, idx) => (
                 <div
                   key={notif.id}
                   className={`flex items-start gap-2.5 p-2.5 rounded-none border border-[#008573]/30 transition-colors ${
@@ -512,7 +529,7 @@ function DashboardPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-bold text-[#003769] flex items-center gap-1">
-                      {notif.title}
+                      Notification
                       {unreadNotifs.some((n) => n.id === notif.id) && (
                         <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                       )}

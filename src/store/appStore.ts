@@ -14,9 +14,11 @@ import { persist } from "zustand/middleware";
 interface AuthState {
   currentUser: AuthUser | null;
   isAuthenticated: boolean;
-  loginAs: (user: AuthUser) => void;
+  accessToken: string | null;
+  loginAs: (user: AuthUser, token?: string) => void;
   logout: () => void;
   setRole: (role: UserRole) => void;
+  setAccessToken: (token: string | null) => void;
 }
 
 interface AppState {
@@ -73,7 +75,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     status: "Open",
     createdDate: "2026-04-16T10:00:00Z",
     lastUpdated: "2026-04-16T10:00:00Z",
-    assignedTo: "System Admin",
+    assignedTo: "Maria Santos",
     priority: "Medium",
     unread: true,
     messages: [
@@ -94,7 +96,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
   {
     id: "SUP-2026-0002",
     employeeId: "emp-003",
-    employeeName: "Latasha Williams",
+    employeeName: "Maria Santos",
     linkedAppId: "case-002",
     linkedAppProgram: "TuitionReimbursement",
     linkedAppDate: "2026-04-20",
@@ -106,13 +108,13 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     status: "Resolved",
     createdDate: "2026-04-21T09:00:00Z",
     lastUpdated: "2026-04-22T14:00:00Z",
-    assignedTo: "System Admin",
+    assignedTo: "Maria Santos",
     priority: "Low",
     unread: false,
     messages: [
       {
         id: "msg-2-1",
-        senderName: "Latasha Williams",
+        senderName: "Maria Santos",
         senderRole: "employee",
         message:
           "I wanted to check if the Fordham HIT 520 course fits the job-related tuition reimbursement criteria for radiology techs. I haven't received a confirmation yet.",
@@ -120,10 +122,10 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
       },
       {
         id: "msg-2-2",
-        senderName: "System Admin",
+        senderName: "Maria Santos",
         senderRole: "admin",
         message:
-          "Hi Latasha, yes, health informatics courses are eligible for radiology techs. I've updated your status to Under Review. You're good to go!",
+          "Hi Maria, yes, health informatics courses are eligible for radiology techs. I've updated your status to Under Review. You're good to go!",
         timestamp: "2026-04-22T14:00:00Z",
       },
     ],
@@ -143,7 +145,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     status: "Resolved",
     createdDate: "2026-03-12T08:30:00Z",
     lastUpdated: "2026-03-14T11:00:00Z",
-    assignedTo: "System Admin",
+    assignedTo: "Maria Santos",
     priority: "High",
     unread: true,
     messages: [
@@ -157,7 +159,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
       },
       {
         id: "msg-3-2",
-        senderName: "System Admin",
+        senderName: "Maria Santos",
         senderRole: "admin",
         message:
           "Hi Maria, we investigated and resolved the duplicate charge entry in your ledger. The adjusted remaining balance now correctly reflects $750. Please check your Overview dashboard to verify.",
@@ -180,7 +182,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
     status: "In Progress",
     createdDate: "2026-04-22T09:15:00Z",
     lastUpdated: "2026-04-23T10:00:00Z",
-    assignedTo: "System Admin",
+    assignedTo: "Maria Santos",
     priority: "Medium",
     unread: false,
     messages: [
@@ -194,7 +196,7 @@ const MOCK_SUPPORT_CASES: SupportCase[] = [
       },
       {
         id: "msg-4-2",
-        senderName: "System Admin",
+        senderName: "Maria Santos",
         senderRole: "admin",
         message:
           "Hi Maria, our system syncs signed DocuSign documents once every 24 hours. I have manually triggered a fetch for your signed agreement, and it is now being processed. It should reflect as completed shortly.",
@@ -209,9 +211,15 @@ export const useAppStore = create<StoreState>()(
     (set) => ({
       currentUser: null,
       isAuthenticated: false,
+      accessToken: null,
 
-      loginAs: (user) => set({ currentUser: user, isAuthenticated: true }),
-      logout: () => set({ currentUser: null, isAuthenticated: false }),
+      loginAs: (user, token) => set((state) => ({ 
+          currentUser: user, 
+          isAuthenticated: true,
+          accessToken: token !== undefined ? token : state.accessToken
+      })),
+      logout: () => set({ currentUser: null, isAuthenticated: false, accessToken: null }),
+      setAccessToken: (token) => set({ accessToken: token }),
       setRole: (role) =>
         set((state) => {
           if (!state.currentUser) return state;

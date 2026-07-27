@@ -543,14 +543,14 @@ export default function ScholarshipPortal() {
                       <CardContent className="p-0">
                         {[
                           {
-                            name: "System Admin",
+                            name: "Maria Santos",
                             role: "Benefits Admin",
                             status: "completed",
                           },
                           {
                             name:
                               currentUser?.name &&
-                              currentUser.name !== "System Admin"
+                              currentUser.name !== "Maria Santos"
                                 ? currentUser.name
                                 : "Sarah Kim",
                             role:
@@ -565,7 +565,7 @@ export default function ScholarshipPortal() {
                             status: "pending",
                           },
                           {
-                            name: "Dr. James Okonkwo",
+                            name: "Maria Santos",
                             role: "Clinical Lead",
                             status: "pending",
                           },

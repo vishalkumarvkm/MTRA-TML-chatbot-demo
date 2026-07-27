@@ -43,8 +43,8 @@ const POSTINGS = [
   },
   {
     id: "P-102",
-    empId: "EMP-38104",
-    name: "Dr. James Okonkwo",
+    empId: "EMP-44821",
+    name: "Maria Santos",
     amount: 6000,
     glCode: "61300-DEPT",
     tax: "Taxable Benefit (Gross-up)",
@@ -53,8 +53,8 @@ const POSTINGS = [
   },
   {
     id: "P-103",
-    empId: "EMP-51247",
-    name: "Latasha Williams",
+    empId: "EMP-44821",
+    name: "Maria Santos",
     amount: 750,
     glCode: "61250-CME",
     tax: "Non-Taxable (§127)",
@@ -63,8 +63,8 @@ const POSTINGS = [
   },
   {
     id: "P-104",
-    empId: "EMP-33591",
-    name: "Carlos Rivera",
+    empId: "EMP-44821",
+    name: "Maria Santos",
     amount: 3250,
     glCode: "61200-TUIT",
     tax: "Non-Taxable (§127)",
@@ -314,7 +314,7 @@ export default function PayrollView() {
                 </p>
                 <div className="bg-white p-3 rounded-lg border border-violet-200 shadow-sm space-y-3">
                   <div className="flex justify-between items-start">
-                    <p className="text-xs font-bold">Dr. James Okonkwo</p>
+                    <p className="text-xs font-bold">Maria Santos</p>
                     <Badge className="bg-violet-100 text-violet-700 text-[8px] h-4">
                       $6,000
                     </Badge>

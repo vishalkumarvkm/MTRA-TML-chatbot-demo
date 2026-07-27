@@ -30,8 +30,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { mockEmployees, mockPrograms } from "@/data/mockData";
 import { useAppStore } from "@/store/appStore";
+import { useEmployeeProfile } from "@/hooks/useEmployees";
+import { usePrograms } from "@/hooks/usePrograms";
+import { useApplications } from "@/hooks/useApplications";
 import type { CourseEntry, Document, ProgramType, WizardData } from "@/types";
 import {
   AlertCircle,
@@ -126,7 +128,9 @@ interface UploadedFile {
   docTypeId: DocTypeId;
   fileName: string;
   fileSize: number;
+  file?: File;
   status: "processing" | "complete" | "error";
+  isValid?: boolean;
   extractedData?: {
     institution?: string;
     amount?: string;
@@ -226,6 +230,17 @@ function Step1Program({
   data: WizardData;
   onUpdate: (d: Partial<WizardData>) => void;
 }) {
+  const { data: mockPrograms = [], isLoading } = usePrograms();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+        <span className="text-sm text-muted-foreground">Loading programs...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -307,7 +322,17 @@ function Step3EmployeeInfo({
   infoCorrect: string | null;
   onInfoCorrectChange: (val: string | null) => void;
 }) {
-  const emp = mockEmployees[0];
+  const { data: emp, isLoading } = useEmployeeProfile();
+
+  if (isLoading || !emp) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+        <span className="text-sm text-muted-foreground">Loading employee profile...</span>
+      </div>
+    );
+  }
+
   const hrsFields: [string, string, string][] = [
     ["Full Name", emp.name, "apply.employee_info.name"],
     ["Employee ID", emp.employeeId, "apply.employee_info.employee_id"],
@@ -427,7 +452,7 @@ function Step4CourseDetails({
   data: WizardData;
   onUpdate: (d: Partial<WizardData>) => void;
 }) {
-  const emp = mockEmployees[0];
+  const { data: emp } = useEmployeeProfile();
   const courses = data.courses && data.courses.length > 0 ? data.courses : [];
   const [courseToRemove, setCourseToRemove] = useState<{
     id: string;
@@ -513,7 +538,7 @@ function Step4CourseDetails({
   const totalTuition = courses.reduce((sum, c) => sum + c.amount, 0);
 
   // Validations
-  const totalWithYtdCredits = totalCredits + emp.creditUsed;
+  const totalWithYtdCredits = totalCredits + (emp?.creditUsed ?? 0);
   const showCreditCapWarning = totalWithYtdCredits > 18;
 
   const showInProgressWarning = courses.some(
@@ -540,23 +565,23 @@ function Step4CourseDetails({
               <span className="text-muted-foreground block">
                 Applicant Name
               </span>
-              <span className="font-semibold text-foreground">{emp.name}</span>
+              <span className="font-semibold text-foreground">{emp?.name}</span>
             </div>
             <div>
               <span className="text-muted-foreground block">Employee ID</span>
               <span className="font-semibold text-foreground">
-                {emp.employeeId}
+                {emp?.employeeId}
               </span>
             </div>
             <div>
               <span className="text-muted-foreground block">Department</span>
               <span className="font-semibold text-foreground">
-                {emp.department}
+                {emp?.department}
               </span>
             </div>
             <div>
               <span className="text-muted-foreground block">Job Title</span>
-              <span className="font-semibold text-foreground">{emp.title}</span>
+              <span className="font-semibold text-foreground">{emp?.title}</span>
             </div>
           </div>
         </CardContent>
@@ -802,7 +827,7 @@ function Step4CourseDetails({
           {totalTuition.toLocaleString()}
         </span>
         <span className="text-xs text-muted-foreground font-body">
-          YTD Credits Used: {emp.creditUsed} / {emp.creditMax}
+          YTD Credits Used: {emp?.creditUsed ?? 0} / {emp?.creditMax ?? 18}
         </span>
       </div>
 
@@ -862,6 +887,7 @@ function Step6Documents({
   setUploads: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
   programType: string;
 }) {
+  const { verifyDocument } = useApplications();
   const [dragging, setDragging] = useState<DocTypeId | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
@@ -916,35 +942,50 @@ function Step6Documents({
         docTypeId,
         fileName: file.name,
         fileSize: file.size,
+        file,
         status: "processing",
         confidence: 0,
+        isValid: undefined,
       };
       setUploads((prev) => [
         ...prev.filter((u) => u.docTypeId !== docTypeId),
         newUpload,
       ]);
-      setTimeout(() => {
-        setUploads((prev) =>
-          prev.map((u) =>
-            u.id === newUpload.id
-              ? {
-                  ...u,
-                  status: "complete",
-                  confidence: 88 + Math.floor(Math.random() * 11),
-                  extractedData: {
-                    institution: "CUNY Lehman College",
-                    amount: "$3,200.00",
-                    date: "2026-01-14",
-                    studentName: "Maria Santos",
-                    term: "Spring 2026",
-                  },
-                }
-              : u,
-          ),
-        );
-      }, 3000);
+      
+      const docTypeObj = docTypes.find((d) => d.id === docTypeId);
+      const docLabel = docTypeObj ? docTypeObj.label : docTypeId;
+      
+      verifyDocument.mutateAsync({ file, docType: docLabel })
+        .then((res: any) => {
+          const data = res?.data || { isValid: false, confidence: 0, extractedData: {} };
+          setUploads((prev) =>
+            prev.map((u) =>
+              u.id === newUpload.id
+                ? {
+                    ...u,
+                    status: "complete",
+                    confidence: data.confidence,
+                    isValid: data.isValid,
+                    extractedData: data.extractedData,
+                  }
+                : u,
+            ),
+          );
+        })
+        .catch((err) => {
+          setUploads((prev) =>
+            prev.map((u) =>
+              u.id === newUpload.id
+                ? {
+                    ...u,
+                    status: "error",
+                  }
+                : u,
+            ),
+          );
+        });
     },
-    [setUploads],
+    [setUploads, verifyDocument],
   );
 
   return (
@@ -1070,7 +1111,21 @@ function Step6Documents({
                       </div>
                     )}
 
-                    {upload.status === "complete" && upload.extractedData && (
+                    {upload.status === "error" && (
+                      <div className="mt-3 flex items-center gap-2 text-destructive">
+                        <span className="text-xs font-medium">
+                          Failed to verify document. Please try again.
+                        </span>
+                      </div>
+                    )}
+
+                    {upload.status === "complete" && upload.isValid === false && (
+                      <div className="mt-3 flex items-center gap-2 text-destructive bg-destructive/10 p-2 rounded text-xs font-medium border border-destructive/20">
+                        Warning: This document does not appear to be a valid {docType.label}. Please double-check the file.
+                      </div>
+                    )}
+
+                    {upload.status === "complete" && upload.isValid !== false && upload.extractedData && (
                       <div className="mt-3 space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] font-semibold text-foreground flex items-center gap-1">
@@ -1131,7 +1186,8 @@ function Step8Review({
   onCertifiedChange: (v: boolean) => void;
   onConductAgreedChange: (v: boolean) => void;
 }) {
-  const emp = mockEmployees[0];
+  const { data: emp } = useEmployeeProfile();
+  const { data: mockPrograms = [] } = usePrograms();
   const selectedProg = mockPrograms.find(
     (p) => p.programType === data.programType,
   );
@@ -1214,13 +1270,13 @@ function Step8Review({
                 Employee
               </p>
               <p className="text-xs font-semibold text-foreground">
-                {emp.name}{" "}
+                {emp?.name || "Loading..."}{" "}
                 <span className="text-muted-foreground font-normal">
-                  ({emp.employeeId})
+                  ({emp?.employeeId || ""})
                 </span>
               </p>
               <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
-                {emp.department}
+                {emp?.department || ""}
               </p>
             </div>
             <div className="pt-2 border-t border-border/60">
@@ -1569,6 +1625,10 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
   const [certified, setCertified] = useState(false);
   const [conductAgreed, setConductAgreed] = useState(false);
   const [infoCorrect, setInfoCorrect] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { createApplication, uploadDocument, submitApplication } = useApplications();
+  const { data: programs = [] } = usePrograms();
 
   // Reset wizard on fresh mount and check query params
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional reset
@@ -1627,9 +1687,47 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (wizardStep === totalSteps) {
       router.push("/");
+    } else if (wizardStep === 5 && canProceed()) {
+      setIsSubmitting(true);
+      try {
+        const selectedProg = programs.find((p) => p.programType === wizardData.programType) || programs[0];
+        const progId = selectedProg?.id ? parseInt(selectedProg.id.replace(/\D/g, "")) || 1 : 1;
+        
+        const courses = wizardData.courses || [];
+        for (const course of courses) {
+          // Create draft
+          const appRes = await createApplication.mutateAsync({
+            program_id: progId,
+            course_name: course.courseTitle || "Unknown Course",
+            institution_name: course.institution || "Unknown Institution",
+            tuition_fee: course.amount || 0,
+            semester: course.term || "Fall 2026",
+            start_date: course.startDate || new Date().toISOString().split("T")[0],
+            end_date: course.endDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+          });
+          const appId = (appRes as any).data.id;
+          
+          // Upload documents
+          for (const doc of uploads) {
+            if (doc.file) {
+              await uploadDocument.mutateAsync({ appId, file: doc.file });
+            }
+          }
+          
+          // Submit application
+          await submitApplication.mutateAsync(appId);
+        }
+        
+        setWizardStep(wizardStep + 1);
+      } catch (err) {
+        console.error("Submission failed:", err);
+        alert("Failed to submit application. Check console for details.");
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
       if (canProceed()) setWizardStep(wizardStep + 1);
     }
@@ -1727,12 +1825,12 @@ export function ApplicationWizard({ userRole }: { userRole: string }) {
               <Button
                 type="button"
                 onClick={handleNext}
-                disabled={!canProceed()}
+                disabled={!canProceed() || isSubmitting}
                 className="gap-1 h-8 text-[11px] px-4 shadow-sm"
                 data-ocid="apply.nav.next_button"
               >
-                <span className="font-semibold">{getNextLabel()}</span>
-                {wizardStep < 5 && <ChevronRight className="w-3.5 h-3.5" />}
+                <span className="font-semibold">{isSubmitting ? "Submitting..." : getNextLabel()}</span>
+                {wizardStep < 5 && !isSubmitting && <ChevronRight className="w-3.5 h-3.5" />}
               </Button>
             )}
           </div>

@@ -157,7 +157,7 @@ export default function SupportCasesPage() {
       status: "Open",
       createdDate: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
-      assignedTo: "System Admin", // Auto-assign to default Administrator
+      assignedTo: "Maria Santos", // Auto-assign to default Administrator
       reopenedFlag: false,
       priority: priority,
       unread: false,
@@ -652,7 +652,7 @@ export default function SupportCasesPage() {
                 >
                   Attachment{" "}
                   <span className="text-muted-foreground font-normal">
-                    (optional, Max 5MB)
+                    (optional, Max 10MB)
                   </span>
                 </Label>
                 <div className="border border-dashed border-input rounded-md p-3 flex items-center justify-between bg-muted/20">

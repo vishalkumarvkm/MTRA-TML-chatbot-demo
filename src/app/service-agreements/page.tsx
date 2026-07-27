@@ -312,8 +312,8 @@ export default function ServiceAgreementsPage() {
               </CardHeader>
               <CardContent className="p-4 space-y-4">
                 {[
-                  { name: "Carlos Rivera", days: 24, status: "ExpiringSoon" },
-                  { name: "Aisha Thompson", days: 8, status: "Critical" },
+                  { name: "Maria Santos", days: 24, status: "ExpiringSoon" },
+                  { name: "Maria Santos", days: 8, status: "Critical" },
                 ].map((alert, i) => (
                   <div
                     key={i}
@@ -333,7 +333,7 @@ export default function ServiceAgreementsPage() {
                 ))}
               </CardContent>
             </Card>
-
+ 
             <div className="space-y-4">
               <div className="flex items-center gap-2 px-1">
                 <History className="w-4 h-4 text-muted-foreground" />
@@ -346,7 +346,7 @@ export default function ServiceAgreementsPage() {
                 {[
                   {
                     text: "SA-003 Generated",
-                    sub: "Latasha Williams",
+                    sub: "Maria Santos",
                     time: "2d ago",
                     icon: FileText,
                   },

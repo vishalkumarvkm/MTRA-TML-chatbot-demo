@@ -262,6 +262,13 @@ export interface ServiceAgreement {
   status: "Active" | "ExpiringSoon" | "Breached" | "Completed";
   docusignUrl: string;
   proratedRepayment: number;
+  documents?: {
+    id: number;
+    filename: string;
+    mime_type: string;
+    size_bytes: number;
+    created_at: string;
+  }[];
 }
 
 export interface ChatMessage {

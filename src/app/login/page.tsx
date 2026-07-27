@@ -2,7 +2,7 @@
 
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Button } from "@/components/ui/button";
-import { mockAuthUsers } from "@/data/mockData";
+import { useAuth } from "@/hooks/useAuth";
 import { useAppStore } from "@/store/appStore";
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,6 +18,7 @@ function LoginPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   // Redirect to target if already authenticated
   useEffect(() => {
@@ -40,36 +41,11 @@ function LoginPageContent() {
     setLoading(true);
     setError("");
 
-    // Simulate auth delay
-    await new Promise((r) => setTimeout(r, 800));
-
-    // Validate email and password combination for core roles
-    const expectedPasswords: Record<string, string> = {
-      "employee@montefiore.org": "montefiore01",
-      "manager@montefiore.org": "montefiore02",
-      "admin@montefiore.org": "montefiore04",
-    };
-
-    const userEmailKey = email.toLowerCase();
-    if (
-      !expectedPasswords[userEmailKey] ||
-      password !== expectedPasswords[userEmailKey]
-    ) {
-      setError("Invalid email or password.");
-      setLoading(false);
-      return;
-    }
-
-    // Find user by email or assign default
-    const matchedUser = mockAuthUsers.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (matchedUser) {
-      loginAs(matchedUser);
+    try {
+      await login({ email, password });
       router.push(redirectTarget);
-    } else {
-      setError("Invalid email or password.");
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password.");
       setLoading(false);
     }
   };

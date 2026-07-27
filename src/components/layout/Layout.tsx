@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { mockNotifications } from "@/data/mockData";
+import { useNotifications } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
 import {
@@ -150,6 +150,8 @@ export function Layout({
   const pathname = usePathname();
   const router = useRouter();
 
+  const { notifications } = useNotifications();
+
   useEffect(() => {
     if (hasHydrated) {
       if (!isAuthenticated) {
@@ -223,14 +225,7 @@ export function Layout({
     );
   }
 
-  const _userNotifications = mockNotifications.filter(
-    (n) =>
-      !n.read &&
-      (currentUser
-        ? n.userId === mockNotifications.find((x) => x.userId)?.userId
-        : true),
-  );
-  const unreadCount = unreadNotificationCount;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const filteredNav = NAV_ITEMS.filter((item) => {
     if (!item.roles) return true;
@@ -305,8 +300,11 @@ export function Layout({
                 data-ocid="header.user_menu"
               >
                 <Avatar className="w-7 h-7">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    {currentUser ? getInitials(currentUser.name) : "U"}
+                  <AvatarFallback 
+                    className="text-xs font-bold"
+                    style={{ backgroundColor: '#e6f0f5', color: '#003769' }}
+                  >
+                    MS
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden md:block max-w-32 truncate">
@@ -447,11 +445,14 @@ export function Layout({
 
           {/* User section at bottom */}
           {(!sidebarCollapsed || !isMobile) && (
-            <div className="border-t border-border p-3 flex-shrink-0">
+            <div className="border-t border-border pl-5 pr-3 py-3 flex-shrink-0">
               <div className="flex items-center gap-2.5">
                 <Avatar className="w-8 h-8 flex-shrink-0">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    {currentUser ? getInitials(currentUser.name) : "U"}
+                  <AvatarFallback 
+                    className="text-xs font-bold"
+                    style={{ backgroundColor: '#e6f0f5', color: '#003769' }}
+                  >
+                    MS
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">

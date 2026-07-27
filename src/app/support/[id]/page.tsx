@@ -38,7 +38,7 @@ import {
 import { useRouter } from "next/navigation";
 import { use, useEffect, useRef, useState } from "react";
 
-const ADMINISTRATORS = ["System Admin", "Derek Chen", "Sarah Kim"];
+const ADMINISTRATORS = ["Maria Santos", "Derek Chen", "Sarah Kim"];
 
 export default function SupportCaseDetailPage({
   params,

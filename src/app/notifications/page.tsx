@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { mockEmployees, mockNotifications } from "@/data/mockData";
+import { mockEmployees } from "@/data/mockData";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useAppStore } from "@/store/appStore";
 import {
   AlertTriangle,
@@ -78,6 +79,8 @@ interface Thread {
 
 export default function NotificationCenter() {
   const { currentUser } = useAppStore();
+  const { notifications, markAsRead } = useNotifications();
+  
   const [activeTab, setActiveTab] = useState<"status" | "messages">("status");
   const [search, setSearch] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -103,7 +106,7 @@ export default function NotificationCenter() {
         },
         {
           id: "m2",
-          senderName: "System Admin",
+          senderName: "Maria Santos",
           senderRole: "admin",
           message:
             "Hi Maria, I am reviewing your tuition reimbursement request for Fordham. I noticed the uploaded transcript does not clearly indicate your enrollment status (full-time vs part-time) or the grading scale. Could you please clarify or upload the supplementary page?",
@@ -119,7 +122,7 @@ export default function NotificationCenter() {
         },
         {
           id: "m4",
-          senderName: "System Admin",
+          senderName: "Maria Santos",
           senderRole: "admin",
           message:
             "Thanks, Maria! I see the grading scale document now. However, to finalize this, we also need the signed Service Agreement. Service agreements apply to all NYSNA nurses receiving tuition assistance. Please sign it so we can progress the application.",
@@ -145,12 +148,12 @@ export default function NotificationCenter() {
           senderName: "System",
           senderRole: "system",
           message:
-            "Application Approved. CME Reimbursement of $750 approved by Dr. James Okonkwo.",
+            "Application Approved. CME Reimbursement of $750 approved by Maria Santos.",
           timestamp: "2026-03-12T09:30:00Z",
         },
         {
           id: "t2-m3",
-          senderName: "System Admin",
+          senderName: "Maria Santos",
           senderRole: "admin",
           message:
             "Hi Maria, your CME conference reimbursement has been approved and processed. It will be posted on your next bi-weekly payroll deposit.",
@@ -183,13 +186,10 @@ export default function NotificationCenter() {
     },
   ]);
 
-  const filteredNotifs = mockNotifications.filter((n) => {
+  const filteredNotifs = notifications.filter((n) => {
     const matchesSearch =
-      n.title.toLowerCase().includes(search.toLowerCase()) ||
       n.message.toLowerCase().includes(search.toLowerCase());
-    const matchesUser =
-      n.userId === employee.id || currentUser?.role === "admin";
-    return matchesSearch && matchesUser;
+    return matchesSearch;
   });
 
   const filteredThreads = threads.filter((t) => {
@@ -202,15 +202,16 @@ export default function NotificationCenter() {
   });
 
   const [selectedNotifId, setSelectedNotifId] = useState<string | null>(
-    filteredNotifs.length > 0 ? filteredNotifs[0].id : null,
+    filteredNotifs.length > 0 ? String(filteredNotifs[0].id) : null,
   );
 
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(
     threads.length > 0 ? threads[0].id : null,
   );
 
-  const activeNotif =
-    filteredNotifs.find((n) => n.id === selectedNotifId) || filteredNotifs[0];
+  const selectedNotifData = notifications.find(
+    (n) => String(n.id) === selectedNotifId,
+  ) || filteredNotifs[0];
   const activeThread =
     threads.find((t) => t.id === selectedThreadId) || threads[0];
 
@@ -343,51 +344,56 @@ export default function NotificationCenter() {
           <div className="lg:col-span-4 space-y-3 max-h-[600px] overflow-y-auto pr-1 no-scrollbar">
             {activeTab === "status" ? (
               filteredNotifs.length === 0 ? (
-                <div className="p-8 text-center bg-card rounded-xl border border-border text-muted-foreground">
-                  <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                  <p className="text-xs">No status alerts found</p>
+                <div className="py-12 text-center text-muted-foreground flex flex-col items-center justify-center h-full">
+                  <Bell className="w-8 h-8 opacity-20 mb-2" />
+                  <p>No notifications found.</p>
                 </div>
               ) : (
                 filteredNotifs.map((notif) => {
-                  const typeInfo =
-                    NOTIF_ICONS[notif.type] || NOTIF_ICONS.system;
-                  const NotifIcon = typeInfo.icon;
+                  const iconConfig =
+                    NOTIF_ICONS[notif.category] || NOTIF_ICONS["system"];
+                  const Icon = iconConfig.icon;
                   return (
-                    <Card
+                    <div
                       key={notif.id}
-                      onClick={() => setSelectedNotifId(notif.id)}
-                      className={`cursor-pointer border transition-all hover:border-primary/30 ${
-                        selectedNotifId === notif.id
-                          ? "border-primary bg-primary/[0.02]"
-                          : "border-border bg-card"
+                      className={`p-4 border-b border-border/50 cursor-pointer transition-colors last:border-b-0 ${
+                        selectedNotifId === String(notif.id)
+                          ? "bg-muted/50 border-l-4 border-l-primary"
+                          : "hover:bg-muted/30 border-l-4 border-l-transparent"
                       }`}
+                      onClick={() => {
+                        setSelectedNotifId(String(notif.id));
+                        if (!notif.read) markAsRead.mutateAsync(String(notif.id));
+                      }}
                     >
-                      <CardContent className="p-4 flex gap-3">
+                      <div className="flex gap-3">
                         <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${typeInfo.bg} ${typeInfo.color}`}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border ${iconConfig.bg} ${iconConfig.color}`}
                         >
-                          <NotifIcon className="w-4 h-4" />
+                          <Icon className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start gap-2">
-                            <h3
-                              className={`text-xs font-bold truncate ${notif.read ? "text-foreground" : "text-primary"}`}
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4
+                              className={`text-sm truncate ${notif.read ? "font-medium text-foreground" : "font-bold text-foreground"}`}
                             >
-                              {notif.title}
-                            </h3>
-                            {!notif.read && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 mt-1" />
-                            )}
+                              Notification
+                            </h4>
+                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                              {new Date(notif.createdAt).toLocaleDateString()}
+                            </span>
                           </div>
-                          <p className="text-[10px] text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed">
+                          <p
+                            className={`text-xs line-clamp-2 ${notif.read ? "text-muted-foreground" : "text-foreground font-medium"}`}
+                          >
                             {notif.message}
                           </p>
-                          <span className="text-[9px] text-muted-foreground/60 block mt-2">
-                            {formatDate(notif.createdAt)}
-                          </span>
                         </div>
-                      </CardContent>
-                    </Card>
+                        {!notif.read && (
+                          <div className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                        )}
+                      </div>
+                    </div>
                   );
                 })
               )
@@ -446,7 +452,7 @@ export default function NotificationCenter() {
           {/* Right Column - Detail Pane */}
           <div className="lg:col-span-8">
             {activeTab === "status" ? (
-              activeNotif ? (
+              selectedNotifData ? (
                 <Card className="border border-border bg-card shadow-sm h-full min-h-[450px] flex flex-col justify-between">
                   <div>
                     <CardHeader className="pb-3 border-b border-border flex flex-row justify-between items-start gap-4">
@@ -455,21 +461,21 @@ export default function NotificationCenter() {
                           variant="outline"
                           className="text-[9px] font-bold tracking-wider uppercase bg-muted/40"
                         >
-                          {activeNotif.type.replace("_", " ")}
+                          {selectedNotifData.category}
                         </Badge>
                         <CardTitle className="text-sm font-bold text-foreground">
-                          {activeNotif.title}
+                          Notification
                         </CardTitle>
                         <p className="text-[10px] text-muted-foreground">
-                          Alert Logged:{" "}
-                          {new Date(activeNotif.createdAt).toLocaleString()}
+                          Logged:{" "}
+                          {new Date(selectedNotifData.createdAt).toLocaleString()}
                         </p>
                       </div>
                     </CardHeader>
                     <CardContent className="p-6 space-y-6">
                       <div className="p-5 rounded-xl border border-primary/10 bg-primary/[0.01]">
                         <p className="text-xs text-foreground leading-relaxed">
-                          {activeNotif.message}
+                          {selectedNotifData.message}
                         </p>
                       </div>
 
@@ -493,23 +499,14 @@ export default function NotificationCenter() {
                             <MessageSquare className="w-3 h-3 text-primary" />{" "}
                             In-App Portal Alert
                           </Badge>
-                          {activeNotif.priority === "high" && (
-                            <Badge
-                              variant="outline"
-                              className="h-5 gap-1 text-[10px] text-muted-foreground font-medium"
-                            >
-                              <Smartphone className="w-3 h-3 text-primary" />{" "}
-                              SMS Alert (Delivered)
-                            </Badge>
-                          )}
                         </div>
                       </div>
                     </CardContent>
                   </div>
 
-                  {activeNotif.actionUrl && (
+                  {selectedNotifData.link && (
                     <div className="p-4 bg-muted/20 border-t border-border flex justify-end">
-                      <Link href={activeNotif.actionUrl} passHref>
+                      <Link href={selectedNotifData.link} passHref>
                         <Button className="h-9 gap-1 text-xs font-bold shadow-sm">
                           Resolve & View Request{" "}
                           <ChevronRight className="w-4 h-4" />
