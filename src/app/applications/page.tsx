@@ -46,7 +46,7 @@ export default function ApplicationsPage() {
     mockEmployees[0];
   const isNYSNA = currentEmployee.isNYSNA === true;
 
-  // Find this employee's active service agreement (NYSNA only)
+  // Find this employee's active service agreement (NYSNA only)---
   const serviceAgreement = isNYSNA
     ? (mockServiceAgreements.find(
         (sa) => sa.employeeId === currentEmployee.id,
