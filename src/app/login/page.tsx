@@ -1,0 +1,167 @@
+"use client";
+
+import { AuthLayout } from "@/components/layout/AuthLayout";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useAppStore } from "@/store/appStore";
+import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+
+import { HARDCODED_CREDENTIALS } from "@/data/mockData";
+
+function LoginPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams?.get("redirect") || "/";
+  const { loginAs, isAuthenticated } = useAppStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+
+  // Redirect to target if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(redirectTarget);
+    }
+  }, [isAuthenticated, redirectTarget, router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Please enter your email address.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await login({ email, password });
+      router.push(redirectTarget);
+    } catch (err: any) {
+      setError(err.message || "Invalid email or password.");
+      setLoading(false);
+    }
+  };
+
+  const fillCredentials = (userEmail: string, userPass: string) => {
+    setEmail(userEmail);
+    setPassword(userPass);
+    setError("");
+  };
+
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <span className="text-sm text-muted-foreground">Redirecting...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AuthLayout
+      title="Sign In"
+      subtitle="Enter your email and password to access the HealthyME Tuition Portal."
+    >
+      <form onSubmit={handleLogin} className="space-y-4" data-ocid="login.form">
+        {error && (
+          <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-xs font-semibold border border-destructive/20 animate-pulse">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground block">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@montefiore.org"
+              disabled={loading}
+              className="w-full h-11 pl-10 pr-4 rounded-xl border border-border bg-card text-sm focus:border-primary/50 outline-none transition-all focus:ring-1 focus:ring-primary/20"
+              data-ocid="login.email_input"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground block">
+            Password
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              className="w-full h-11 pl-10 pr-10 rounded-xl border border-border bg-card text-sm focus:border-primary/50 outline-none transition-all focus:ring-1 focus:ring-primary/20"
+              data-ocid="login.password_input"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-11 mt-2 rounded-xl text-sm font-bold shadow-md transition-all"
+          data-ocid="login.submit_button"
+        >
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <>
+              Sign In <ArrowRight className="w-4 h-4" />
+            </>
+          )}
+        </Button>
+      </form>
+    </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <span className="text-sm text-muted-foreground">
+              Loading login portal...
+            </span>
+          </div>
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
+  );
+}
