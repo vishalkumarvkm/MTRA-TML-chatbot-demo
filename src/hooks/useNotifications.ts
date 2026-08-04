@@ -1,5 +1,5 @@
-import { fetchApi } from "@/lib/api";
 import { mockNotifications } from "@/data/mockData";
+import { fetchApi } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface Notification {
@@ -10,7 +10,13 @@ export interface Notification {
   read: boolean;
   createdAt: string;
   link?: string;
-  category: "status_change" | "document" | "system" | "sla" | "approval" | "deadline";
+  category:
+    | "status_change"
+    | "document"
+    | "system"
+    | "sla"
+    | "approval"
+    | "deadline";
 }
 
 export function useNotifications() {
@@ -25,7 +31,13 @@ export function useNotifications() {
           return response.data.map((n: any) => ({
             id: String(n.id),
             userId: String(n.user_id),
-            title: n.title || (n.message?.toLowerCase().includes("approved") ? "Application Approved" : n.message?.toLowerCase().includes("review") ? "Application Under Review" : "Notification Update"),
+            title:
+              n.title ||
+              (n.message?.toLowerCase().includes("approved")
+                ? "Application Approved"
+                : n.message?.toLowerCase().includes("review")
+                  ? "Application Under Review"
+                  : "Notification Update"),
             message: n.message,
             read: n.is_read,
             createdAt: n.created_at,

@@ -18,6 +18,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -30,11 +37,19 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import { mockApplications } from "@/data/mockData";
 import { useApplications } from "@/hooks/useApplications";
 import { useEmployeeProfile } from "@/hooks/useEmployees";
 import { usePrograms } from "@/hooks/usePrograms";
 import { useAppStore } from "@/store/appStore";
-import type { CourseEntry, Document, ProgramType, WizardData } from "@/types";
+import type {
+  Application,
+  CourseEntry,
+  Document,
+  ProgramType,
+  WizardData,
+} from "@/types";
 import {
   AlertCircle,
   AlertTriangle,
@@ -42,7 +57,9 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Download,
+  FileSignature,
   FileText,
   GraduationCap,
   Heart,
@@ -60,10 +77,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Constants ────────────────────────────────────────────────
 const PROGRAM_ICONS: Record<string, React.ReactNode> = {
-  TuitionReimbursement: <GraduationCap className="w-4 h-4 text-[#1A1A1A]" />,
-  CMEReimbursement: <Heart className="w-4 h-4 text-[#1A1A1A]" />,
-  MMCScholarship: <Star className="w-4 h-4 text-[#1A1A1A]" />,
-  DependentTuition: <Users className="w-4 h-4 text-[#1A1A1A]" />,
+  TuitionReimbursement: <GraduationCap className="w-4 h-4 text-[#008573]" />,
+  CMEReimbursement: <Heart className="w-4 h-4 text-[#008573]" />,
+  MMCScholarship: <Star className="w-4 h-4 text-[#008573]" />,
+  DependentTuition: <Users className="w-4 h-4 text-[#008573]" />,
+  LetterRequests: <FileText className="w-4 h-4 text-[#008573]" />,
 };
 const NY_UNIVERSITIES = [
   "CUNY Lehman College",
@@ -233,6 +251,367 @@ function WizardProgress({ step }: { step: number }) {
   );
 }
 
+// ─── Letter Request Modal Component ─────────────────────────────
+function LetterRequestModal({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const router = useRouter();
+  const { data: emp } = useEmployeeProfile();
+  const [requestType, setRequestType] = useState<string>(
+    "PREP Form (Payment Reimbursement from Employer Plan)",
+  );
+  const [additionalDetails, setAdditionalDetails] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [trackingId, setTrackingId] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFiles(Array.from(e.target.files));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const newRef = `LTR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    setTrackingId(newRef);
+
+    const empName = emp?.name || "Maria Santos";
+    const empId = emp?.employeeId || "EMP-44821";
+    const empTitle = emp?.title || "Registered Nurse, BSN";
+    const empDept = emp?.department || "Nursing — 4 North ICU";
+
+    const newLetterApp: Application = {
+      id: newRef,
+      employeeId: empId,
+      programType: "LetterRequests",
+      status: "PendingApproval",
+      submittedAt: new Date().toISOString(),
+      amount: 0,
+      credits: 0,
+      institution: "CUNY Lehman College",
+      courseTitle: requestType,
+      documents: files.map((f, idx) => ({
+        id: `doc-ltr-${Date.now()}-${idx}`,
+        name: f.name,
+        type: "other",
+        uploadedAt: new Date().toISOString(),
+        size: f.size,
+        status: "verified",
+      })),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      trackingId: newRef,
+      letterDetails: {
+        requestType,
+        additionalDetails,
+        generatedLetterContent: `MONTEFIORE MEDICAL CENTER\nHUMAN RESOURCES & BENEFITS ADMINISTRATION\n111 East 210th Street, Bronx, NY 10467\n\nOFFICIAL TUITION DEFERMENT & EMPLOYER PLAN VERIFICATION LETTER\n\nDate: ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}\nTracking Reference: ${newRef}\n\nTO WHOM IT MAY CONCERN,\n\nThis letter serves as official verification from Montefiore Medical Center regarding the employment status and tuition assistance eligibility for:\n\nAssociate Name: ${empName}\nEmployee ID: ${empId}\nJob Title: ${empTitle}\nDepartment: ${empDept}\n\nREQUEST TYPE: ${requestType}\nADDITIONAL DETAILS: ${additionalDetails || "None provided"}\n\nSTATUS: PENDING BENEFITS SPECIALIST REVIEW & APPROVAL`,
+      },
+    };
+
+    mockApplications.unshift(newLetterApp);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }, 600);
+  };
+
+  const handleReset = () => {
+    setIsSubmitted(false);
+    setRequestType("PREP Form (Payment Reimbursement from Employer Plan)");
+    setAdditionalDetails("");
+    setFiles([]);
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleReset}>
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full bg-white border border-slate-200 rounded-none p-5 sm:p-6 font-body space-y-3">
+        {!isSubmitted ? (
+          <form onSubmit={handleSubmit} className="space-y-4 text-left">
+            <DialogHeader className="text-left space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#003769]/10 flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4 text-[#003769]" />
+                </div>
+                <DialogTitle className="text-lg sm:text-xl font-normal font-display text-[#003769] leading-tight">
+                  Submit Letter Request
+                </DialogTitle>
+              </div>
+              <DialogDescription className="text-xs font-bold text-[#008573]">
+                Request a deferment letter, completed PREP form, or other
+                tuition-related letter for your school.
+              </DialogDescription>
+            </DialogHeader>
+
+            <Separator className="my-1" />
+
+            {/* Field 1: Request Type */}
+            <div className="space-y-1">
+              <Label className="text-xs font-bold text-[#003769]">
+                1. Request Type <span className="text-red-500">*</span>
+              </Label>
+              <Select value={requestType} onValueChange={setRequestType}>
+                <SelectTrigger
+                  className="w-full bg-white border-slate-300 rounded-none text-xs font-body text-left whitespace-normal h-9"
+                  data-ocid="letter.select_type"
+                >
+                  <SelectValue placeholder="Select Request Type" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-slate-300 rounded-none text-xs">
+                  <SelectItem value="PREP Form (Payment Reimbursement from Employer Plan)">
+                    PREP Form (Payment Reimbursement from Employer Plan)
+                  </SelectItem>
+                  <SelectItem value="Deferment Letter Request">
+                    Deferment Letter Request
+                  </SelectItem>
+                  <SelectItem value="Other Tuition-Related Letter">
+                    Other Tuition-Related Letter
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Field 2: Additional Details */}
+            <div className="space-y-1">
+              <Label className="text-xs font-bold text-[#003769]">
+                2. Additional Details{" "}
+                <span className="text-muted-foreground font-normal">
+                  (Optional)
+                </span>
+              </Label>
+              <Textarea
+                value={additionalDetails}
+                onChange={(e) => setAdditionalDetails(e.target.value)}
+                placeholder='Example: "My university requires a deferment letter before August 30."'
+                className="bg-white border-slate-300 rounded-none text-xs min-h-[70px] font-body"
+                data-ocid="letter.additional_details"
+              />
+            </div>
+
+            {/* Field 3: Supporting Documents */}
+            <div className="space-y-1">
+              <Label className="text-xs font-bold text-[#003769]">
+                3. Supporting Documents{" "}
+                <span className="text-muted-foreground font-normal">
+                  (Optional)
+                </span>
+              </Label>
+              <div className="border-2 border-dashed border-slate-300 p-3 text-center hover:bg-slate-50 transition-colors">
+                <input
+                  type="file"
+                  id="letter-file-upload"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="letter-file-upload"
+                  className="cursor-pointer space-y-1 block"
+                >
+                  <Upload className="w-5 h-5 mx-auto text-[#008573]" />
+                  <p className="text-xs font-bold text-[#003769]">
+                    Click to upload blank PREP form or enrollment proof
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    PDF, PNG, JPG up to 10MB
+                  </p>
+                </label>
+                {files.length > 0 && (
+                  <div className="mt-2 pt-1 border-t border-slate-200 text-left space-y-0.5">
+                    {files.map((f, i) => (
+                      <div
+                        key={i}
+                        className="text-xs text-[#008573] font-semibold flex items-center gap-1.5 truncate"
+                      >
+                        <FileText className="w-3.5 h-3.5 shrink-0" /> {f.name} (
+                        {Math.round(f.size / 1024)} KB)
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer buttons */}
+            <div className="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-200">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                className="rounded-full h-9 text-xs px-5 border-slate-300 font-bold"
+                data-ocid="letter.cancel_button"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="rounded-full h-9 text-xs px-6 bg-[#003769] hover:bg-[#00274d] text-white font-bold border-0 shadow-xs"
+                data-ocid="letter.submit_button"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />{" "}
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit Request"
+                )}
+              </Button>
+            </div>
+          </form>
+        ) : (
+          /* Confirmation / Success Screen */
+          <div
+            className="space-y-3.5 text-left py-1"
+            data-ocid="letter.success_screen"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-6 h-6 text-[#008573]" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-base sm:text-lg font-bold font-display text-[#003769] leading-snug">
+                  Letter Request Submitted Successfully
+                </h3>
+                <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                  <Badge className="bg-[#E6F0F5] text-[#003769] text-[10px] font-bold border-0 whitespace-nowrap">
+                    Ref ID: {trackingId}
+                  </Badge>
+                  <Badge className="bg-amber-100 text-amber-800 text-[10px] font-bold border-0 whitespace-nowrap">
+                    Pending Specialist Review
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Workflow Timeline Stepper */}
+            <div className="bg-[#E6F0F5]/50 border border-slate-200 p-2.5 space-y-2 rounded-none">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[10px] font-bold text-[#003769] font-body uppercase tracking-wider">
+                  Request Progress & Timeline
+                </h4>
+                <span className="text-[10px] text-[#008573] font-bold">
+                  Estimated Processing: 2–3 Business Days
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-1.5 text-center text-xs font-body">
+                {/* Step 1 */}
+                <div className="flex flex-col items-center justify-center p-2 rounded bg-emerald-50 border border-emerald-200 min-w-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mb-0.5 shrink-0" />
+                  <span className="font-bold text-emerald-900 text-[10px] leading-tight">
+                    1. Submitted
+                  </span>
+                  <span className="text-[8px] text-emerald-700 font-semibold">Done</span>
+                </div>
+                {/* Step 2 */}
+                <div className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 border border-amber-300 min-w-0">
+                  <Clock className="w-3.5 h-3.5 text-amber-600 mb-0.5 animate-pulse shrink-0" />
+                  <span className="font-bold text-amber-900 text-[10px] leading-tight">
+                    2. Preparation
+                  </span>
+                  <span className="text-[8px] text-amber-800 font-bold">In Progress</span>
+                </div>
+                {/* Step 3 */}
+                <div className="flex flex-col items-center justify-center p-2 rounded bg-slate-100 border border-slate-200 opacity-70 min-w-0">
+                  <FileSignature className="w-3.5 h-3.5 text-slate-500 mb-0.5 shrink-0" />
+                  <span className="font-bold text-slate-700 text-[10px] leading-tight">
+                    3. Review
+                  </span>
+                  <span className="text-[8px] text-slate-500 font-medium">Pending HR</span>
+                </div>
+                {/* Step 4 */}
+                <div className="flex flex-col items-center justify-center p-2 rounded bg-slate-100 border border-slate-200 opacity-70 min-w-0">
+                  <Download className="w-3.5 h-3.5 text-slate-500 mb-0.5 shrink-0" />
+                  <span className="font-bold text-slate-700 text-[10px] leading-tight">
+                    4. Download
+                  </span>
+                  <span className="text-[8px] text-slate-500 font-medium">Pending</span>
+                </div>
+              </div>
+            </div>
+
+            <Alert className="bg-amber-50/80 border-amber-200 p-2.5">
+              <Info className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+              <AlertTitle className="text-xs font-bold text-amber-900">
+                Benefits Specialist Approval Notice
+              </AlertTitle>
+              <AlertDescription className="text-xs text-amber-800 leading-normal mt-0.5">
+                Your request has been recorded and auto-filled with your Montefiore HRIS information. Our Benefits Specialist will review and approve your request before releasing the letter for download.
+              </AlertDescription>
+            </Alert>
+
+            {/* Letter Request Details Card */}
+            <Card className="border border-slate-300 rounded-none bg-white p-3 font-body text-xs text-[#1A1A1A] space-y-2">
+              <div className="border-b border-slate-200 pb-1.5 flex justify-between items-center gap-2">
+                <span className="font-bold text-[#003769] text-[11px]">LETTER REQUEST DETAILS</span>
+                <Badge className="bg-amber-100 text-amber-800 border border-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                  Pending Specialist Review
+                </Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Associate Name</span>
+                  <span className="font-bold text-[#003769]">{emp?.name || "Maria Santos"} ({emp?.employeeId || "EMP-44821"})</span>
+                </div>
+                <div>
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Request Type</span>
+                  <span className="font-bold text-[#008573]">{requestType}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Submitted Date</span>
+                  <span className="font-semibold text-slate-700">{new Date().toLocaleDateString()}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Estimated Processing</span>
+                  <span className="font-semibold text-slate-700">2–3 Business Days</span>
+                </div>
+              </div>
+              {additionalDetails && (
+                <div className="pt-1.5 border-t border-slate-100">
+                  <span className="text-[9px] text-slate-500 uppercase font-bold block">Additional Notes</span>
+                  <p className="italic text-slate-600 text-[11px] mt-0.5 font-normal">"{additionalDetails}"</p>
+                </div>
+              )}
+            </Card>
+
+            <div className="flex items-center justify-end gap-2.5 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                className="rounded-full h-8 text-xs px-5 border-slate-300 font-bold"
+                data-ocid="letter.close_button"
+              >
+                Close & Return
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  handleReset();
+                  router.push("/applications");
+                }}
+                className="rounded-full h-8 text-xs px-6 bg-[#003769] hover:bg-[#00274d] text-white font-bold border-0 shadow-xs"
+                data-ocid="letter.view_apps_button"
+              >
+                View My Applications
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ─── Step 1: Program Selection ────────────────────────────────
 function Step1Program({
   data,
@@ -242,14 +621,13 @@ function Step1Program({
   onUpdate: (d: Partial<WizardData>) => void;
 }) {
   const { data: mockPrograms = [], isLoading } = usePrograms();
+  const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Loader2 className="w-8 h-8 text-[#008573] animate-spin mb-4" />
-        <span className="text-sm text-[#1A1A1A]">
-          Loading programs...
-        </span>
+        <span className="text-sm text-[#1A1A1A]">Loading programs...</span>
       </div>
     );
   }
@@ -258,16 +636,17 @@ function Step1Program({
     <div className="space-y-6 text-left">
       <div>
         <h2 className="text-xl font-normal font-display text-[#003769]">
-          Select a Program
+          Select a Program or Service
         </h2>
         <p className="text-sm font-bold text-[#008573] mt-1">
-          Choose the program you'd like to apply for. Each program
-          has different eligibility requirements and benefit amounts.
+          Choose a reimbursement program to apply for or select Letter Requests
+          to request tuition deferment and PREP forms.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {mockPrograms.map((prog) => {
           const selected = data.programType === prog.programType;
+          const isLetter = prog.programType === "LetterRequests";
           const isScholarship = prog.programType === "MMCScholarship";
           const maxAmt = isScholarship ? 500 : prog.maxAmount;
           const maxCreds = isScholarship ? 0 : prog.maxCredits;
@@ -276,9 +655,13 @@ function Step1Program({
             <button
               key={prog.id}
               type="button"
-              onClick={() =>
-                onUpdate({ programType: prog.programType as ProgramType })
-              }
+              onClick={() => {
+                if (isLetter) {
+                  setIsLetterModalOpen(true);
+                } else {
+                  onUpdate({ programType: prog.programType as ProgramType });
+                }
+              }}
               data-ocid={`apply.program_card.${prog.id}`}
               className={[
                 "text-left rounded-none border-2 p-4 transition-all duration-200 hover:shadow-md flex flex-col justify-between cursor-pointer min-h-[110px]",
@@ -296,19 +679,23 @@ function Step1Program({
                     {prog.name}
                   </h3>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {selected && (
+                    {selected && !isLetter && (
                       <Badge className="bg-[#008573] text-white text-[8px] h-4 px-1.5 py-0 justify-center rounded-full font-bold border-0">
                         Selected
                       </Badge>
                     )}
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-[9px] text-slate-500">
-                        Up to
-                      </span>
-                      <span className="text-sm font-bold text-[#003769]">
-                        ${maxAmt.toLocaleString()}
-                      </span>
-                    </div>
+                    {isLetter ? (
+                      <Badge className="bg-[#003769] text-white text-[8px] h-4 px-2 py-0 justify-center rounded-full font-bold border-0">
+                        Service Request
+                      </Badge>
+                    ) : (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-[9px] text-slate-500">Up to</span>
+                        <span className="text-sm font-bold text-[#003769]">
+                          ${maxAmt.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className="text-[10px] text-[#1A1A1A] mt-2 leading-normal line-clamp-2 font-body">
@@ -317,16 +704,26 @@ function Step1Program({
               </div>
               <div className="mt-3 pt-1.5 border-t border-slate-200/60 flex items-center justify-between w-full">
                 <span className="text-[9px] text-slate-500 font-body">
-                  Credit Limit
+                  {isLetter ? "Request Type" : "Credit Limit"}
                 </span>
                 <span className="text-[10px] font-semibold text-[#1A1A1A] font-body">
-                  {maxCreds > 0 ? `${maxCreds} credits/year` : "No credit requirement"}
+                  {isLetter
+                    ? "Service / HR Approval Required"
+                    : maxCreds > 0
+                      ? `${maxCreds} credits/year`
+                      : "No credit requirement"}
                 </span>
               </div>
             </button>
           );
         })}
       </div>
+
+      {/* Short-Form Modal for Letter Requests */}
+      <LetterRequestModal
+        open={isLetterModalOpen}
+        onOpenChange={setIsLetterModalOpen}
+      />
     </div>
   );
 }
@@ -595,9 +992,7 @@ function Step4CourseDetails({
         <CardContent className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-body">
             <div>
-              <span className="text-slate-500 block">
-                Applicant Name
-              </span>
+              <span className="text-slate-500 block">Applicant Name</span>
               <span className="font-semibold text-[#1A1A1A]">{emp?.name}</span>
             </div>
             <div>
@@ -614,9 +1009,7 @@ function Step4CourseDetails({
             </div>
             <div>
               <span className="text-slate-500 block">Job Title</span>
-              <span className="font-semibold text-[#1A1A1A]">
-                {emp?.title}
-              </span>
+              <span className="font-semibold text-[#1A1A1A]">{emp?.title}</span>
             </div>
           </div>
         </CardContent>
@@ -635,8 +1028,8 @@ function Step4CourseDetails({
       {showInProgressWarning && (
         <div className="p-3.5 bg-[#ebf3ef] border border-[#acd3c0] text-[#1A1A1A] rounded-none text-xs space-y-1 font-body">
           <span className="font-bold text-[#008573] block">Important:</span>
-          Application contains in-progress or enrolled courses. Please note that final
-          reimbursement depends on grade verification.
+          Application contains in-progress or enrolled courses. Please note that
+          final reimbursement depends on grade verification.
         </div>
       )}
 
@@ -725,7 +1118,9 @@ function Step4CourseDetails({
                       course.institution !== "")) && (
                     <Input
                       id={`custom-institution-${course.id}`}
-                      value={course.institution === "Other" ? "" : course.institution}
+                      value={
+                        course.institution === "Other" ? "" : course.institution
+                      }
                       placeholder="Specify custom institution name..."
                       className="mt-2 placeholder:text-slate-400/50 placeholder:font-normal placeholder:italic text-xs"
                       onChange={(e) =>
@@ -1061,7 +1456,8 @@ function Step6Documents({
           Required Documentation
         </h2>
         <p className="text-sm font-bold text-[#008573] mt-1 font-body">
-          Upload official documentation supporting your application. Our AI will automatically extract and verify key information.
+          Upload official documentation supporting your application. Our AI will
+          automatically extract and verify key information.
         </p>
       </div>
 

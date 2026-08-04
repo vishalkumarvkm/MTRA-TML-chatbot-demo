@@ -243,14 +243,13 @@ export default function SupportCaseDetailPage({
                 <span className="inline-flex items-center gap-1 bg-[#EDE9FE] text-[#5B21B6] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
                   <FileText className="w-3 h-3" /> {supportCase.category}
                 </span>
-                <span
-                  className="text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block uppercase tracking-wider bg-[#ebf3ef] text-[#008573] border-0"
-                >
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block uppercase tracking-wider bg-[#ebf3ef] text-[#008573] border-0">
                   {supportCase.status}
                 </span>
                 {supportCase.linkedAppId && (
                   <span className="inline-flex items-center gap-1 bg-[#E6F0F5] text-[#003769] px-2.5 py-0.5 rounded-full text-[10px] font-bold border-0">
-                    <LinkIcon className="w-3 h-3 text-[#008573]" /> {supportCase.linkedAppId}
+                    <LinkIcon className="w-3 h-3 text-[#008573]" />{" "}
+                    {supportCase.linkedAppId}
                   </span>
                 )}
               </div>

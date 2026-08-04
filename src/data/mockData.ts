@@ -252,6 +252,23 @@ export const mockPrograms: Program[] = [
     color: "chart-3",
     available: true,
   },
+  {
+    id: "prog-005",
+    programType: "LetterRequests",
+    name: "Letter Requests",
+    description:
+      "Request a deferment letter, completed PREP form, or other tuition-related letter for your school.",
+    maxAmount: 0,
+    maxCredits: 0,
+    eligibilityRules: [
+      "Available to all active Montefiore employees",
+      "Requires HR/Benefits Specialist review and approval",
+      "Completed letter will be made available for download in portal",
+    ],
+    icon: "📄",
+    color: "primary",
+    available: true,
+  },
 ];
 
 export const mockApplications: Application[] = [

@@ -5,7 +5,8 @@ export type ProgramType =
   | "TuitionReimbursement"
   | "CMEReimbursement"
   | "MMCScholarship"
-  | "DependentTuition";
+  | "DependentTuition"
+  | "LetterRequests";
 
 export type ApplicationStatus =
   | "Draft"
@@ -61,6 +62,13 @@ export interface Application {
   term?: string;
   notes?: string;
   trackingId?: string;
+  letterDetails?: {
+    requestType: string;
+    additionalDetails?: string;
+    generatedLetterContent?: string;
+    approvedAt?: string;
+    approvedBy?: string;
+  };
 }
 
 export interface Employee {

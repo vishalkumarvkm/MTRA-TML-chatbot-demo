@@ -281,7 +281,10 @@ export default function NotificationCenter() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Button size="sm" className="h-9 px-4 font-bold text-xs rounded-full bg-[#003769] text-white hover:bg-[#00274d] border-0 shadow-xs">
+            <Button
+              size="sm"
+              className="h-9 px-4 font-bold text-xs rounded-full bg-[#003769] text-white hover:bg-[#00274d] border-0 shadow-xs"
+            >
               Mark All as Read
             </Button>
             <Button
@@ -461,9 +464,7 @@ export default function NotificationCenter() {
                   <div>
                     <CardHeader className="pb-3 border-b border-border flex flex-row justify-between items-start gap-4">
                       <div className="space-y-1.5">
-                        <Badge
-                          className="text-[9px] font-bold tracking-wider uppercase bg-[#ebf3ef] text-[#008573] border-0 rounded-full px-2 py-0.5"
-                        >
+                        <Badge className="text-[9px] font-bold tracking-wider uppercase bg-[#ebf3ef] text-[#008573] border-0 rounded-full px-2 py-0.5">
                           {selectedNotifData.category}
                         </Badge>
                         <CardTitle className="text-sm font-bold text-[#008573]">
@@ -490,15 +491,11 @@ export default function NotificationCenter() {
                           Communication Channels Sent
                         </h4>
                         <div className="flex gap-2 flex-wrap">
-                          <Badge
-                            className="h-6 gap-1 text-[10px] text-[#003769] font-bold bg-[#E6F0F5] border-0 rounded-full px-2.5"
-                          >
+                          <Badge className="h-6 gap-1 text-[10px] text-[#003769] font-bold bg-[#E6F0F5] border-0 rounded-full px-2.5">
                             <Mail className="w-3 h-3 text-[#008573]" /> Email
                             Notification (Delivered)
                           </Badge>
-                          <Badge
-                            className="h-6 gap-1 text-[10px] text-[#003769] font-bold bg-[#E6F0F5] border-0 rounded-full px-2.5"
-                          >
+                          <Badge className="h-6 gap-1 text-[10px] text-[#003769] font-bold bg-[#E6F0F5] border-0 rounded-full px-2.5">
                             <MessageSquare className="w-3 h-3 text-[#008573]" />{" "}
                             In-App Portal Alert
                           </Badge>

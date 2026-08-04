@@ -96,8 +96,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         </div>
 
         <p className="mt-8 text-xs text-muted-foreground text-center">
-          &copy; {new Date().getFullYear()} Montefiore Medical Center. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Montefiore Medical Center. All
+          rights reserved.
         </p>
       </div>
     </div>

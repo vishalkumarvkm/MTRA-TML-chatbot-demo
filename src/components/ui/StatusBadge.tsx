@@ -8,43 +8,35 @@ const APP_STATUS_CONFIG: Record<
 > = {
   Draft: {
     label: "Draft",
-    className:
-      "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
+    className: "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
   },
   Submitted: {
     label: "Submitted",
-    className:
-      "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
+    className: "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
   },
   UnderReview: {
     label: "Under Review",
-    className:
-      "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
+    className: "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
   },
   PendingApproval: {
     label: "Pending Approval",
-    className:
-      "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
+    className: "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
   },
   Approved: {
     label: "Approved",
-    className:
-      "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
+    className: "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
   },
   Rejected: {
     label: "Rejected",
-    className:
-      "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
+    className: "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
   },
   Escalated: {
     label: "Escalated",
-    className:
-      "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
+    className: "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
   },
   Expired: {
     label: "Escalated",
-    className:
-      "bg-amber-100 text-amber-800 border-0 hover:bg-amber-100/80",
+    className: "bg-amber-100 text-amber-800 border-0 hover:bg-amber-100/80",
   },
 };
 
@@ -54,18 +46,15 @@ const SLA_STATUS_CONFIG: Record<
 > = {
   OnTrack: {
     label: "On Track",
-    className:
-      "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
+    className: "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
   },
   AtRisk: {
     label: "At Risk",
-    className:
-      "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
+    className: "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
   },
   Overdue: {
     label: "Overdue",
-    className:
-      "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
+    className: "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
   },
 };
 
@@ -75,28 +64,23 @@ const APPROVAL_STATUS_CONFIG: Record<
 > = {
   Pending: {
     label: "Pending",
-    className:
-      "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
+    className: "bg-[#E6F0F5] text-[#003769] border-0 hover:bg-[#E6F0F5]",
   },
   Approved: {
     label: "Approved",
-    className:
-      "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
+    className: "bg-[#ebf3ef] text-[#008573] border-0 hover:bg-[#ebf3ef]",
   },
   Rejected: {
     label: "Rejected",
-    className:
-      "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
+    className: "bg-[#1a1a1a] text-white border-0 hover:bg-[#1a1a1a]/90",
   },
   Escalated: {
     label: "Escalated",
-    className:
-      "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
+    className: "bg-[#e6e6e6] text-[#1a1a1a] border-0 hover:bg-[#e6e6e6]",
   },
   Expired: {
     label: "Escalated",
-    className:
-      "bg-amber-100 text-amber-800 border-0 hover:bg-amber-100/80",
+    className: "bg-amber-100 text-amber-800 border-0 hover:bg-amber-100/80",
   },
 };
 

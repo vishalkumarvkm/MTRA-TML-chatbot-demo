@@ -10,7 +10,9 @@ export function useManagerApprovals() {
     queryKey: ["manager_approvals"],
     queryFn: async () => {
       try {
-        const response = await fetchApi<{ data: any[] }>("/manager/applications");
+        const response = await fetchApi<{ data: any[] }>(
+          "/manager/applications",
+        );
         if (response.data && Array.isArray(response.data)) {
           return response.data.map((app: any) => ({
             id: String(app.id),
@@ -24,7 +26,9 @@ export function useManagerApprovals() {
             institution: app.institution_name,
             courseTitle: app.course_name,
             dueDate: new Date(
-              (app.created_at ? new Date(app.created_at).getTime() : Date.now()) +
+              (app.created_at
+                ? new Date(app.created_at).getTime()
+                : Date.now()) +
                 15 * 24 * 60 * 60 * 1000,
             ).toISOString(),
             submittedDate: app.created_at || new Date().toISOString(),
@@ -33,7 +37,9 @@ export function useManagerApprovals() {
           }));
         }
       } catch (e) {
-        console.warn("Using mock manager approvals fallback due to fetch failure");
+        console.warn(
+          "Using mock manager approvals fallback due to fetch failure",
+        );
       }
       return mockApprovalItems;
     },

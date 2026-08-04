@@ -13,7 +13,7 @@ export function useAuth() {
 
       // Check hardcoded credentials first
       const hardcodedMatch = HARDCODED_CREDENTIALS.find(
-        (cred) => cred.email.toLowerCase() === emailClean
+        (cred) => cred.email.toLowerCase() === emailClean,
       );
 
       if (hardcodedMatch) {
@@ -24,7 +24,9 @@ export function useAuth() {
             token: fakeToken,
           };
         } else {
-          throw new Error("Invalid password. Please check credentials and try again.");
+          throw new Error(
+            "Invalid password. Please check credentials and try again.",
+          );
         }
       }
 
@@ -43,11 +45,14 @@ export function useAuth() {
         });
 
         const roleLower = String(response.data.role).toLowerCase() as any;
-        const matchedCredential = HARDCODED_CREDENTIALS.find(c => c.role === roleLower);
+        const matchedCredential = HARDCODED_CREDENTIALS.find(
+          (c) => c.role === roleLower,
+        );
         const userObj = matchedCredential?.user || {
           id: String(response.data.user.id),
           employeeId: `EMP-${response.data.user.id}`,
-          name: response.data.user.name || response.data.user.email.split("@")[0],
+          name:
+            response.data.user.name || response.data.user.email.split("@")[0],
           email: response.data.user.email,
           role: roleLower,
           department: "Montefiore Medical Center",

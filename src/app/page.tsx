@@ -35,6 +35,7 @@ import {
   DollarSign,
   FilePlus,
   FileSignature,
+  FileText,
   GraduationCap,
   Heart,
   Info,
@@ -51,6 +52,7 @@ const PROGRAM_ICONS: Record<string, React.ReactNode> = {
   CMEReimbursement: <Heart className="w-5 h-5" />,
   MMCScholarship: <Star className="w-5 h-5" />,
   DependentTuition: <Users className="w-5 h-5" />,
+  LetterRequests: <FileText className="w-5 h-5" />,
 };
 
 const PROGRAM_COLORS: Record<string, string> = {
@@ -62,6 +64,8 @@ const PROGRAM_COLORS: Record<string, string> = {
     "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
   DependentTuition:
     "bg-violet-100 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300",
+  LetterRequests:
+    "bg-sky-100 text-sky-800 dark:bg-sky-950/40 dark:text-sky-300",
 };
 
 const NOTIF_ICONS: Record<string, React.ReactNode> = {
@@ -416,7 +420,8 @@ function DashboardPage() {
                           Service Agreement Required
                         </div>
                         <p className="text-[10px] text-[#1A1A1A] leading-normal line-clamp-2">
-                          You have 7 days to submit your service agreement for application {myApps[0].trackingId || myApps[0].id}.
+                          You have 7 days to submit your service agreement for
+                          application {myApps[0].trackingId || myApps[0].id}.
                         </p>
                       </div>
                       <div>
@@ -439,7 +444,8 @@ function DashboardPage() {
                           No Pending Tasks
                         </div>
                         <p className="text-[10px] text-[#1A1A1A] leading-normal line-clamp-2">
-                          You are up to date! Submit an application to request educational assistance.
+                          You are up to date! Submit an application to request
+                          educational assistance.
                         </p>
                       </div>
                       <div>
@@ -623,9 +629,7 @@ function DashboardPage() {
               <CardContent className="p-4 space-y-3">
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <p className="text-xs font-bold text-[#008573]">
-                      Status
-                    </p>
+                    <p className="text-xs font-bold text-[#008573]">Status</p>
                     <p className="text-xs font-normal text-[#1A1A1A] mt-0.5">
                       Active
                     </p>
@@ -648,7 +652,9 @@ function DashboardPage() {
                   </div>
                 </div>
                 <p className="text-[10px] text-[#1A1A1A] leading-tight mt-2">
-                  You are required to remain employed at Montefiore Medical Center for 2 years following reimbursement of 18 credits per your service agreement.
+                  You are required to remain employed at Montefiore Medical
+                  Center for 2 years following reimbursement of 18 credits per
+                  your service agreement.
                 </p>
               </CardContent>
             </Card>

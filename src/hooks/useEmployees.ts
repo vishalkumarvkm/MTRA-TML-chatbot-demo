@@ -36,7 +36,8 @@ export function useEmployeeProfile() {
         // Fallback to currently logged in mock user or default mock employee
         const currentUser = useAppStore.getState().currentUser;
         const matchedMock = mockEmployees.find(
-          (m) => m.email.toLowerCase() === (currentUser?.email || "").toLowerCase()
+          (m) =>
+            m.email.toLowerCase() === (currentUser?.email || "").toLowerCase(),
         );
         return matchedMock || mockEmployees[0];
       }

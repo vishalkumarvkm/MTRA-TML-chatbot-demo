@@ -45,7 +45,9 @@ export function useApplications() {
           body: JSON.stringify(data),
         });
       } catch (e) {
-        console.warn("Using mock application creation fallback due to fetch failure");
+        console.warn(
+          "Using mock application creation fallback due to fetch failure",
+        );
         return { data: { id: `app-${Date.now()}` } };
       }
     },

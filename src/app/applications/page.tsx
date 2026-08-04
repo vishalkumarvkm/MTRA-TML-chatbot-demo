@@ -38,6 +38,7 @@ export default function ApplicationsPage() {
   const router = useRouter();
   const { currentUser } = useAppStore();
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<"all" | "tuition" | "letters">("all");
   const { applications, isLoading } = useApplications();
 
   // Current employee (Maria Santos in demo)
@@ -55,12 +56,18 @@ export default function ApplicationsPage() {
 
   let userApps = applications || [];
 
-  const filteredApps = userApps.filter(
-    (app) =>
+  const filteredApps = userApps.filter((app) => {
+    const matchesSearch =
       app.institution.toLowerCase().includes(search.toLowerCase()) ||
       app.courseTitle?.toLowerCase().includes(search.toLowerCase()) ||
-      app.id.toLowerCase().includes(search.toLowerCase()),
-  );
+      app.id.toLowerCase().includes(search.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    if (activeTab === "tuition") return app.programType !== "LetterRequests";
+    if (activeTab === "letters") return app.programType === "LetterRequests";
+    return true;
+  });
 
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-US", {
@@ -195,7 +202,50 @@ export default function ApplicationsPage() {
 
         {/* Applications Table */}
         <Card className="border border-slate-200 rounded-none shadow-none overflow-hidden bg-white">
-          <CardHeader className="pb-3 border-b border-border bg-muted/30">
+          <CardHeader className="pb-3 border-b border-border bg-muted/30 space-y-3">
+            {/* Tab Controls */}
+            <div className="flex items-center gap-2 border-b border-slate-200/80 pb-3 overflow-x-auto no-scrollbar">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setActiveTab("all")}
+                className={`h-8 text-xs px-4 rounded-full font-bold transition-all ${
+                  activeTab === "all"
+                    ? "bg-[#003769] text-white hover:bg-[#00274d]"
+                    : "bg-[#E6F0F5] text-[#003769] hover:bg-[#d5e5ee]"
+                }`}
+                data-ocid="applications.tab_all"
+              >
+                All Requests ({userApps.length})
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setActiveTab("tuition")}
+                className={`h-8 text-xs px-4 rounded-full font-bold transition-all ${
+                  activeTab === "tuition"
+                    ? "bg-[#003769] text-white hover:bg-[#00274d]"
+                    : "bg-[#E6F0F5] text-[#003769] hover:bg-[#d5e5ee]"
+                }`}
+                data-ocid="applications.tab_tuition"
+              >
+                Tuition Applications ({userApps.filter((a) => a.programType !== "LetterRequests").length})
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setActiveTab("letters")}
+                className={`h-8 text-xs px-4 rounded-full font-bold transition-all ${
+                  activeTab === "letters"
+                    ? "bg-[#003769] text-white hover:bg-[#00274d]"
+                    : "bg-[#E6F0F5] text-[#003769] hover:bg-[#d5e5ee]"
+                }`}
+                data-ocid="applications.tab_letters"
+              >
+                My Letter Requests ({userApps.filter((a) => a.programType === "LetterRequests").length})
+              </Button>
+            </div>
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -294,7 +344,9 @@ export default function ApplicationsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="font-semibold text-foreground">
-                          {formatCurrency(app.amount)}
+                          {app.programType === "LetterRequests"
+                            ? "N/A (Service)"
+                            : formatCurrency(app.amount)}
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {formatDate(app.submittedAt ?? app.createdAt)}
@@ -303,7 +355,34 @@ export default function ApplicationsPage() {
                           <StatusBadge status={app.status} />
                         </TableCell>
                         <TableCell className="text-right px-4">
-                          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+                          {app.programType === "LetterRequests" &&
+                          app.status === "Approved" ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-[10px] gap-1 rounded-full border-[#008573] text-[#008573] hover:bg-[#ebf3ef]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const content =
+                                  app.letterDetails?.generatedLetterContent ||
+                                  `MONTEFIORE MEDICAL CENTER\nOFFICIAL TUITION DEFERMENT LETTER\nAssociate: Maria Santos (EMP-44821)\nStatus: APPROVED BY BENEFITS SPECIALIST`;
+                                const blob = new Blob([content], {
+                                  type: "text/plain;charset=utf-8",
+                                });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = `Montefiore_Letter_${app.id}.txt`;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              }}
+                            >
+                              <Download className="w-3 h-3" />
+                              Download Letter
+                            </Button>
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
